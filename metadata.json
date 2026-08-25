@@ -1,0 +1,6 @@
+{
+  "name": "عالم الشرق الأوسط",
+  "description": "منصة عالم الشرق الأوسط للسوشيال ميديا، المنشورات، وشحن الألعاب.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
