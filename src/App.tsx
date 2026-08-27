@@ -98,6 +98,7 @@ export default function App() {
     );
   }
 
+  if (!session) {
     return <LoginPage />;
   }
 
