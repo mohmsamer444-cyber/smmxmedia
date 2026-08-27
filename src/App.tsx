@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
+import { useAuth } from './context/AuthContext';
+import { LoginPage } from './components/auth/LoginPage';
 import { Header } from './components/common/Header';
 import { BottomNav } from './components/common/BottomNav';
 import { Drawer } from './components/common/Drawer';
@@ -86,6 +88,19 @@ const AppContent: React.FC = () => {
 };
 
 export default function App() {
+  const { session, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full bg-[#0A0A0A] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#E31E24] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+    return <LoginPage />;
+  }
+
   return (
     <AppProvider>
       <AppContent />
