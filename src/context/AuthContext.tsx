@@ -6,8 +6,8 @@ interface AuthContextType {
   session: Session | null;
   user: User | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>;
-  signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  signUp: (identifier: string, password: string, fullName: string) => Promise<{ error: string | null }>;
+  signIn: (identifier: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -36,16 +36,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
   }, []);
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (identifier: string, password: string, fullName: string) => {
+    const isPhone = isPhoneNumber(identifier);
+    const email = isPhone ? phoneToInternalEmail(identifier) : identifier;
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } },
+      options: { data: { full_name: fullName, phone: isPhone ? identifier : null } },
     });
     return { error: error ? translateAuthError(error.message) : null };
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (identifier: string, password: string) => {
+    const isPhone = isPhoneNumber(identifier);
+    const email = isPhone ? phoneToInternalEmail(identifier) : identifier;
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error: error ? translateAuthError(error.message) : null };
   };
@@ -69,10 +73,19 @@ export const useAuth = () => {
   return ctx;
 };
 
+function isPhoneNumber(value: string): boolean {
+  return /^[0-9+][0-9\s-]{6,}$/.test(value.trim()) && !value.includes('@');
+}
+
+function phoneToInternalEmail(phone: string): string {
+  const digits = phone.trim().replace(/[^0-9]/g, '');
+  return `phone_${digits}@smmxmedia.local`;
+}
+
 function translateAuthError(message: string): string {
-  if (message.includes('Invalid login credentials')) return 'الإيميل أو كلمة المرور غير صحيحة';
-  if (message.includes('User already registered')) return 'الإيميل ده مسجل بالفعل';
+  if (message.includes('Invalid login credentials')) return 'البيانات غير صحيحة';
+  if (message.includes('User already registered')) return 'الحساب ده مسجل بالفعل';
   if (message.includes('Password should be at least')) return 'كلمة المرور لازم تكون 6 أحرف على الأقل';
-  if (message.includes('Unable to validate email')) return 'صيغة الإيميل غير صحيحة';
+  if (message.includes('Unable to validate email')) return 'صيغة البريد أو الرقم غير صحيحة';
   return message;
 }
