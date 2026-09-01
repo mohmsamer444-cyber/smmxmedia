@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import {
   X,
   ExternalLink,
@@ -43,6 +44,8 @@ export const Drawer: React.FC<DrawerProps> = ({ isOpen: propIsOpen, onClose: pro
     openAvatarModal,
     showToast,
   } = useApp();
+
+  const { signOut } = useAuth();
 
   const isOpen = propIsOpen ?? isDrawerOpen;
   const onClose = propOnClose ?? closeDrawer;
@@ -318,8 +321,9 @@ export const Drawer: React.FC<DrawerProps> = ({ isOpen: propIsOpen, onClose: pro
 
             {/* Logout Button */}
             <button
-              onClick={() => {
+              onClick={async () => {
                 onClose();
+                await signOut();
                 showToast('تم تسجيل الخروج بنجاح', 'info');
               }}
               className="w-full py-2.5 px-4 rounded-xl border border-[#E31E24]/50 text-red-400 hover:bg-red-500/10 hover:text-red-300 font-bold text-xs flex items-center justify-center gap-2 transition-colors"
