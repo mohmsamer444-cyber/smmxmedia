@@ -311,28 +311,28 @@ export const INITIAL_ORDERS: SMMOrder[] = [
 
 export const GAME_PACKAGES: GamePackage[] = [
   // PUBG Mobile UC
-  { id: 'pubg-1', game: 'pubg', amount: 60, unit: 'UC', priceUSD: 0.67 },
-  { id: 'pubg-2', game: 'pubg', amount: 325, unit: 'UC', priceUSD: 3.41 },
-  { id: 'pubg-3', game: 'pubg', amount: 660, unit: 'UC', priceUSD: 6.83 },
-  { id: 'pubg-4', game: 'pubg', amount: 1800, unit: 'UC', priceUSD: 17.09 },
-  { id: 'pubg-5', game: 'pubg', amount: 3850, unit: 'UC', priceUSD: 30.77 },
-  { id: 'pubg-6', game: 'pubg', amount: 8100, unit: 'UC', priceUSD: 68.39 },
+  { id: 'pubg-1', game: 'pubg', amount: 60, unit: 'UC', priceUSD: 0.99 },
+  { id: 'pubg-2', game: 'pubg', amount: 325, unit: 'UC', priceUSD: 4.99, discountBadge: '-10%' },
+  { id: 'pubg-3', game: 'pubg', amount: 660, unit: 'UC', priceUSD: 9.99, discountBadge: '-15%' },
+  { id: 'pubg-4', game: 'pubg', amount: 1800, unit: 'UC', priceUSD: 24.99, discountBadge: '-20%' },
+  { id: 'pubg-5', game: 'pubg', amount: 3850, unit: 'UC', priceUSD: 44.99, discountBadge: '-25%' },
+  { id: 'pubg-6', game: 'pubg', amount: 8100, unit: 'UC', priceUSD: 99.99, discountBadge: '-25%' },
 
   // Free Fire Diamonds
-  { id: 'ff-1', game: 'freefire', amount: 100, unit: 'جواهر', priceUSD: 0.67 },
-  { id: 'ff-2', game: 'freefire', amount: 310, unit: 'جواهر', priceUSD: 2.04 },
-  { id: 'ff-3', game: 'freefire', amount: 520, unit: 'جواهر', priceUSD: 3.41 },
-  { id: 'ff-4', game: 'freefire', amount: 1060, unit: 'جواهر', priceUSD: 6.83 },
-  { id: 'ff-5', game: 'freefire', amount: 2180, unit: 'جواهر', priceUSD: 13.67 },
-  { id: 'ff-6', game: 'freefire', amount: 5600, unit: 'جواهر', priceUSD: 34.19 },
+  { id: 'ff-1', game: 'freefire', amount: 100, unit: 'جواهر', priceUSD: 0.99 },
+  { id: 'ff-2', game: 'freefire', amount: 310, unit: 'جواهر', priceUSD: 2.99, discountBadge: '-10%' },
+  { id: 'ff-3', game: 'freefire', amount: 520, unit: 'جواهر', priceUSD: 4.99, discountBadge: '-15%' },
+  { id: 'ff-4', game: 'freefire', amount: 1060, unit: 'جواهر', priceUSD: 9.99, discountBadge: '-20%' },
+  { id: 'ff-5', game: 'freefire', amount: 2180, unit: 'جواهر', priceUSD: 19.99, discountBadge: '-25%' },
+  { id: 'ff-6', game: 'freefire', amount: 5600, unit: 'جواهر', priceUSD: 49.99, discountBadge: '-25%' },
 
   // eFootball Coins
-  { id: 'ef-1', game: 'efootball', amount: 260, unit: 'كوينز', priceUSD: 1.36 },
-  { id: 'ef-2', game: 'efootball', amount: 550, unit: 'كوينز', priceUSD: 2.73 },
-  { id: 'ef-3', game: 'efootball', amount: 1040, unit: 'كوينز', priceUSD: 4.78 },
-  { id: 'ef-4', game: 'efootball', amount: 2130, unit: 'كوينز', priceUSD: 9.57 },
-  { id: 'ef-5', game: 'efootball', amount: 3250, unit: 'كوينز', priceUSD: 13.67 },
-  { id: 'ef-6', game: 'efootball', amount: 5600, unit: 'كوينز', priceUSD: 23.93 },
+  { id: 'ef-1', game: 'efootball', amount: 260, unit: 'كوينز', priceUSD: 1.99 },
+  { id: 'ef-2', game: 'efootball', amount: 550, unit: 'كوينز', priceUSD: 3.99, discountBadge: '-10%' },
+  { id: 'ef-3', game: 'efootball', amount: 1040, unit: 'كوينز', priceUSD: 6.99, discountBadge: '-15%' },
+  { id: 'ef-4', game: 'efootball', amount: 2130, unit: 'كوينز', priceUSD: 13.99, discountBadge: '-20%' },
+  { id: 'ef-5', game: 'efootball', amount: 3250, unit: 'كوينز', priceUSD: 19.99, discountBadge: '-25%' },
+  { id: 'ef-6', game: 'efootball', amount: 5600, unit: 'كوينز', priceUSD: 34.99, discountBadge: '-25%' },
 ];
 
 export const INITIAL_POSTS: SocialPost[] = [
