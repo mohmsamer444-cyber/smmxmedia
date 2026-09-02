@@ -27,6 +27,31 @@
     width: 100%;
     position: relative;
   }
+
+  /* Slightly larger base text on tablets and laptops so the UI doesn't
+     look cramped when stretched beyond a phone screen. */
+  @media (min-width: 768px) {
+    html {
+      font-size: 15.5px;
+    }
+  }
+  @media (min-width: 1024px) {
+    html {
+      font-size: 16px;
+    }
+  }
+}
+
+/* Consistent breathing room for page sections across breakpoints */
+.page-container {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+@media (min-width: 640px) {
+  .page-container {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
 }
 
 /* Custom glow utilities */

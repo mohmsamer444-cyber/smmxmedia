@@ -21,6 +21,7 @@ import {
   Camera,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useAuth } from '../../context/AuthContext';
 
 interface HeaderProps {
   onOpenDrawer: () => void;
@@ -128,6 +129,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
     openAvatarModal,
     showToast,
   } = useApp();
+  const { signOut } = useAuth();
 
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -423,8 +425,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
                     </button>
 
                     <button
-                      onClick={() => {
+                      onClick={async () => {
                         setIsProfileOpen(false);
+                        await signOut();
                         showToast('تم تسجيل الخروج بنجاح', 'info');
                       }}
                       className="w-full flex items-center gap-2 py-2 text-red-400 hover:text-red-300 transition-colors"

@@ -52,7 +52,7 @@ const AppContent: React.FC = () => {
       <Header onOpenDrawer={openDrawer} />
 
       {/* Main View Area */}
-      <main className="w-full max-w-7xl mx-auto px-3 sm:px-6 pt-4 overflow-x-hidden">
+      <main className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-28 overflow-x-hidden">
         {activeTab === 'feed' && <SocialFeedPage />}
         {activeTab === 'services' && <ServicesPage />}
         {activeTab === 'games' && <GameTopUpPage />}
