@@ -18,6 +18,7 @@ interface DepositRow {
   amount: number;
   method: string | null;
   note: string | null;
+  proof_image_url: string | null;
   status: string;
   created_at: string;
   profiles?: { full_name: string | null; email: string | null } | null;
@@ -42,7 +43,7 @@ export const AdminDashboard: React.FC = () => {
 
     const { data: depositsData } = await supabase
       .from('deposit_requests')
-      .select('id, user_id, amount, method, note, status, created_at, profiles(full_name, email)')
+      .select('id, user_id, amount, method, note, proof_image_url, status, created_at, profiles(full_name, email)')
       .order('created_at', { ascending: false });
     setDeposits((depositsData as any) || []);
 
@@ -259,6 +260,20 @@ export const AdminDashboard: React.FC = () => {
               <p className="text-sm font-black text-emerald-400">${d.amount}</p>
               {d.method && <p className="text-xs text-gray-400">طريقة الدفع: {d.method}</p>}
               {d.note && <p className="text-xs text-gray-400">ملاحظة: {d.note}</p>}
+              {d.proof_image_url && (
+                <a
+                  href={d.proof_image_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block mt-1"
+                >
+                  <img
+                    src={d.proof_image_url}
+                    alt="إثبات الدفع"
+                    className="w-full max-h-48 object-cover rounded-lg border border-[#262626]"
+                  />
+                </a>
+              )}
 
               {d.status === 'pending' && (
                 <div className="flex gap-2 pt-1">

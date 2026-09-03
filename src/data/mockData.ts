@@ -310,29 +310,44 @@ export const INITIAL_ORDERS: SMMOrder[] = [
 ];
 
 export const GAME_PACKAGES: GamePackage[] = [
-  // PUBG Mobile UC
-  { id: 'pubg-1', game: 'pubg', amount: 60, unit: 'UC', priceUSD: 0.99 },
-  { id: 'pubg-2', game: 'pubg', amount: 325, unit: 'UC', priceUSD: 4.99, discountBadge: '-10%' },
-  { id: 'pubg-3', game: 'pubg', amount: 660, unit: 'UC', priceUSD: 9.99, discountBadge: '-15%' },
-  { id: 'pubg-4', game: 'pubg', amount: 1800, unit: 'UC', priceUSD: 24.99, discountBadge: '-20%' },
-  { id: 'pubg-5', game: 'pubg', amount: 3850, unit: 'UC', priceUSD: 44.99, discountBadge: '-25%' },
-  { id: 'pubg-6', game: 'pubg', amount: 8100, unit: 'UC', priceUSD: 99.99, discountBadge: '-25%' },
+  // PUBG Mobile UC (10% off wholesale pricing)
+  { id: 'pubg-2', game: 'pubg', amount: 325, unit: 'UC', priceUSD: 3.82 },
+  { id: 'pubg-3', game: 'pubg', amount: 660, unit: 'UC', priceUSD: 7.64 },
+  { id: 'pubg-4', game: 'pubg', amount: 1800, unit: 'UC', priceUSD: 19.12 },
+  { id: 'pubg-5', game: 'pubg', amount: 3850, unit: 'UC', priceUSD: 34.42 },
+  { id: 'pubg-6', game: 'pubg', amount: 8100, unit: 'UC', priceUSD: 76.49 },
 
-  // Free Fire Diamonds
-  { id: 'ff-1', game: 'freefire', amount: 100, unit: 'جواهر', priceUSD: 0.99 },
-  { id: 'ff-2', game: 'freefire', amount: 310, unit: 'جواهر', priceUSD: 2.99, discountBadge: '-10%' },
-  { id: 'ff-3', game: 'freefire', amount: 520, unit: 'جواهر', priceUSD: 4.99, discountBadge: '-15%' },
-  { id: 'ff-4', game: 'freefire', amount: 1060, unit: 'جواهر', priceUSD: 9.99, discountBadge: '-20%' },
-  { id: 'ff-5', game: 'freefire', amount: 2180, unit: 'جواهر', priceUSD: 19.99, discountBadge: '-25%' },
-  { id: 'ff-6', game: 'freefire', amount: 5600, unit: 'جواهر', priceUSD: 49.99, discountBadge: '-25%' },
+  // Free Fire Diamonds (10% off wholesale pricing)
+  { id: 'ff-1', game: 'freefire', amount: 100, unit: 'جواهر', priceUSD: 0.76 },
+  { id: 'ff-2', game: 'freefire', amount: 310, unit: 'جواهر', priceUSD: 2.29 },
+  { id: 'ff-3', game: 'freefire', amount: 520, unit: 'جواهر', priceUSD: 3.82 },
+  { id: 'ff-4', game: 'freefire', amount: 1060, unit: 'جواهر', priceUSD: 7.64 },
+  { id: 'ff-5', game: 'freefire', amount: 2180, unit: 'جواهر', priceUSD: 15.29 },
+  { id: 'ff-6', game: 'freefire', amount: 5600, unit: 'جواهر', priceUSD: 38.24 },
 
-  // eFootball Coins
-  { id: 'ef-1', game: 'efootball', amount: 260, unit: 'كوينز', priceUSD: 1.99 },
-  { id: 'ef-2', game: 'efootball', amount: 550, unit: 'كوينز', priceUSD: 3.99, discountBadge: '-10%' },
-  { id: 'ef-3', game: 'efootball', amount: 1040, unit: 'كوينز', priceUSD: 6.99, discountBadge: '-15%' },
-  { id: 'ef-4', game: 'efootball', amount: 2130, unit: 'كوينز', priceUSD: 13.99, discountBadge: '-20%' },
-  { id: 'ef-5', game: 'efootball', amount: 3250, unit: 'كوينز', priceUSD: 19.99, discountBadge: '-25%' },
-  { id: 'ef-6', game: 'efootball', amount: 5600, unit: 'كوينز', priceUSD: 34.99, discountBadge: '-25%' },
+  // eFootball Coins (10% off wholesale pricing)
+  { id: 'ef-1', game: 'efootball', amount: 260, unit: 'كوينز', priceUSD: 1.52 },
+  { id: 'ef-2', game: 'efootball', amount: 550, unit: 'كوينز', priceUSD: 3.05 },
+  { id: 'ef-3', game: 'efootball', amount: 1040, unit: 'كوينز', priceUSD: 5.35 },
+  { id: 'ef-4', game: 'efootball', amount: 2130, unit: 'كوينز', priceUSD: 10.70 },
+  { id: 'ef-5', game: 'efootball', amount: 3250, unit: 'كوينز', priceUSD: 15.29 },
+  { id: 'ef-6', game: 'efootball', amount: 5600, unit: 'كوينز', priceUSD: 26.77 },
+
+  // TikTok Coins — أسعار رسمية (يناير 2026) مع خصم 15%
+  { id: 'tiktok-1', game: 'tiktok', amount: 65, unit: 'كوينز', priceUSD: 0.84 },
+  { id: 'tiktok-2', game: 'tiktok', amount: 330, unit: 'كوينز', priceUSD: 4.24 },
+  { id: 'tiktok-3', game: 'tiktok', amount: 660, unit: 'كوينز', priceUSD: 8.49 },
+  { id: 'tiktok-4', game: 'tiktok', amount: 1321, unit: 'كوينز', priceUSD: 16.99 },
+  { id: 'tiktok-5', game: 'tiktok', amount: 3303, unit: 'كوينز', priceUSD: 42.49 },
+  { id: 'tiktok-6', game: 'tiktok', amount: 6607, unit: 'كوينز', priceUSD: 84.99 },
+
+  // اشتراكات AI
+  { id: 'ai-1', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 19.99, label: 'ChatGPT Plus' },
+  { id: 'ai-2', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 17.99, label: 'Claude Pro' },
+  { id: 'ai-3', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 9.99, label: 'Midjourney (Standard)' },
+  { id: 'ai-4', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 19.99, label: 'Gemini Advanced' },
+  { id: 'ai-5', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 12.99, label: 'Perplexity Pro' },
+  { id: 'ai-6', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 29.99, label: 'ChatGPT Plus + Claude Pro (باقة مزدوجة)' },
 ];
 
 export const INITIAL_POSTS: SocialPost[] = [

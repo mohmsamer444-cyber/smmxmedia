@@ -24,6 +24,8 @@ import {
   INITIAL_NOTIFICATIONS,
 } from '../data/mockData';
 import { fetchServices, createSMMOrder, cancelSMMOrder, requestRefill, checkOrderStatus } from '../services/smmApi';
+import { supabase } from '../lib/supabaseClient';
+import { useAuth } from './AuthContext';
 
 export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
   USD: { code: 'USD', symbol: '$', rate: 1.0, flag: '🇺🇸' },
@@ -51,12 +53,13 @@ interface AppContextType {
   setActiveTab: (tab: MainTab) => void;
   feedSubTab: FeedSubTab;
   setFeedSubTab: (tab: FeedSubTab) => void;
-  gameFilter: 'pubg' | 'freefire' | 'efootball';
-  setGameFilter: (game: 'pubg' | 'freefire' | 'efootball') => void;
+  gameFilter: 'pubg' | 'freefire' | 'efootball' | 'tiktok' | 'ai';
+  setGameFilter: (game: 'pubg' | 'freefire' | 'efootball' | 'tiktok' | 'ai') => void;
 
   // User & Balance
   user: UserProfile;
   depositFunds: (amountUSD: number) => void;
+  refreshBalance: () => Promise<void>;
   updateUserAvatar: (newAvatarUrl: string) => void;
   removeUserAvatar: () => void;
   isAvatarModalOpen: boolean;
@@ -162,10 +165,51 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Navigation state
   const [activeTab, setActiveTab] = useState<MainTab>('feed');
   const [feedSubTab, setFeedSubTab] = useState<FeedSubTab>('posts');
-  const [gameFilter, setGameFilter] = useState<'pubg' | 'freefire' | 'efootball'>('pubg');
+  const [gameFilter, setGameFilter] = useState<'pubg' | 'freefire' | 'efootball' | 'tiktok' | 'ai'>('pubg');
 
   // User state
   const [user, setUser] = useState<UserProfile>(CURRENT_USER);
+  const { session } = useAuth();
+
+  // Sync real balance + name + id from the Supabase "profiles" table
+  const refreshBalance = async () => {
+    if (!session?.user?.id) return;
+    const fetchProfile = () =>
+      supabase
+        .from('profiles')
+        .select('id, full_name, balance')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+    let { data, error } = await fetchProfile();
+
+    // Profile row may not exist yet right after signup (trigger race) — retry once shortly after.
+    if (!error && !data) {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      ({ data, error } = await fetchProfile());
+    }
+
+    if (!error && data) {
+      setUser(prev => ({
+        ...prev,
+        id: data.id,
+        name: data.full_name || prev.name,
+        balanceUSD: typeof data.balance === 'number' ? data.balance : 0,
+      }));
+    } else {
+      // No profile row found at all — treat as a brand-new account with 0 balance
+      // instead of showing whatever balance was left over from a previous session.
+      setUser(prev => ({
+        ...prev,
+        id: session.user.id,
+        balanceUSD: 0,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    refreshBalance();
+  }, [session?.user?.id]);
 
   // Services & Orders state
   const [services, setServices] = useState<SMMService[]>(INITIAL_SERVICES);
@@ -173,13 +217,62 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [selectedPlatformFilter, setSelectedPlatformFilter] = useState<string>('all');
   const [orders, setOrders] = useState<SMMOrder[]>(INITIAL_ORDERS);
 
-  // Social Feed state
-  const [posts, setPosts] = useState<SocialPost[]>(INITIAL_POSTS);
+  // Social Feed state — starts empty and is filled with real posts from Supabase
+  const [posts, setPosts] = useState<SocialPost[]>([]);
 
-  // Chats & Groups state
-  const [conversations, setConversations] = useState<ChatConversation[]>(INITIAL_CONVERSATIONS);
+  const mapDbPostToSocialPost = (row: any): SocialPost => ({
+    id: row.id,
+    author: {
+      id: row.user_id,
+      name: row.profiles?.full_name || 'مستخدم',
+      username: row.profiles?.full_name ? row.profiles.full_name.replace(/\s+/g, '_') : 'user',
+      avatar: DEFAULT_AVATAR,
+      verified: false,
+      bio: '',
+      followers: 0,
+      following: 0,
+      balanceUSD: 0,
+      ordersCount: 0,
+    },
+    timestamp: new Date(row.created_at).toLocaleString('ar-EG'),
+    content: row.content || '',
+    hashtags: row.hashtags || [],
+    gameTag: row.game_tag || undefined,
+    priceTag: row.price_tag || undefined,
+    images: row.image_url ? [row.image_url] : undefined,
+    location: row.location || undefined,
+    likesCount: 0,
+    isLiked: false,
+    commentsCount: 0,
+    comments: [],
+    sharesCount: 0,
+    isBookmarked: false,
+    category: 'all',
+  });
+
+  const loadPosts = async () => {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('id, user_id, content, hashtags, game_tag, price_tag, location, image_url, created_at, profiles(full_name)')
+      .order('created_at', { ascending: false })
+      .limit(100);
+    if (!error && data) {
+      setPosts(data.map(mapDbPostToSocialPost));
+    }
+  };
+
+  // Chats & Groups state — real per-account message history from Supabase,
+  // merged onto the demo contact list for names/avatars.
+  const [conversations, setConversations] = useState<ChatConversation[]>(
+    INITIAL_CONVERSATIONS.map(c => ({ ...c, messages: [], lastMessage: '', unreadCount: 0 }))
+  );
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [groups] = useState<GroupItem[]>(INITIAL_GROUPS);
+
+  useEffect(() => {
+    loadPosts();
+    loadChatMessages();
+  }, [session?.user?.id]);
 
   // Notifications state
   const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
@@ -400,7 +493,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
-  const createPost = (postData: Partial<SocialPost>) => {
+  const createPost = async (postData: Partial<SocialPost>) => {
     const newPost: SocialPost = {
       id: 'post-' + Date.now(),
       author: user,
@@ -420,7 +513,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       category: 'all',
     };
 
+    // Optimistic UI update
     setPosts(prev => [newPost, ...prev]);
+
+    if (session?.user?.id) {
+      const { error } = await supabase.from('posts').insert({
+        user_id: session.user.id,
+        content: postData.content || '',
+        hashtags: postData.hashtags || ['عالم_الشرق_الأوسط'],
+        game_tag: postData.gameTag || null,
+        price_tag: postData.priceTag || null,
+        location: postData.location || null,
+        image_url: postData.images && postData.images.length > 0 ? postData.images[0] : null,
+      });
+      if (error) {
+        showToast('تم النشر محليًا فقط، تعذر حفظه في قاعدة البيانات: ' + error.message, 'error');
+        return;
+      }
+      loadPosts();
+    }
+
     showToast('تم نشر منشورك بنجاح!', 'success');
   };
 
@@ -502,6 +614,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     );
   };
 
+  const saveChatMessageToDb = async (contactKey: string, text: string, isMine: boolean) => {
+    if (!session?.user?.id) return;
+    await supabase.from('chat_messages').insert({
+      user_id: session.user.id,
+      contact_key: contactKey,
+      text,
+      is_mine: isMine,
+    });
+  };
+
   const sendChatMessage = (chatId: string, text: string) => {
     if (!text.trim()) return;
     setConversations(prev =>
@@ -524,6 +646,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         return conv;
       })
     );
+    saveChatMessageToDb(chatId, text, true);
   };
 
   const startDirectChatWithUser = (targetUser: UserProfile, initialContext?: string) => {
@@ -532,6 +655,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     let convId = existingConv ? existingConv.id : 'chat-' + Date.now();
 
     if (!existingConv) {
+      const greeting = `أهلاً بك! أنا أستقبل الرسائل بخصوص الحسابات والخدمات.`;
       const newConv: ChatConversation = {
         id: convId,
         user: targetUser,
@@ -542,13 +666,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           {
             id: 'msg-init-' + Date.now(),
             senderId: targetUser.id,
-            text: `أهلاً بك! أنا أستقبل الرسائل بخصوص الحسابات والخدمات.`,
+            text: greeting,
             timestamp: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
             isMine: false,
           }
         ]
       };
       setConversations(prev => [newConv, ...prev]);
+      saveChatMessageToDb(convId, greeting, false);
     }
 
     if (initialContext) {
@@ -573,6 +698,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           return c;
         })
       );
+      saveChatMessageToDb(convId, initialContext, true);
     }
 
     setActiveChatId(convId);
@@ -671,6 +797,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
         user,
         depositFunds,
+        refreshBalance,
         updateUserAvatar,
         removeUserAvatar,
         isAvatarModalOpen,

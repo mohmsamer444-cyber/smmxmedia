@@ -138,12 +138,13 @@ export interface NotificationItem {
 
 export interface GamePackage {
   id: string;
-  game: 'pubg' | 'freefire' | 'efootball';
+  game: 'pubg' | 'freefire' | 'efootball' | 'tiktok' | 'ai';
   amount: number;
   unit: string;
   priceUSD: number;
   discountBadge?: string;
   icon?: string;
+  label?: string;
 }
 
 export interface PlatformStats {

@@ -39,12 +39,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const signUp = async (identifier: string, password: string, fullName: string) => {
     const isPhone = isPhoneNumber(identifier);
     const email = isPhone ? phoneToInternalEmail(identifier) : identifier;
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: fullName, phone: isPhone ? identifier : null } },
     });
-    return { error: error ? translateAuthError(error.message) : null };
+
+    if (error) {
+      return { error: translateAuthError(error.message) };
+    }
+
+    // Safety net: make sure a profile row exists for this new user with a
+    // fresh balance of 0, in case the DB trigger hasn't created it yet.
+    if (data.user?.id) {
+      await supabase.from('profiles').upsert(
+        {
+          id: data.user.id,
+          email: isPhone ? null : email,
+          phone: isPhone ? identifier : null,
+          full_name: fullName,
+          balance: 0,
+        },
+        { onConflict: 'id', ignoreDuplicates: true }
+      );
+    }
+
+    return { error: null };
   };
 
   const signIn = async (identifier: string, password: string) => {

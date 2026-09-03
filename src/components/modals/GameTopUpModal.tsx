@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, Gamepad2, ShieldCheck, AlertCircle, Zap } from 'lucide-react';
+import { X, Gamepad2, ShieldCheck, AlertCircle, Zap, Music2, BrainCircuit } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   PubgUcGraphic,
@@ -31,29 +31,53 @@ export const GameTopUpModal: React.FC = () => {
       ? 'شحن شدات ببجي موبايل (PUBG Mobile UC)'
       : selectedGamePackage.game === 'freefire'
       ? 'شحن جواهر فري فاير (Free Fire Diamonds)'
-      : 'شحن كوينز بيس إيفوتبول (eFootball Coins)';
+      : selectedGamePackage.game === 'efootball'
+      ? 'شحن كوينز بيس إيفوتبول (eFootball Coins)'
+      : selectedGamePackage.game === 'tiktok'
+      ? 'شحن عملات تيك توك (TikTok Coins)'
+      : `اشتراك ${selectedGamePackage.label || 'AI'}`;
 
   const uidLabel =
     selectedGamePackage.game === 'pubg'
       ? 'معرف اللاعب الرقمي (Player ID / UID)'
       : selectedGamePackage.game === 'freefire'
       ? 'معرف الحساب (Player ID)'
-      : 'معرف الحساب / البريد الإلكتروني للعبة';
+      : selectedGamePackage.game === 'efootball'
+      ? 'معرف الحساب / البريد الإلكتروني للعبة'
+      : selectedGamePackage.game === 'tiktok'
+      ? 'اسم المستخدم على تيك توك (Username)'
+      : 'البريد الإلكتروني لحساب الاشتراك';
 
   const uidPlaceholder =
     selectedGamePackage.game === 'pubg'
       ? 'مثال: 5129481023'
       : selectedGamePackage.game === 'freefire'
       ? 'مثال: 2840192841'
-      : 'مثال: 10492810';
+      : selectedGamePackage.game === 'efootball'
+      ? 'مثال: 10492810'
+      : selectedGamePackage.game === 'tiktok'
+      ? 'مثال: @username'
+      : 'example@email.com';
 
   const renderCurrencyGraphic = () => {
     if (selectedGamePackage.game === 'pubg') {
       return <PubgUcGraphic amount={selectedGamePackage.amount} size={40} />;
     } else if (selectedGamePackage.game === 'freefire') {
       return <FreeFireDiamondGraphic amount={selectedGamePackage.amount} size={40} />;
-    } else {
+    } else if (selectedGamePackage.game === 'efootball') {
       return <EfootballCoinGraphic amount={selectedGamePackage.amount} size={40} />;
+    } else if (selectedGamePackage.game === 'tiktok') {
+      return (
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-sky-400 flex items-center justify-center">
+          <Music2 className="w-5 h-5 text-white" />
+        </div>
+      );
+    } else {
+      return (
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+          <BrainCircuit className="w-5 h-5 text-white" />
+        </div>
+      );
     }
   };
 

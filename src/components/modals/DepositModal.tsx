@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabaseClient';
 import {
   X,
   Wallet,
@@ -32,9 +34,12 @@ export interface DepositRecord {
 }
 
 export const DepositModal: React.FC = () => {
-  const { isDepositModalOpen, closeDepositModal, depositFunds, formatPrice, showToast } = useApp();
+  const { isDepositModalOpen, closeDepositModal, refreshBalance, formatPrice, showToast } = useApp();
+  const { session } = useAuth();
 
   const [activeTab, setActiveTab] = useState<'form' | 'history'>('form');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<string>('vodafone');
   const [amountUSD, setAmountUSD] = useState<number>(50);
 
@@ -47,29 +52,40 @@ export const DepositModal: React.FC = () => {
   // Copy indicator state
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  // Deposit history state with mock previous records
-  const [depositsHistory, setDepositsHistory] = useState<DepositRecord[]>([
-    {
-      id: 'DEP-849201',
-      method: 'vodafone',
-      methodName: 'فودافون كاش',
-      amountUSD: 25,
-      refNumber: 'TXN-99823412',
-      senderInfo: '01098765432',
-      date: '2026/08/01 14:20',
-      status: 'completed',
-    },
-    {
-      id: 'DEP-710293',
-      method: 'binance',
-      methodName: 'Binance Pay',
-      amountUSD: 100,
-      refNumber: 'BP-55419201',
-      senderInfo: 'binance_user_99',
-      date: '2026/07/28 11:05',
-      status: 'completed',
-    },
-  ]);
+  // Real deposit history, fetched from Supabase for the logged-in user
+  const [depositsHistory, setDepositsHistory] = useState<DepositRecord[]>([]);
+
+  const loadHistory = async () => {
+    if (!session?.user?.id) return;
+    setIsLoadingHistory(true);
+    const { data, error } = await supabase
+      .from('deposit_requests')
+      .select('id, amount, method, note, status, created_at')
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: false });
+    if (!error && data) {
+      const mapped: DepositRecord[] = data.map((row: any) => ({
+        id: row.id,
+        method: row.method || '',
+        methodName: row.method || 'غير محدد',
+        amountUSD: Number(row.amount) || 0,
+        refNumber: '',
+        senderInfo: row.note || '',
+        date: new Date(row.created_at).toLocaleDateString('ar-EG') +
+          ' ' + new Date(row.created_at).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+        status: row.status === 'approved' ? 'completed' : row.status === 'rejected' ? 'rejected' : 'pending',
+      }));
+      setDepositsHistory(mapped);
+    }
+    setIsLoadingHistory(false);
+  };
+
+  useEffect(() => {
+    if (isDepositModalOpen) {
+      loadHistory();
+      refreshBalance();
+    }
+  }, [isDepositModalOpen]);
 
   if (!isDepositModalOpen) return null;
 
@@ -170,44 +186,69 @@ export const DepositModal: React.FC = () => {
     setProofPreview(null);
   };
 
-  const handleSubmitDeposit = (e: React.FormEvent) => {
+  const handleSubmitDeposit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) {
       showToast('يرجى ملء جميع بيانات إثبات الدفع وإرفاق الصورة أولاً', 'error');
       return;
     }
+    if (!session?.user?.id) {
+      showToast('يجب تسجيل الدخول أولاً لإرسال طلب الإيداع', 'error');
+      return;
+    }
 
-    const newDepId = 'DEP-' + Math.floor(100000 + Math.random() * 900000);
-    const newRecord: DepositRecord = {
-      id: newDepId,
-      method: selectedMethod,
-      methodName: selectedMethodObj.name,
-      amountUSD,
-      refNumber,
-      senderInfo,
-      proofImageName: proofImage?.name,
-      date: new Date().toLocaleDateString('ar-EG') + ' ' + new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
-      status: 'pending',
-    };
+    setIsSubmitting(true);
+    try {
+      let proofImageUrl: string | null = null;
 
-    setDepositsHistory([newRecord, ...depositsHistory]);
-    showToast('تم استلام طلب الإيداع، سيتم مراجعته وتأكيده خلال وقت قصير', 'success');
+      if (proofImage) {
+        const fileExt = proofImage.name.split('.').pop() || 'jpg';
+        const filePath = `${session.user.id}/${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('deposit-proofs')
+          .upload(filePath, proofImage);
 
-    // Reset Form
-    setRefNumber('');
-    setSenderInfo('');
-    setProofImage(null);
-    setProofPreview(null);
-    setActiveTab('history');
+        if (uploadError) {
+          showToast('تعذر رفع صورة الإثبات: ' + uploadError.message, 'error');
+          setIsSubmitting(false);
+          return;
+        }
 
-    // Simulate Admin Approval timer (7 seconds)
-    setTimeout(() => {
-      setDepositsHistory(prev =>
-        prev.map(item => (item.id === newDepId ? { ...item, status: 'completed' } : item))
-      );
-      depositFunds(amountUSD);
-      showToast(`تمت مراجعة واعتماد طلب الإيداع (${formatPrice(amountUSD)}) وإضافته لرصيدك بنجاح!`, 'success');
-    }, 7000);
+        const { data: publicUrlData } = supabase.storage
+          .from('deposit-proofs')
+          .getPublicUrl(filePath);
+        proofImageUrl = publicUrlData.publicUrl;
+      }
+
+      const noteText = `مرجع: ${refNumber} | المرسل: ${senderInfo}`;
+
+      const { error: insertError } = await supabase.from('deposit_requests').insert({
+        user_id: session.user.id,
+        amount: amountUSD,
+        method: selectedMethodObj.name,
+        note: noteText,
+        proof_image_url: proofImageUrl,
+        status: 'pending',
+      });
+
+      if (insertError) {
+        showToast('حصل خطأ أثناء إرسال الطلب: ' + insertError.message, 'error');
+        setIsSubmitting(false);
+        return;
+      }
+
+      showToast('تم استلام طلب الإيداع، سيتم مراجعته من قِبل الإدارة قريبًا', 'success');
+
+      // Reset Form
+      setRefNumber('');
+      setSenderInfo('');
+      setProofImage(null);
+      setProofPreview(null);
+      setActiveTab('history');
+      await loadHistory();
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -537,15 +578,17 @@ export const DepositModal: React.FC = () => {
 
                   <button
                     type="submit"
-                    disabled={!isFormValid}
+                    disabled={!isFormValid || isSubmitting}
                     className={`w-full py-3.5 rounded-xl font-bold text-sm shadow-lg transition-all flex items-center justify-center gap-2 ${
-                      isFormValid
+                      isFormValid && !isSubmitting
                         ? 'bg-[#E31E24] hover:bg-[#c11319] text-white red-glow cursor-pointer'
                         : 'bg-gray-800 text-gray-500 border border-gray-700 cursor-not-allowed opacity-60'
                     }`}
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>تأكيد عملية الإيداع ({formatPrice(amountUSD)})</span>
+                    <span>
+                      {isSubmitting ? 'جاري الإرسال...' : `تأكيد عملية الإيداع (${formatPrice(amountUSD)})`}
+                    </span>
                   </button>
                 </div>
               </form>

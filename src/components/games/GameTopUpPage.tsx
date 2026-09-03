@@ -14,6 +14,8 @@ import {
   Sparkles,
   Flame,
   ChevronLeft,
+  Music2,
+  BrainCircuit,
 } from 'lucide-react';
 
 import heroBannerImg from '../../assets/images/games_hero_banner_1785659970112.jpg';
@@ -41,6 +43,8 @@ export const GameTopUpPage: React.FC = () => {
   const pubgPackages = GAME_PACKAGES.filter(p => p.game === 'pubg');
   const freeFirePackages = GAME_PACKAGES.filter(p => p.game === 'freefire');
   const eFootballPackages = GAME_PACKAGES.filter(p => p.game === 'efootball');
+  const tiktokPackages = GAME_PACKAGES.filter(p => p.game === 'tiktok');
+  const aiPackages = GAME_PACKAGES.filter(p => p.game === 'ai');
 
   // Array of 16 ember particles for random particle positioning & timing
   const emberParticles = [
@@ -207,7 +211,7 @@ export const GameTopUpPage: React.FC = () => {
       </div>
 
       {/* Game Selector Tabs */}
-      <div className="grid grid-cols-3 gap-2 bg-[#141414] border border-[#262626] p-2 rounded-2xl shadow-xl">
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 bg-[#141414] border border-[#262626] p-2 rounded-2xl shadow-xl">
         <button
           onClick={() => setGameFilter('pubg')}
           className={`py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
@@ -242,6 +246,30 @@ export const GameTopUpPage: React.FC = () => {
         >
           <EfootballCoinGraphic amount={260} size={22} />
           <span>eFOOTBALL 2024</span>
+        </button>
+
+        <button
+          onClick={() => setGameFilter('tiktok')}
+          className={`py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
+            gameFilter === 'tiktok'
+              ? 'bg-[#E31E24] text-white shadow-lg red-glow'
+              : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
+          }`}
+        >
+          <Music2 className="w-[22px] h-[22px]" />
+          <span>TIKTOK</span>
+        </button>
+
+        <button
+          onClick={() => setGameFilter('ai')}
+          className={`py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
+            gameFilter === 'ai'
+              ? 'bg-[#E31E24] text-white shadow-lg red-glow'
+              : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
+          }`}
+        >
+          <BrainCircuit className="w-[22px] h-[22px]" />
+          <span>اشتراكات AI</span>
         </button>
       </div>
 
@@ -429,6 +457,93 @@ export const GameTopUpPage: React.FC = () => {
                 >
                   <ShoppingCart className="w-3.5 h-3.5" />
                   شحن الآن
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* TikTok Coins Section */}
+      {gameFilter === 'tiktok' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-extrabold text-base text-white flex items-center gap-2">
+              <Music2 className="w-5 h-5 text-pink-400" />
+              شحن عملات تيك توك (TikTok Coins)
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {tiktokPackages.map(pkg => (
+              <div
+                key={pkg.id}
+                className="relative bg-[#141414] border border-[#262626] hover-red-glow rounded-2xl p-4 text-center space-y-3 flex flex-col justify-between shadow-xl group"
+              >
+                <div className="space-y-2 pt-2">
+                  <span className="font-black text-lg text-white block">
+                    {pkg.amount} {pkg.unit}
+                  </span>
+
+                  <div className="mx-auto my-1 w-[52px] h-[52px] rounded-full bg-gradient-to-br from-pink-500 to-sky-400 flex items-center justify-center shadow-lg">
+                    <Music2 className="w-6 h-6 text-white" />
+                  </div>
+
+                  <span className="text-sm font-black text-[#E31E24] block font-sans">
+                    {formatPrice(pkg.priceUSD)}
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => openGameModal(pkg)}
+                  className="w-full py-2 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center justify-center gap-1"
+                >
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  شحن الآن
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* AI Subscriptions Section */}
+      {gameFilter === 'ai' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-extrabold text-base text-white flex items-center gap-2">
+              <BrainCircuit className="w-5 h-5 text-violet-400" />
+              اشتراكات الذكاء الاصطناعي (AI Subscriptions)
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {aiPackages.map(pkg => (
+              <div
+                key={pkg.id}
+                className="relative bg-[#141414] border border-[#262626] hover-red-glow rounded-2xl p-4 text-center space-y-3 flex flex-col justify-between shadow-xl group"
+              >
+                <div className="space-y-2 pt-2">
+                  <span className="font-black text-sm text-white block leading-snug min-h-[2.5em] flex items-center justify-center">
+                    {pkg.label}
+                  </span>
+
+                  <div className="mx-auto my-1 w-[52px] h-[52px] rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg">
+                    <BrainCircuit className="w-6 h-6 text-white" />
+                  </div>
+
+                  <span className="text-[11px] text-gray-400 block">اشتراك شهري</span>
+                  <span className="text-sm font-black text-[#E31E24] block font-sans">
+                    {formatPrice(pkg.priceUSD)}
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => openGameModal(pkg)}
+                  className="w-full py-2 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center justify-center gap-1"
+                >
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  اشترك الآن
                 </button>
               </div>
             ))}
