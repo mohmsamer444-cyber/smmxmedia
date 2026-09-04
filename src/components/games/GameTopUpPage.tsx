@@ -250,24 +250,30 @@ export const GameTopUpPage: React.FC = () => {
 
         <button
           onClick={() => setGameFilter('tiktok')}
-          className={`py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
+          className={`relative py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
             gameFilter === 'tiktok'
               ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
           }`}
         >
+          <span className="absolute -top-2 -left-1.5 bg-green-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-md animate-pulse-glow">
+            -15%
+          </span>
           <Music2 className="w-[22px] h-[22px]" />
           <span>TIKTOK</span>
         </button>
 
         <button
           onClick={() => setGameFilter('ai')}
-          className={`py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
+          className={`relative py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
             gameFilter === 'ai'
               ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
           }`}
         >
+          <span className="absolute -top-2 -left-1.5 bg-green-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-md animate-pulse-glow">
+            -15%
+          </span>
           <BrainCircuit className="w-[22px] h-[22px]" />
           <span>اشتراكات AI</span>
         </button>
@@ -480,6 +486,12 @@ export const GameTopUpPage: React.FC = () => {
                 key={pkg.id}
                 className="relative bg-[#141414] border border-[#262626] hover-red-glow rounded-2xl p-4 text-center space-y-3 flex flex-col justify-between shadow-xl group"
               >
+                {pkg.discountBadge && (
+                  <span className="absolute top-2 right-2 bg-[#E8123D] text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md animate-pulse-glow">
+                    {pkg.discountBadge}
+                  </span>
+                )}
+
                 <div className="space-y-2 pt-2">
                   <span className="font-black text-lg text-white block">
                     {pkg.amount} {pkg.unit}
@@ -523,6 +535,12 @@ export const GameTopUpPage: React.FC = () => {
                 key={pkg.id}
                 className="relative bg-[#141414] border border-[#262626] hover-red-glow rounded-2xl p-4 text-center space-y-3 flex flex-col justify-between shadow-xl group"
               >
+                {pkg.discountBadge && (
+                  <span className="absolute top-2 right-2 bg-[#E8123D] text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md animate-pulse-glow">
+                    {pkg.discountBadge}
+                  </span>
+                )}
+
                 <div className="space-y-2 pt-2">
                   <span className="font-black text-sm text-white block leading-snug min-h-[2.5em] flex items-center justify-center">
                     {pkg.label}

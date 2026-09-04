@@ -333,21 +333,23 @@ export const GAME_PACKAGES: GamePackage[] = [
   { id: 'ef-5', game: 'efootball', amount: 3250, unit: 'كوينز', priceUSD: 15.29 },
   { id: 'ef-6', game: 'efootball', amount: 5600, unit: 'كوينز', priceUSD: 26.77 },
 
-  // TikTok Coins — أسعار رسمية (يناير 2026) مع خصم 15%
-  { id: 'tiktok-1', game: 'tiktok', amount: 65, unit: 'كوينز', priceUSD: 0.84 },
-  { id: 'tiktok-2', game: 'tiktok', amount: 330, unit: 'كوينز', priceUSD: 4.24 },
-  { id: 'tiktok-3', game: 'tiktok', amount: 660, unit: 'كوينز', priceUSD: 8.49 },
-  { id: 'tiktok-4', game: 'tiktok', amount: 1321, unit: 'كوينز', priceUSD: 16.99 },
-  { id: 'tiktok-5', game: 'tiktok', amount: 3303, unit: 'كوينز', priceUSD: 42.49 },
-  { id: 'tiktok-6', game: 'tiktok', amount: 6607, unit: 'كوينز', priceUSD: 84.99 },
+  // TikTok Coins — أسعار رسمية (يناير 2026) مع خصم إضافي 15% (إجمالي أوفر من السعر الرسمي)
+  { id: 'tiktok-1', game: 'tiktok', amount: 65, unit: 'كوينز', priceUSD: 0.71, discountBadge: '-15%' },
+  { id: 'tiktok-2', game: 'tiktok', amount: 330, unit: 'كوينز', priceUSD: 3.60, discountBadge: '-15%' },
+  { id: 'tiktok-3', game: 'tiktok', amount: 660, unit: 'كوينز', priceUSD: 7.22, discountBadge: '-15%' },
+  { id: 'tiktok-4', game: 'tiktok', amount: 1321, unit: 'كوينز', priceUSD: 14.44, discountBadge: '-15%' },
+  { id: 'tiktok-5', game: 'tiktok', amount: 3303, unit: 'كوينز', priceUSD: 36.12, discountBadge: '-15%' },
+  { id: 'tiktok-6', game: 'tiktok', amount: 6607, unit: 'كوينز', priceUSD: 72.24, discountBadge: '-15%' },
 
-  // اشتراكات AI
-  { id: 'ai-1', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 16.99, label: 'ChatGPT Plus' },
-  { id: 'ai-2', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 15.29, label: 'Claude Pro' },
-  { id: 'ai-3', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 8.49, label: 'Midjourney (Standard)' },
-  { id: 'ai-4', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 16.99, label: 'Gemini Advanced' },
-  { id: 'ai-5', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 11.04, label: 'Perplexity Pro' },
-  { id: 'ai-6', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 25.49, label: 'ChatGPT Plus + Claude Pro (باقة مزدوجة)' },
+  // اشتراكات AI — خصم إضافي 15% على كل الباقات
+  { id: 'ai-1', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 14.44, label: 'ChatGPT Plus', discountBadge: '-15%' },
+  { id: 'ai-2', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 13.00, label: 'Claude Pro', discountBadge: '-15%' },
+  { id: 'ai-3', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 7.22, label: 'Midjourney (Standard)', discountBadge: '-15%' },
+  { id: 'ai-4', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 14.44, label: 'Gemini Advanced', discountBadge: '-15%' },
+  { id: 'ai-5', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 9.38, label: 'Perplexity Pro', discountBadge: '-15%' },
+  { id: 'ai-6', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 21.67, label: 'ChatGPT Plus + Claude Pro (باقة مزدوجة)', discountBadge: '-15%' },
+  { id: 'ai-7', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 17.00, label: 'Microsoft Copilot Pro', discountBadge: '-15%' },
+  { id: 'ai-8', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 19.54, label: 'Grok Premium+ (X)', discountBadge: '-15%' },
 ];
 
 export const INITIAL_POSTS: SocialPost[] = [

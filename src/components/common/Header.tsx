@@ -16,7 +16,6 @@ import {
   Code,
   ShieldAlert,
   Send,
-  MessageCircle,
   DollarSign,
   Camera,
 } from 'lucide-react';
@@ -182,18 +181,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
 
         {/* Right Header Actions - Minimal Monochrome Top Utility Row */}
         <div className="flex items-center gap-1.5 sm:gap-2 text-gray-300">
-          {/* WhatsApp Direct Icon Link */}
-          <a
-            href="https://wa.me/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="واتساب"
-            className="p-1.5 hover:text-white transition-colors"
-            title="واتساب"
-          >
-            <MessageCircle className="w-4 h-4 stroke-[1.8]" />
-          </a>
-
           {/* Dark / Light Toggle */}
           <button
             onClick={toggleTheme}
