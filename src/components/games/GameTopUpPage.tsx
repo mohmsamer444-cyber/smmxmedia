@@ -130,12 +130,12 @@ export const GameTopUpPage: React.FC = () => {
             </div>
           </div>
 
-          {/* 5 Interactive Posters (PUBG, Free Fire, eFootball, TikTok, AI) */}
-          <div className="flex items-center justify-start sm:justify-center gap-3 sm:-space-x-5 sm:gap-0 space-x-reverse overflow-x-auto no-scrollbar pt-2 lg:pt-0 z-10 max-w-full snap-x snap-mandatory px-1 sm:px-0">
+          {/* 3 Interactive Character Posters (PUBG, Free Fire, eFootball) */}
+          <div className="flex items-center justify-center -space-x-3 sm:-space-x-5 space-x-reverse pt-2 lg:pt-0 z-10">
             {/* PUBG Mobile Character Poster */}
             <div
               onClick={() => setGameFilter('pubg')}
-              className={`relative shrink-0 snap-center w-28 sm:w-32 lg:w-36 h-40 sm:h-48 rounded-2xl overflow-hidden border-2 cursor-pointer transition-all duration-500 transform ${
+              className={`relative w-28 sm:w-32 lg:w-36 h-40 sm:h-48 rounded-2xl overflow-hidden border-2 cursor-pointer transition-all duration-500 transform ${
                 gameFilter === 'pubg'
                   ? 'border-[#E8123D] scale-110 z-30 opacity-100 shadow-[0_0_25px_rgba(227,30,36,0.7)] animate-bob-1'
                   : 'border-[#333] scale-95 z-10 opacity-60 grayscale-[25%] hover:opacity-90 hover:scale-100'
@@ -160,7 +160,7 @@ export const GameTopUpPage: React.FC = () => {
             {/* Free Fire Character Poster */}
             <div
               onClick={() => setGameFilter('freefire')}
-              className={`relative shrink-0 snap-center w-28 sm:w-32 lg:w-36 h-44 sm:h-52 rounded-2xl overflow-hidden border-2 cursor-pointer transition-all duration-500 transform ${
+              className={`relative w-28 sm:w-32 lg:w-36 h-44 sm:h-52 rounded-2xl overflow-hidden border-2 cursor-pointer transition-all duration-500 transform ${
                 gameFilter === 'freefire'
                   ? 'border-purple-500 scale-110 z-30 opacity-100 shadow-[0_0_25px_rgba(168,85,247,0.7)] animate-bob-2'
                   : 'border-[#333] scale-95 z-10 opacity-60 grayscale-[25%] hover:opacity-90 hover:scale-100'
@@ -185,7 +185,7 @@ export const GameTopUpPage: React.FC = () => {
             {/* eFootball Character Poster */}
             <div
               onClick={() => setGameFilter('efootball')}
-              className={`relative shrink-0 snap-center w-28 sm:w-32 lg:w-36 h-40 sm:h-48 rounded-2xl overflow-hidden border-2 cursor-pointer transition-all duration-500 transform ${
+              className={`relative w-28 sm:w-32 lg:w-36 h-40 sm:h-48 rounded-2xl overflow-hidden border-2 cursor-pointer transition-all duration-500 transform ${
                 gameFilter === 'efootball'
                   ? 'border-blue-500 scale-110 z-30 opacity-100 shadow-[0_0_25px_rgba(59,130,246,0.7)] animate-bob-3'
                   : 'border-[#333] scale-95 z-10 opacity-60 grayscale-[25%] hover:opacity-90 hover:scale-100'
@@ -204,50 +204,6 @@ export const GameTopUpPage: React.FC = () => {
                   eFOOTBALL
                 </span>
                 <span className="text-[9px] text-yellow-400 font-bold block">2024</span>
-              </div>
-            </div>
-
-            {/* TikTok Coins Poster */}
-            <div
-              onClick={() => setGameFilter('tiktok')}
-              className={`relative shrink-0 snap-center w-28 sm:w-32 lg:w-36 h-40 sm:h-48 rounded-2xl overflow-hidden border-2 cursor-pointer transition-all duration-500 transform ${
-                gameFilter === 'tiktok'
-                  ? 'border-pink-500 scale-110 z-30 opacity-100 shadow-[0_0_25px_rgba(236,72,153,0.7)] animate-bob-1'
-                  : 'border-[#333] scale-95 z-10 opacity-60 grayscale-[25%] hover:opacity-90 hover:scale-100'
-              }`}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-600 via-fuchsia-600 to-sky-500" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Music2 className="w-12 h-12 sm:w-14 sm:h-14 text-white drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]" />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-              <div className="absolute bottom-2 inset-x-0 text-center p-1 z-10 flex flex-col items-center">
-                <span className="font-black text-xs text-white block uppercase tracking-wider drop-shadow-md">
-                  TIKTOK
-                </span>
-                <span className="text-[9px] text-pink-300 font-bold block">COINS</span>
-              </div>
-            </div>
-
-            {/* AI Subscriptions Poster */}
-            <div
-              onClick={() => setGameFilter('ai')}
-              className={`relative shrink-0 snap-center w-28 sm:w-32 lg:w-36 h-40 sm:h-48 rounded-2xl overflow-hidden border-2 cursor-pointer transition-all duration-500 transform ${
-                gameFilter === 'ai'
-                  ? 'border-violet-500 scale-110 z-30 opacity-100 shadow-[0_0_25px_rgba(139,92,246,0.7)] animate-bob-2'
-                  : 'border-[#333] scale-95 z-10 opacity-60 grayscale-[25%] hover:opacity-90 hover:scale-100'
-              }`}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-purple-600 to-fuchsia-600" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <BrainCircuit className="w-12 h-12 sm:w-14 sm:h-14 text-white drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]" />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-              <div className="absolute bottom-2 inset-x-0 text-center p-1 z-10 flex flex-col items-center">
-                <span className="font-black text-xs text-white block uppercase tracking-wider drop-shadow-md">
-                  AI
-                </span>
-                <span className="text-[9px] text-violet-300 font-bold block">اشتراكات</span>
               </div>
             </div>
           </div>
