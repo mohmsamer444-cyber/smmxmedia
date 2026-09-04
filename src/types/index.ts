@@ -84,6 +84,7 @@ export interface SocialPost {
     duration: string;
     thumbnail?: string;
   };
+  audioUrl?: string;
   poll?: {
     question: string;
     options: { id: string; text: string; votes: number }[];

@@ -38,11 +38,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const signUp = async (identifier: string, password: string, fullName: string) => {
     const isPhone = isPhoneNumber(identifier);
-    const email = isPhone ? phoneToInternalEmail(identifier) : identifier;
+    const isEmail = identifier.includes('@');
+    const email = isPhone
+      ? phoneToInternalEmail(identifier)
+      : isEmail
+      ? identifier
+      : usernameToInternalEmail(identifier);
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName, phone: isPhone ? identifier : null } },
+      options: { data: { full_name: fullName, phone: isPhone ? identifier : null, username: !isPhone && !isEmail ? identifier : null } },
     });
 
     if (error) {
@@ -55,7 +60,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       await supabase.from('profiles').upsert(
         {
           id: data.user.id,
-          email: isPhone ? null : email,
+          email: isPhone || !isEmail ? null : email,
           phone: isPhone ? identifier : null,
           full_name: fullName,
           balance: 0,
@@ -69,7 +74,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const signIn = async (identifier: string, password: string) => {
     const isPhone = isPhoneNumber(identifier);
-    const email = isPhone ? phoneToInternalEmail(identifier) : identifier;
+    const isEmail = identifier.includes('@');
+    const email = isPhone
+      ? phoneToInternalEmail(identifier)
+      : isEmail
+      ? identifier
+      : usernameToInternalEmail(identifier);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error: error ? translateAuthError(error.message) : null };
   };
@@ -100,6 +110,11 @@ function isPhoneNumber(value: string): boolean {
 function phoneToInternalEmail(phone: string): string {
   const digits = phone.trim().replace(/[^0-9]/g, '');
   return `phone_${digits}@smmxmedia.local`;
+}
+
+function usernameToInternalEmail(username: string): string {
+  const clean = username.trim().toLowerCase().replace(/[^a-z0-9_.]/g, '');
+  return `user_${clean}@smmxmedia.local`;
 }
 
 function translateAuthError(message: string): string {

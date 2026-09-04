@@ -39,6 +39,7 @@ interface PackageRow {
 }
 
 interface PostRow {
+  audio_url: string | null;
   id: string;
   content: string;
   image_url: string | null;
@@ -77,7 +78,7 @@ export const AdminDashboard: React.FC = () => {
 
   // Catalog posts (admin-only storefront posts) state
   const [catalogPosts, setCatalogPosts] = useState<PostRow[]>([]);
-  const [newPost, setNewPost] = useState({ content: '', image_url: '', video_url: '', game_tag: '', price_tag: '', hashtags: '' });
+  const [newPost, setNewPost] = useState({ content: '', image_url: '', video_url: '', audio_url: '', game_tag: '', price_tag: '', hashtags: '' });
 
   const loadData = async () => {
     setLoading(true);
@@ -104,7 +105,7 @@ export const AdminDashboard: React.FC = () => {
 
     const { data: postsData } = await supabase
       .from('posts')
-      .select('id, content, image_url, video_url, game_tag, price_tag, hashtags, created_at')
+      .select('id, content, image_url, video_url, audio_url, game_tag, price_tag, hashtags, created_at')
       .order('created_at', { ascending: false });
     setCatalogPosts((postsData as any) || []);
 
@@ -260,13 +261,14 @@ export const AdminDashboard: React.FC = () => {
       content: newPost.content.trim(),
       image_url: newPost.image_url.trim() || null,
       video_url: newPost.video_url.trim() || null,
+      audio_url: newPost.audio_url.trim() || null,
       game_tag: newPost.game_tag.trim() || null,
       price_tag: newPost.price_tag.trim() || null,
       hashtags: hashtagsArr.length > 0 ? hashtagsArr : null,
     });
     if (!error) {
       showMsg('تم نشر المنشور في الكتالوج بنجاح');
-      setNewPost({ content: '', image_url: '', video_url: '', game_tag: '', price_tag: '', hashtags: '' });
+      setNewPost({ content: '', image_url: '', video_url: '', audio_url: '', game_tag: '', price_tag: '', hashtags: '' });
       loadData();
     } else {
       showMsg('حصل خطأ: ' + error.message);
@@ -647,12 +649,14 @@ export const AdminDashboard: React.FC = () => {
               إضافة منشور جديد للكتالوج
             </p>
             <textarea
-              placeholder="وصف العرض..."
+              placeholder="وصف العرض... (حتى 5000 حرف)"
               value={newPost.content}
-              onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-              rows={3}
+              onChange={(e) => setNewPost({ ...newPost, content: e.target.value.slice(0, 5000) })}
+              rows={4}
+              maxLength={5000}
               className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] resize-none"
             />
+            <p className="text-[10px] text-gray-500 text-left dir-ltr">{newPost.content.length} / 5000</p>
             <input
               type="text"
               dir="ltr"
@@ -667,6 +671,14 @@ export const AdminDashboard: React.FC = () => {
               placeholder="رابط الفيديو (video URL — اختياري)"
               value={newPost.video_url}
               onChange={(e) => setNewPost({ ...newPost, video_url: e.target.value })}
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] text-left"
+            />
+            <input
+              type="text"
+              dir="ltr"
+              placeholder="رابط أغنية/صوت (audio URL — اختياري)"
+              value={newPost.audio_url}
+              onChange={(e) => setNewPost({ ...newPost, audio_url: e.target.value })}
               className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] text-left"
             />
             <div className="grid grid-cols-2 gap-2">
@@ -719,6 +731,9 @@ export const AdminDashboard: React.FC = () => {
               )}
               {p.video_url && (
                 <video src={p.video_url} controls className="w-full h-32 object-cover rounded-lg bg-black" />
+              )}
+              {p.audio_url && (
+                <audio src={p.audio_url} controls className="w-full h-10" />
               )}
               <div className="flex items-center gap-2 flex-wrap text-[10px] text-gray-500">
                 {p.game_tag && <span className="px-2 py-0.5 rounded bg-[#0A0A0A] border border-[#262626]">{p.game_tag}</span>}

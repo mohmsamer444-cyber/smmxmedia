@@ -274,6 +274,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     priceTag: row.price_tag || undefined,
     images: row.image_url ? [row.image_url] : undefined,
     video: row.video_url ? { url: row.video_url, duration: '' } : undefined,
+    audioUrl: row.audio_url || undefined,
     location: row.location || undefined,
     likesCount: row.post_likes?.[0]?.count || 0,
     isLiked: likedSet.has(row.id),
@@ -288,7 +289,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const { data, error } = await supabase
       .from('posts')
       .select(
-        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, video_url, shares_count, created_at, profiles(full_name), post_likes(count), post_comments(count)'
+        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, video_url, audio_url, shares_count, created_at, profiles(full_name), post_likes(count), post_comments(count)'
       )
       .order('created_at', { ascending: false })
       .limit(100);

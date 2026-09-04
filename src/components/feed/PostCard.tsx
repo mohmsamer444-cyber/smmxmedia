@@ -183,6 +183,13 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         </div>
       )}
 
+      {/* Audio / Song Player */}
+      {post.audioUrl && (
+        <div className="rounded-xl overflow-hidden border border-[#262626] bg-[#0A0A0A] p-3">
+          <audio src={post.audioUrl} controls className="w-full h-9" />
+        </div>
+      )}
+
       {/* Engagement Bar — Like / Comment / Share */}
       <div className="flex items-center justify-between border-t border-b border-[#262626] py-2">
         <button
