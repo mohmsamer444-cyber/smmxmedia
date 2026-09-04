@@ -37,7 +37,7 @@ export const AffiliateModal: React.FC<AffiliateModalProps> = ({ isOpen, onClose 
           {/* Header */}
           <div className="p-4 border-b border-[#262626] flex items-center justify-between bg-[#1a1a1a]">
             <h3 className="font-bold text-sm text-white flex items-center gap-2">
-              <Handshake className="w-4 h-4 text-[#E31E24]" />
+              <Handshake className="w-4 h-4 text-[#E8123D]" />
               شركاء التسويق بالعمولة (Affiliate Program)
             </h3>
             <button
@@ -50,9 +50,9 @@ export const AffiliateModal: React.FC<AffiliateModalProps> = ({ isOpen, onClose 
 
           <div className="p-5 space-y-5 text-right">
             {/* Banner info */}
-            <div className="p-4 bg-gradient-to-r from-[#E31E24]/20 via-[#1a1a1a] to-[#0A0A0A] border border-[#E31E24]/30 rounded-2xl space-y-2">
+            <div className="p-4 bg-gradient-to-r from-[#E8123D]/20 via-[#1a1a1a] to-[#0A0A0A] border border-[#E8123D]/30 rounded-2xl space-y-2">
               <div className="flex items-center gap-2 font-black text-white text-sm">
-                <Award className="w-5 h-5 text-[#E31E24]" />
+                <Award className="w-5 h-5 text-[#E8123D]" />
                 احصل على 5% عمولة فورية عن كل عملية شحن!
               </div>
               <p className="text-xs text-gray-300 leading-relaxed">
@@ -65,7 +65,7 @@ export const AffiliateModal: React.FC<AffiliateModalProps> = ({ isOpen, onClose 
               <div className="p-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-center">
                 <span className="text-[10px] text-gray-400 block mb-1">عدد المسجلين عبر رابطك</span>
                 <span className="text-lg font-black text-white flex items-center justify-center gap-1">
-                  <Users className="w-4 h-4 text-[#E31E24]" />
+                  <Users className="w-4 h-4 text-[#E8123D]" />
                   {referredCount} مستخدم
                 </span>
               </div>
@@ -81,7 +81,7 @@ export const AffiliateModal: React.FC<AffiliateModalProps> = ({ isOpen, onClose 
             {/* Referral Link Box */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-white block flex items-center gap-1.5">
-                <Share2 className="w-3.5 h-3.5 text-[#E31E24]" />
+                <Share2 className="w-3.5 h-3.5 text-[#E8123D]" />
                 رابط الإحالة الخاص بك للترويج
               </label>
               <div className="flex items-center gap-2">
@@ -93,7 +93,7 @@ export const AffiliateModal: React.FC<AffiliateModalProps> = ({ isOpen, onClose 
                 />
                 <button
                   onClick={handleCopy}
-                  className="px-4 py-2.5 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white text-xs font-bold flex items-center gap-1.5 transition-colors shrink-0"
+                  className="px-4 py-2.5 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white text-xs font-bold flex items-center gap-1.5 transition-colors shrink-0"
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {copied ? 'تم النسخ' : 'نسخ الرابط'}

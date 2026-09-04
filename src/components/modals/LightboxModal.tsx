@@ -13,7 +13,7 @@ export const LightboxModal: React.FC = () => {
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md">
         <button
           onClick={closeLightbox}
-          className="absolute top-4 right-4 p-2 rounded-full bg-[#141414] text-white hover:bg-[#E31E24] transition-colors z-50"
+          className="absolute top-4 right-4 p-2 rounded-full bg-[#141414] text-white hover:bg-[#E8123D] transition-colors z-50"
         >
           <X className="w-6 h-6" />
         </button>

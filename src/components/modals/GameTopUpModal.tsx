@@ -107,7 +107,7 @@ export const GameTopUpModal: React.FC = () => {
           {/* Header */}
           <div className="p-4 border-b border-[#262626] flex items-center justify-between bg-[#1a1a1a]">
             <h3 className="font-bold text-sm text-white flex items-center gap-2">
-              <Gamepad2 className="w-4 h-4 text-[#E31E24]" />
+              <Gamepad2 className="w-4 h-4 text-[#E8123D]" />
               {gameTitle}
             </h3>
             <button
@@ -124,7 +124,7 @@ export const GameTopUpModal: React.FC = () => {
               <div className="flex items-center gap-3">
                 {renderCurrencyGraphic()}
                 <div>
-                  <span className="text-[10px] text-[#E31E24] font-bold block uppercase tracking-wider">
+                  <span className="text-[10px] text-[#E8123D] font-bold block uppercase tracking-wider">
                     الحزمة المختارة
                   </span>
                   <span className="text-base font-black text-white">
@@ -134,7 +134,7 @@ export const GameTopUpModal: React.FC = () => {
               </div>
               <div className="text-right">
                 <span className="text-[10px] text-gray-400 block">السعر الإجمالي</span>
-                <span className="text-lg font-black text-[#E31E24]">
+                <span className="text-lg font-black text-[#E8123D]">
                   {formatPrice(selectedGamePackage.priceUSD)}
                 </span>
               </div>
@@ -149,7 +149,7 @@ export const GameTopUpModal: React.FC = () => {
                 value={playerUID}
                 onChange={e => setPlayerUID(e.target.value)}
                 placeholder={uidPlaceholder}
-                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E31E24] font-sans text-left dir-ltr"
+                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E8123D] font-sans text-left dir-ltr"
               />
               <p className="text-[10px] text-gray-500 mt-1">
                 تأكد من كتابة الـ ID الخاص بحسابك بدقة. يتم الشحن آلياً وفورياً خلال دقائق.
@@ -169,7 +169,7 @@ export const GameTopUpModal: React.FC = () => {
                     closeGameModal();
                     openDepositModal();
                   }}
-                  className="px-2.5 py-1 rounded-lg bg-[#E31E24] text-white font-bold text-[11px]"
+                  className="px-2.5 py-1 rounded-lg bg-[#E8123D] text-white font-bold text-[11px]"
                 >
                   إيداع رصيد
                 </button>
@@ -182,7 +182,7 @@ export const GameTopUpModal: React.FC = () => {
               disabled={isSubmitting || !isBalanceSufficient}
               className={`w-full py-3 rounded-xl font-bold text-sm text-white shadow-lg transition-all flex items-center justify-center gap-2 ${
                 isBalanceSufficient && !isSubmitting
-                  ? 'bg-[#E31E24] hover:bg-[#c11319] red-glow'
+                  ? 'bg-[#E8123D] hover:bg-[#b10e31] red-glow'
                   : 'bg-gray-700 cursor-not-allowed opacity-60'
               }`}
             >

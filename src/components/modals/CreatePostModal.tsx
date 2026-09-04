@@ -151,7 +151,7 @@ export const CreatePostModal: React.FC = () => {
           {/* Header */}
           <div className="p-4 border-b border-[#262626] flex items-center justify-between bg-[#1a1a1a]">
             <h3 className="font-bold text-sm text-white flex items-center gap-2">
-              <Send className="w-4 h-4 text-[#E31E24]" />
+              <Send className="w-4 h-4 text-[#E8123D]" />
               إنشاء منشور جديد
             </h3>
             <button
@@ -168,7 +168,7 @@ export const CreatePostModal: React.FC = () => {
               <img
                 src={user.avatar}
                 alt={user.name}
-                className="w-10 h-10 rounded-full object-cover border border-[#E31E24]"
+                className="w-10 h-10 rounded-full object-cover border border-[#E8123D]"
               />
               <div>
                 <span className="font-bold text-xs text-white block">{user.name}</span>
@@ -182,7 +182,7 @@ export const CreatePostModal: React.FC = () => {
               onChange={e => setText(e.target.value)}
               placeholder="اكتب وصف حسابك (ببجي / بيس / فري فاير)... اذكر الرتبة، الأسكنات، عدد الشدات/الجواهر، والسعر المطلوب"
               rows={4}
-              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl p-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E31E24] resize-none"
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl p-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E8123D] resize-none"
               required={contentType === 'text'}
             />
 
@@ -196,7 +196,7 @@ export const CreatePostModal: React.FC = () => {
                 value={hashtagsText}
                 onChange={e => setHashtagsText(e.target.value)}
                 placeholder="#حساب_ببجي_للبيع #وساطة_عالم_الشرق_الأوسط"
-                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E31E24]"
+                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E8123D]"
               />
             </div>
 
@@ -227,8 +227,8 @@ export const CreatePostModal: React.FC = () => {
                 )}
 
                 {/* File Picker Drop Area */}
-                <label className="flex flex-col items-center justify-center p-5 border-2 border-dashed border-[#262626] hover:border-[#E31E24]/60 rounded-xl cursor-pointer bg-[#141414] hover:bg-[#1f1f1f] transition-all group">
-                  <div className="w-10 h-10 rounded-full bg-[#E31E24]/10 text-[#E31E24] flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
+                <label className="flex flex-col items-center justify-center p-5 border-2 border-dashed border-[#262626] hover:border-[#E8123D]/60 rounded-xl cursor-pointer bg-[#141414] hover:bg-[#1f1f1f] transition-all group">
+                  <div className="w-10 h-10 rounded-full bg-[#E8123D]/10 text-[#E8123D] flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform">
                     <Upload className="w-5 h-5" />
                   </div>
                   <span className="text-xs font-bold text-white mb-0.5">انقر لاختيار صور الحساب من معرض الصور</span>
@@ -252,7 +252,7 @@ export const CreatePostModal: React.FC = () => {
                     value={imageUrl}
                     onChange={e => setImageUrl(e.target.value)}
                     placeholder="https://... رابط صورة مباشر"
-                    className="w-full bg-[#141414] border border-[#262626] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#E31E24]"
+                    className="w-full bg-[#141414] border border-[#262626] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#E8123D]"
                   />
                 </div>
               </div>
@@ -278,8 +278,8 @@ export const CreatePostModal: React.FC = () => {
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#262626] hover:border-[#E31E24]/60 rounded-xl cursor-pointer bg-[#141414] hover:bg-[#1f1f1f] transition-all group">
-                    <div className="w-12 h-12 rounded-full bg-[#E31E24]/10 text-[#E31E24] flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                  <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#262626] hover:border-[#E8123D]/60 rounded-xl cursor-pointer bg-[#141414] hover:bg-[#1f1f1f] transition-all group">
+                    <div className="w-12 h-12 rounded-full bg-[#E8123D]/10 text-[#E8123D] flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                       <Upload className="w-6 h-6" />
                     </div>
                     <span className="text-xs font-bold text-white mb-1">انقر لإرفاق فيديو من جهازك</span>
@@ -308,7 +308,7 @@ export const CreatePostModal: React.FC = () => {
                       }
                     }}
                     placeholder="https://www.youtube.com/watch?v=... أو تيك توك"
-                    className="w-full bg-[#141414] border border-[#262626] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E31E24]"
+                    className="w-full bg-[#141414] border border-[#262626] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E8123D]"
                   />
                 </div>
               </div>
@@ -322,7 +322,7 @@ export const CreatePostModal: React.FC = () => {
                   value={pollQuestion}
                   onChange={e => setPollQuestion(e.target.value)}
                   placeholder="اكتب سؤال الاستطلاع هنا..."
-                  className="w-full bg-[#141414] border border-[#262626] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E31E24] mb-2"
+                  className="w-full bg-[#141414] border border-[#262626] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E8123D] mb-2"
                 />
 
                 <label className="text-[11px] text-gray-400 block font-semibold">خيارات الإجابة</label>
@@ -333,7 +333,7 @@ export const CreatePostModal: React.FC = () => {
                       value={opt}
                       onChange={e => handlePollChange(i, e.target.value)}
                       placeholder={`خيار ${i + 1}`}
-                      className="flex-1 bg-[#141414] border border-[#262626] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#E31E24]"
+                      className="flex-1 bg-[#141414] border border-[#262626] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#E8123D]"
                     />
                     {pollOptions.length > 2 && (
                       <button
@@ -351,7 +351,7 @@ export const CreatePostModal: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleAddPollOption}
-                    className="text-xs text-[#E31E24] font-bold flex items-center gap-1 hover:underline pt-1"
+                    className="text-xs text-[#E8123D] font-bold flex items-center gap-1 hover:underline pt-1"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     إضافة خيار آخر
@@ -368,7 +368,7 @@ export const CreatePostModal: React.FC = () => {
                   value={location}
                   onChange={e => setLocation(e.target.value)}
                   placeholder="مثال: الرياض، المملكة العربية السعودية"
-                  className="w-full bg-[#141414] border border-[#262626] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E31E24]"
+                  className="w-full bg-[#141414] border border-[#262626] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E8123D]"
                 />
               </div>
             )}
@@ -379,7 +379,7 @@ export const CreatePostModal: React.FC = () => {
                 type="button"
                 onClick={() => setContentType('text')}
                 className={`p-2 rounded-lg flex items-center gap-1 transition-colors ${
-                  contentType === 'text' ? 'text-[#E31E24] font-bold bg-[#E31E24]/10' : 'hover:text-white'
+                  contentType === 'text' ? 'text-[#E8123D] font-bold bg-[#E8123D]/10' : 'hover:text-white'
                 }`}
               >
                 <FileText className="w-4 h-4" />
@@ -389,7 +389,7 @@ export const CreatePostModal: React.FC = () => {
                 type="button"
                 onClick={() => setContentType('image')}
                 className={`p-2 rounded-lg flex items-center gap-1 transition-colors ${
-                  contentType === 'image' ? 'text-[#E31E24] font-bold bg-[#E31E24]/10' : 'hover:text-white'
+                  contentType === 'image' ? 'text-[#E8123D] font-bold bg-[#E8123D]/10' : 'hover:text-white'
                 }`}
               >
                 <Image className="w-4 h-4" />
@@ -399,7 +399,7 @@ export const CreatePostModal: React.FC = () => {
                 type="button"
                 onClick={() => setContentType('video')}
                 className={`p-2 rounded-lg flex items-center gap-1 transition-colors ${
-                  contentType === 'video' ? 'text-[#E31E24] font-bold bg-[#E31E24]/10' : 'hover:text-white'
+                  contentType === 'video' ? 'text-[#E8123D] font-bold bg-[#E8123D]/10' : 'hover:text-white'
                 }`}
               >
                 <Video className="w-4 h-4" />
@@ -409,7 +409,7 @@ export const CreatePostModal: React.FC = () => {
                 type="button"
                 onClick={() => setContentType('poll')}
                 className={`p-2 rounded-lg flex items-center gap-1 transition-colors ${
-                  contentType === 'poll' ? 'text-[#E31E24] font-bold bg-[#E31E24]/10' : 'hover:text-white'
+                  contentType === 'poll' ? 'text-[#E8123D] font-bold bg-[#E8123D]/10' : 'hover:text-white'
                 }`}
               >
                 <BarChart2 className="w-4 h-4" />
@@ -419,7 +419,7 @@ export const CreatePostModal: React.FC = () => {
                 type="button"
                 onClick={() => setContentType('location')}
                 className={`p-2 rounded-lg flex items-center gap-1 transition-colors ${
-                  contentType === 'location' ? 'text-[#E31E24] font-bold bg-[#E31E24]/10' : 'hover:text-white'
+                  contentType === 'location' ? 'text-[#E8123D] font-bold bg-[#E8123D]/10' : 'hover:text-white'
                 }`}
               >
                 <MapPin className="w-4 h-4" />
@@ -430,7 +430,7 @@ export const CreatePostModal: React.FC = () => {
             {/* Submit CTA */}
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-sm shadow-lg red-glow transition-all flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-sm shadow-lg red-glow transition-all flex items-center justify-center gap-2"
             >
               <Send className="w-4 h-4" />
               نشر الآن

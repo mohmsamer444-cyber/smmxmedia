@@ -57,7 +57,7 @@ export const SocialFeedPage: React.FC = () => {
           onClick={() => setFeedSubTab('posts')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
             feedSubTab === 'posts'
-              ? 'bg-[#E31E24] text-white shadow-lg red-glow'
+              ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white'
           }`}
         >
@@ -69,7 +69,7 @@ export const SocialFeedPage: React.FC = () => {
           onClick={() => setFeedSubTab('chats')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
             feedSubTab === 'chats'
-              ? 'bg-[#E31E24] text-white shadow-lg red-glow'
+              ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white'
           }`}
         >
@@ -81,7 +81,7 @@ export const SocialFeedPage: React.FC = () => {
           onClick={() => setFeedSubTab('groups')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
             feedSubTab === 'groups'
-              ? 'bg-[#E31E24] text-white shadow-lg red-glow'
+              ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white'
           }`}
         >
@@ -93,7 +93,7 @@ export const SocialFeedPage: React.FC = () => {
           onClick={() => setFeedSubTab('friends')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
             feedSubTab === 'friends'
-              ? 'bg-[#E31E24] text-white shadow-lg red-glow'
+              ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white'
           }`}
         >
@@ -105,7 +105,7 @@ export const SocialFeedPage: React.FC = () => {
           onClick={() => openUserProfileModal(user)}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
             feedSubTab === 'profile'
-              ? 'bg-[#E31E24] text-white shadow-lg red-glow'
+              ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white'
           }`}
         >
@@ -123,11 +123,11 @@ export const SocialFeedPage: React.FC = () => {
               <img
                 src={user.avatar}
                 alt={user.name}
-                className="w-10 h-10 rounded-full object-cover border border-[#E31E24] shrink-0"
+                className="w-10 h-10 rounded-full object-cover border border-[#E8123D] shrink-0"
               />
               <button
                 onClick={() => openCreatePost('text')}
-                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-4 py-3 text-xs text-right text-gray-400 hover:border-[#E31E24]/60 transition-colors"
+                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-4 py-3 text-xs text-right text-gray-400 hover:border-[#E8123D]/60 transition-colors"
               >
                 بيع حساب، عرض خدمة، أو شارك منشورك الآن...
               </button>
@@ -169,7 +169,7 @@ export const SocialFeedPage: React.FC = () => {
 
               <button
                 onClick={() => openCreatePost('text')}
-                className="px-4 py-1.5 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center gap-1 shrink-0"
+                className="px-4 py-1.5 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center gap-1 shrink-0"
               >
                 <Send className="w-3.5 h-3.5" />
                 نشر الآن
@@ -178,9 +178,9 @@ export const SocialFeedPage: React.FC = () => {
           </div>
 
           {/* Security Banner Card */}
-          <div className="bg-[#141414] border-2 border-[#E31E24]/80 rounded-2xl p-4 shadow-2xl relative overflow-hidden red-glow">
+          <div className="bg-[#141414] border-2 border-[#E8123D]/80 rounded-2xl p-4 shadow-2xl relative overflow-hidden red-glow">
             <div className="flex items-start gap-3">
-              <div className="p-2.5 rounded-xl bg-[#E31E24]/20 text-[#E31E24] shrink-0">
+              <div className="p-2.5 rounded-xl bg-[#E8123D]/20 text-[#E8123D] shrink-0">
                 <ShieldAlert className="w-6 h-6" />
               </div>
               <div>
@@ -201,7 +201,7 @@ export const SocialFeedPage: React.FC = () => {
                 onClick={() => setFeedCategoryFilter('all')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex-1 sm:flex-initial ${
                   feedCategoryFilter === 'all'
-                    ? 'bg-[#E31E24] text-white'
+                    ? 'bg-[#E8123D] text-white'
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
@@ -211,7 +211,7 @@ export const SocialFeedPage: React.FC = () => {
                 onClick={() => setFeedCategoryFilter('following')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex-1 sm:flex-initial ${
                   feedCategoryFilter === 'following'
-                    ? 'bg-[#E31E24] text-white'
+                    ? 'bg-[#E8123D] text-white'
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
@@ -221,7 +221,7 @@ export const SocialFeedPage: React.FC = () => {
                 onClick={() => setFeedCategoryFilter('friends')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex-1 sm:flex-initial ${
                   feedCategoryFilter === 'friends'
-                    ? 'bg-[#E31E24] text-white'
+                    ? 'bg-[#E8123D] text-white'
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
@@ -236,7 +236,7 @@ export const SocialFeedPage: React.FC = () => {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="ابحث في المنشورات والوسوم..."
-                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl pl-3 pr-8 py-1.5 text-xs text-white focus:outline-none focus:border-[#E31E24]"
+                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl pl-3 pr-8 py-1.5 text-xs text-white focus:outline-none focus:border-[#E8123D]"
               />
               <Search className="w-3.5 h-3.5 text-gray-500 absolute right-2.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -274,7 +274,7 @@ export const SocialFeedPage: React.FC = () => {
       {/* Sub Tab: Friends */}
       {feedSubTab === 'friends' && (
         <div className="bg-[#141414] border border-[#262626] p-6 rounded-2xl text-center space-y-2">
-          <UserCheck className="w-10 h-10 text-[#E31E24] mx-auto" />
+          <UserCheck className="w-10 h-10 text-[#E8123D] mx-auto" />
           <h3 className="font-bold text-sm text-white">قائمة الأصدقاء والمتابعين</h3>
           <p className="text-xs text-gray-400">
             يمكنك التواصل المباشر مع الأصدقاء وتبادل بطاقات الشحن والخدمات.

@@ -163,7 +163,7 @@ export const AvatarUploadModal: React.FC = () => {
           {/* Header */}
           <div className="p-4 border-b border-[#262626] bg-[#1a1a1a] flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Camera className="w-5 h-5 text-[#E31E24]" />
+              <Camera className="w-5 h-5 text-[#E8123D]" />
               <h3 className="font-extrabold text-sm text-white">تغيير الصورة الشخصية</h3>
             </div>
             <button
@@ -190,13 +190,13 @@ export const AvatarUploadModal: React.FC = () => {
                   <img
                     src={user.avatar}
                     alt={user.name}
-                    className="w-32 h-32 rounded-full object-cover border-4 border-[#E31E24] shadow-2xl ring-4 ring-[#E31E24]/20"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-[#E8123D] shadow-2xl ring-4 ring-[#E8123D]/20"
                   />
                   <div
                     onClick={() => fileInputRef.current?.click()}
                     className="absolute inset-0 bg-black/60 rounded-full flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer backdrop-blur-[2px]"
                   >
-                    <Upload className="w-6 h-6 mb-1 text-[#E31E24]" />
+                    <Upload className="w-6 h-6 mb-1 text-[#E8123D]" />
                     <span className="text-[11px] font-bold">رفع صورة جديدة</span>
                   </div>
                 </div>
@@ -211,7 +211,7 @@ export const AvatarUploadModal: React.FC = () => {
                 <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full py-3 px-4 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs flex items-center justify-center gap-2 red-glow transition-all"
+                    className="w-full py-3 px-4 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs flex items-center justify-center gap-2 red-glow transition-all"
                   >
                     <Upload className="w-4 h-4" />
                     <span>تغيير الصورة الشخصية</span>
@@ -230,7 +230,7 @@ export const AvatarUploadModal: React.FC = () => {
               /* Interactive Circular Crop & Zoom Step */
               <div className="flex flex-col items-center space-y-5">
                 <p className="text-xs text-gray-300 text-center flex items-center gap-1.5 bg-[#0A0A0A] px-3 py-1.5 rounded-xl border border-[#262626]">
-                  <Move className="w-3.5 h-3.5 text-[#E31E24]" />
+                  <Move className="w-3.5 h-3.5 text-[#E8123D]" />
                   <span>اسحب الصورة للتحريك، واستخدم شريط التكبير لضبط الوجه داخل الإطار</span>
                 </p>
 
@@ -243,7 +243,7 @@ export const AvatarUploadModal: React.FC = () => {
                   onTouchStart={handleTouchStart}
                   onTouchMove={handleTouchMove}
                   onTouchEnd={handleMouseUp}
-                  className="relative w-52 h-52 rounded-full border-4 border-[#E31E24] shadow-[0_0_25px_rgba(227,30,36,0.5)] overflow-hidden bg-black cursor-grab active:cursor-grabbing select-none"
+                  className="relative w-52 h-52 rounded-full border-4 border-[#E8123D] shadow-[0_0_25px_rgba(227,30,36,0.5)] overflow-hidden bg-black cursor-grab active:cursor-grabbing select-none"
                 >
                   <img
                     ref={imgRef}
@@ -266,7 +266,7 @@ export const AvatarUploadModal: React.FC = () => {
                 <div className="w-full bg-[#0A0A0A] p-3 rounded-xl border border-[#262626] space-y-2">
                   <div className="flex items-center justify-between text-xs text-gray-300">
                     <span className="font-bold flex items-center gap-1">
-                      <ZoomIn className="w-3.5 h-3.5 text-[#E31E24]" />
+                      <ZoomIn className="w-3.5 h-3.5 text-[#E8123D]" />
                       مستوى التكبير ({zoom.toFixed(1)}x)
                     </span>
                     <button
@@ -295,7 +295,7 @@ export const AvatarUploadModal: React.FC = () => {
                       step="0.05"
                       value={zoom}
                       onChange={e => setZoom(parseFloat(e.target.value))}
-                      className="w-full accent-[#E31E24] bg-[#262626] h-1.5 rounded-lg cursor-pointer"
+                      className="w-full accent-[#E8123D] bg-[#262626] h-1.5 rounded-lg cursor-pointer"
                     />
                     <button
                       onClick={() => setZoom(prev => Math.min(3, prev + 0.2))}
@@ -310,7 +310,7 @@ export const AvatarUploadModal: React.FC = () => {
                 <div className="flex items-center gap-3 w-full">
                   <button
                     onClick={handleConfirmSave}
-                    className="w-full py-3 px-4 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs flex items-center justify-center gap-2 red-glow transition-all"
+                    className="w-full py-3 px-4 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs flex items-center justify-center gap-2 red-glow transition-all"
                   >
                     <Check className="w-4 h-4" />
                     <span>حفظ الصورة الشخصية</span>

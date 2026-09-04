@@ -23,7 +23,7 @@ export const Footer: React.FC = () => {
           {/* Brand Info */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <span className="w-8 h-8 rounded-xl bg-[#E31E24] text-white font-black flex items-center justify-center text-sm shadow-md red-glow">
+              <span className="w-8 h-8 rounded-xl bg-[#E8123D] text-white font-black flex items-center justify-center text-sm shadow-md red-glow">
                 ع
               </span>
               <span className="font-black text-lg text-white tracking-wider">عالم الشرق الأوسط</span>
@@ -40,7 +40,7 @@ export const Footer: React.FC = () => {
           {/* Quick Links */}
           <div className="space-y-3">
             <h4 className="font-extrabold text-sm text-white flex items-center gap-1.5">
-              <Info className="w-4 h-4 text-[#E31E24]" />
+              <Info className="w-4 h-4 text-[#E8123D]" />
               روابط سريعة
             </h4>
             <ul className="space-y-2 text-xs">
@@ -49,7 +49,7 @@ export const Footer: React.FC = () => {
                   onClick={openDepositModal}
                   className="hover:text-white transition-colors flex items-center gap-1.5"
                 >
-                  <CreditCard className="w-3.5 h-3.5 text-[#E31E24]" />
+                  <CreditCard className="w-3.5 h-3.5 text-[#E8123D]" />
                   <span>شحن الرصيد والوسائل المتاحة</span>
                 </button>
               </li>
@@ -58,19 +58,19 @@ export const Footer: React.FC = () => {
                   onClick={openApiSettingsModal}
                   className="hover:text-white transition-colors flex items-center gap-1.5"
                 >
-                  <FileText className="w-3.5 h-3.5 text-[#E31E24]" />
+                  <FileText className="w-3.5 h-3.5 text-[#E8123D]" />
                   <span>ربط API الموزعين</span>
                 </button>
               </li>
               <li>
                 <span className="text-gray-400 hover:text-white cursor-pointer transition-colors flex items-center gap-1.5">
-                  <Lock className="w-3.5 h-3.5 text-[#E31E24]" />
+                  <Lock className="w-3.5 h-3.5 text-[#E8123D]" />
                   <span>سياسة الخصوصية والشروط</span>
                 </span>
               </li>
               <li>
                 <span className="text-gray-400 hover:text-white cursor-pointer transition-colors flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#E31E24]" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#E8123D]" />
                   <span>ضمان الاسترجاع والتعبئة</span>
                 </span>
               </li>
@@ -80,16 +80,16 @@ export const Footer: React.FC = () => {
           {/* Contact & Support */}
           <div className="space-y-3">
             <h4 className="font-extrabold text-sm text-white flex items-center gap-1.5">
-              <Headphones className="w-4 h-4 text-[#E31E24]" />
+              <Headphones className="w-4 h-4 text-[#E8123D]" />
               الدعم الفني والاتصال
             </h4>
             <div className="space-y-2 text-xs">
               <p className="flex items-center gap-2 text-gray-300">
-                <Phone className="w-4 h-4 text-[#E31E24]" />
+                <Phone className="w-4 h-4 text-[#E8123D]" />
                 <span dir="ltr" className="font-mono">+966 50 123 4567</span>
               </p>
               <p className="flex items-center gap-2 text-gray-300">
-                <Mail className="w-4 h-4 text-[#E31E24]" />
+                <Mail className="w-4 h-4 text-[#E8123D]" />
                 <span className="font-mono">support@alsharq-world.com</span>
               </p>
               <p className="text-[11px] text-gray-500">

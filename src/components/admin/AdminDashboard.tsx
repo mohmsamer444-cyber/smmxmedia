@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search } from 'lucide-react';
+import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search, Settings, Tag, Plus, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 
 interface ProfileRow {
@@ -24,14 +24,45 @@ interface DepositRow {
   profiles?: { full_name: string | null; email: string | null } | null;
 }
 
+interface SettingRow {
+  key: string;
+  value: string;
+}
+
+interface PackageRow {
+  id: string;
+  game: string;
+  amount: number;
+  unit: string;
+  price_usd: number;
+  label: string | null;
+}
+
+const GAME_LABELS: Record<string, string> = {
+  pubg: 'ببجي (PUBG)',
+  freefire: 'فري فاير',
+  efootball: 'إيفوتبول',
+  tiktok: 'تيك توك',
+  ai: 'اشتراكات AI',
+};
+
 export const AdminDashboard: React.FC = () => {
-  const [tab, setTab] = useState<'users' | 'deposits'>('users');
+  const [tab, setTab] = useState<'users' | 'deposits' | 'settings' | 'packages'>('users');
   const [users, setUsers] = useState<ProfileRow[]>([]);
   const [deposits, setDeposits] = useState<DepositRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [balanceEdits, setBalanceEdits] = useState<Record<string, string>>({});
   const [message, setMessage] = useState<string | null>(null);
+
+  // Settings (payment numbers/addresses) state
+  const [settings, setSettings] = useState<SettingRow[]>([]);
+  const [settingEdits, setSettingEdits] = useState<Record<string, string>>({});
+
+  // Packages (game top-ups / AI subscriptions) state
+  const [packages, setPackages] = useState<PackageRow[]>([]);
+  const [packageEdits, setPackageEdits] = useState<Record<string, string>>({});
+  const [newPkg, setNewPkg] = useState({ id: '', game: 'pubg', amount: '', unit: '', price_usd: '', label: '' });
 
   const loadData = async () => {
     setLoading(true);
@@ -46,6 +77,15 @@ export const AdminDashboard: React.FC = () => {
       .select('id, user_id, amount, method, note, proof_image_url, status, created_at, profiles(full_name, email)')
       .order('created_at', { ascending: false });
     setDeposits((depositsData as any) || []);
+
+    const { data: settingsData } = await supabase.from('site_settings').select('key, value');
+    setSettings(settingsData || []);
+
+    const { data: packagesData } = await supabase
+      .from('game_packages')
+      .select('id, game, amount, unit, price_usd, label')
+      .order('game', { ascending: true });
+    setPackages((packagesData as any) || []);
 
     setLoading(false);
   };
@@ -119,10 +159,70 @@ export const AdminDashboard: React.FC = () => {
     );
   });
 
+  const getSetting = (key: string) => settings.find((s) => s.key === key)?.value || '';
+
+  const saveSetting = async (key: string) => {
+    const value = settingEdits[key];
+    if (value === undefined) return;
+    const { error } = await supabase.from('site_settings').upsert({ key, value }, { onConflict: 'key' });
+    if (!error) {
+      showMsg('تم تحديث الإعداد بنجاح');
+      loadData();
+    } else {
+      showMsg('حصل خطأ: ' + error.message);
+    }
+  };
+
+  const savePackagePrice = async (pkgId: string) => {
+    const value = packageEdits[pkgId];
+    if (value === undefined || value === '') return;
+    const numeric = parseFloat(value);
+    if (isNaN(numeric)) return;
+    const { error } = await supabase.from('game_packages').update({ price_usd: numeric }).eq('id', pkgId);
+    if (!error) {
+      showMsg('تم تحديث السعر بنجاح');
+      loadData();
+    } else {
+      showMsg('حصل خطأ: ' + error.message);
+    }
+  };
+
+  const deletePackage = async (pkgId: string) => {
+    const { error } = await supabase.from('game_packages').delete().eq('id', pkgId);
+    if (!error) {
+      showMsg('تم حذف الباقة');
+      loadData();
+    } else {
+      showMsg('حصل خطأ: ' + error.message);
+    }
+  };
+
+  const addPackage = async () => {
+    if (!newPkg.id.trim() || !newPkg.amount || !newPkg.unit.trim() || !newPkg.price_usd) {
+      showMsg('من فضلك املأ كل الحقول (الكود، الكمية، الوحدة، السعر)');
+      return;
+    }
+    const { error } = await supabase.from('game_packages').insert({
+      id: newPkg.id.trim(),
+      game: newPkg.game,
+      amount: parseFloat(newPkg.amount),
+      unit: newPkg.unit.trim(),
+      price_usd: parseFloat(newPkg.price_usd),
+      label: newPkg.label.trim() || null,
+    });
+    if (!error) {
+      showMsg('تمت إضافة الباقة بنجاح');
+      setNewPkg({ id: '', game: 'pubg', amount: '', unit: '', price_usd: '', label: '' });
+      loadData();
+    } else {
+      showMsg('حصل خطأ: ' + error.message);
+    }
+  };
+
   return (
     <div dir="rtl" className="min-h-screen w-full bg-[#0A0A0A] text-white">
       <div className="sticky top-0 z-10 bg-[#121212] border-b border-[#262626] px-4 py-3 flex items-center justify-between">
-        <h1 className="font-extrabold text-lg text-[#E31E24]">لوحة تحكم الأدمن</h1>
+        <h1 className="font-extrabold text-lg text-[#E8123D]">لوحة تحكم الأدمن</h1>
         <button
           onClick={loadData}
           className="p-2 rounded-lg bg-[#1a1a1a] text-gray-400 hover:text-white hover:bg-[#262626] transition-colors"
@@ -137,11 +237,11 @@ export const AdminDashboard: React.FC = () => {
         </div>
       )}
 
-      <div className="px-4 pt-4 flex gap-2 max-w-2xl mx-auto">
+      <div className="px-4 pt-4 flex gap-2 max-w-2xl mx-auto flex-wrap">
         <button
           onClick={() => setTab('users')}
-          className={`flex-1 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
-            tab === 'users' ? 'bg-[#E31E24] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
+          className={`flex-1 min-w-[45%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
+            tab === 'users' ? 'bg-[#E8123D] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
           }`}
         >
           <Users className="w-4 h-4" />
@@ -149,12 +249,30 @@ export const AdminDashboard: React.FC = () => {
         </button>
         <button
           onClick={() => setTab('deposits')}
-          className={`flex-1 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
-            tab === 'deposits' ? 'bg-[#E31E24] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
+          className={`flex-1 min-w-[45%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
+            tab === 'deposits' ? 'bg-[#E8123D] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
           }`}
         >
           <Wallet className="w-4 h-4" />
           طلبات الشحن ({deposits.filter((d) => d.status === 'pending').length})
+        </button>
+        <button
+          onClick={() => setTab('settings')}
+          className={`flex-1 min-w-[45%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
+            tab === 'settings' ? 'bg-[#E8123D] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
+          }`}
+        >
+          <Settings className="w-4 h-4" />
+          إعدادات الدفع
+        </button>
+        <button
+          onClick={() => setTab('packages')}
+          className={`flex-1 min-w-[45%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
+            tab === 'packages' ? 'bg-[#E8123D] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
+          }`}
+        >
+          <Tag className="w-4 h-4" />
+          الأسعار ({packages.length})
         </button>
       </div>
 
@@ -167,7 +285,7 @@ export const AdminDashboard: React.FC = () => {
               placeholder="ابحث بالاسم أو الإيميل أو الرقم..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#141414] border border-[#262626] rounded-xl py-2.5 pr-10 pl-3 text-sm outline-none focus:border-[#E31E24]"
+              className="w-full bg-[#141414] border border-[#262626] rounded-xl py-2.5 pr-10 pl-3 text-sm outline-none focus:border-[#E8123D]"
             />
           </div>
 
@@ -180,7 +298,7 @@ export const AdminDashboard: React.FC = () => {
                   {u.phone && <p className="text-[11px] text-gray-500">{u.phone}</p>}
                 </div>
                 {u.is_admin && (
-                  <span className="text-[10px] bg-[#E31E24]/20 text-[#E31E24] px-2 py-1 rounded-full font-bold">
+                  <span className="text-[10px] bg-[#E8123D]/20 text-[#E8123D] px-2 py-1 rounded-full font-bold">
                     أدمن
                   </span>
                 )}
@@ -197,11 +315,11 @@ export const AdminDashboard: React.FC = () => {
                   placeholder="رصيد جديد"
                   value={balanceEdits[u.id] ?? ''}
                   onChange={(e) => setBalanceEdits({ ...balanceEdits, [u.id]: e.target.value })}
-                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E31E24]"
+                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
                 />
                 <button
                   onClick={() => updateBalance(u.id)}
-                  className="px-3 py-2 rounded-lg bg-[#E31E24] text-white text-xs font-bold"
+                  className="px-3 py-2 rounded-lg bg-[#E8123D] text-white text-xs font-bold"
                 >
                   تعيين
                 </button>
@@ -298,6 +416,152 @@ export const AdminDashboard: React.FC = () => {
 
           {!loading && deposits.length === 0 && (
             <p className="text-center text-gray-500 text-sm py-8">مفيش طلبات شحن</p>
+          )}
+        </div>
+      )}
+      {tab === 'settings' && (
+        <div className="p-4 space-y-3 max-w-2xl mx-auto">
+          <p className="text-xs text-gray-400 leading-relaxed">
+            الأرقام والعناوين دي بتظهر مباشرة للمستخدمين في صفحة "شحن الرصيد". أي تعديل هنا يتحدث على الموقع فورًا.
+          </p>
+
+          {[
+            { key: 'vodafone_cash_number', label: 'رقم فودافون كاش', placeholder: '01xxxxxxxxx' },
+            { key: 'binance_address', label: 'عنوان محفظة Binance (USDT)', placeholder: '0x...' },
+            { key: 'binance_pay_id', label: 'Binance Pay ID', placeholder: '123456789' },
+            { key: 'instapay_address', label: 'عنوان إنستا باي', placeholder: 'name@instapay' },
+          ].map((field) => (
+            <div key={field.key} className="bg-[#141414] border border-[#262626] rounded-xl p-3.5 space-y-2">
+              <p className="text-xs font-bold text-gray-300">{field.label}</p>
+              <p className="text-[11px] text-gray-500 dir-ltr">
+                الحالي: {getSetting(field.key) || '(غير محدد بعد)'}
+              </p>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  dir="ltr"
+                  placeholder={field.placeholder}
+                  value={settingEdits[field.key] ?? getSetting(field.key)}
+                  onChange={(e) => setSettingEdits({ ...settingEdits, [field.key]: e.target.value })}
+                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] dir-ltr text-left"
+                />
+                <button
+                  onClick={() => saveSetting(field.key)}
+                  className="px-3 py-2 rounded-lg bg-[#E8123D] text-white text-xs font-bold shrink-0"
+                >
+                  حفظ
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {tab === 'packages' && (
+        <div className="p-4 space-y-3 max-w-2xl mx-auto">
+          <div className="bg-[#141414] border border-[#262626] rounded-xl p-3.5 space-y-2">
+            <p className="text-xs font-bold text-gray-300 flex items-center gap-1.5">
+              <Plus className="w-3.5 h-3.5" />
+              إضافة باقة جديدة
+            </p>
+            <select
+              value={newPkg.game}
+              onChange={(e) => setNewPkg({ ...newPkg, game: e.target.value })}
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+            >
+              <option value="pubg">ببجي (PUBG)</option>
+              <option value="freefire">فري فاير</option>
+              <option value="efootball">إيفوتبول</option>
+              <option value="tiktok">تيك توك</option>
+              <option value="ai">اشتراكات AI</option>
+            </select>
+            <input
+              type="text"
+              placeholder="كود الباقة (مثال: pubg-7)"
+              value={newPkg.id}
+              onChange={(e) => setNewPkg({ ...newPkg, id: e.target.value })}
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+            />
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                type="number"
+                placeholder="الكمية"
+                value={newPkg.amount}
+                onChange={(e) => setNewPkg({ ...newPkg, amount: e.target.value })}
+                className="bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+              />
+              <input
+                type="text"
+                placeholder="الوحدة (UC / شهر)"
+                value={newPkg.unit}
+                onChange={(e) => setNewPkg({ ...newPkg, unit: e.target.value })}
+                className="bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+              />
+            </div>
+            <input
+              type="number"
+              step="0.01"
+              placeholder="السعر بالدولار"
+              value={newPkg.price_usd}
+              onChange={(e) => setNewPkg({ ...newPkg, price_usd: e.target.value })}
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+            />
+            <input
+              type="text"
+              placeholder="اسم مخصص (اختياري - لاشتراكات AI مثلاً)"
+              value={newPkg.label}
+              onChange={(e) => setNewPkg({ ...newPkg, label: e.target.value })}
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+            />
+            <button
+              onClick={addPackage}
+              className="w-full py-2 rounded-lg bg-[#E8123D] text-white text-xs font-bold"
+            >
+              إضافة الباقة
+            </button>
+          </div>
+
+          {packages.map((p) => (
+            <div key={p.id} className="bg-[#141414] border border-[#262626] rounded-xl p-3.5 space-y-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-bold text-sm">{p.label || `${p.amount} ${p.unit}`}</p>
+                  <p className="text-[11px] text-gray-500">{GAME_LABELS[p.game] || p.game} — كود: {p.id}</p>
+                </div>
+                <button
+                  onClick={() => deletePackage(p.id)}
+                  className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">السعر الحالي:</span>
+                <span className="text-sm font-black text-emerald-400">${p.price_usd}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="سعر جديد"
+                  value={packageEdits[p.id] ?? ''}
+                  onChange={(e) => setPackageEdits({ ...packageEdits, [p.id]: e.target.value })}
+                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+                />
+                <button
+                  onClick={() => savePackagePrice(p.id)}
+                  className="px-3 py-2 rounded-lg bg-[#E8123D] text-white text-xs font-bold"
+                >
+                  تحديث
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {!loading && packages.length === 0 && (
+            <p className="text-center text-gray-500 text-sm py-8">
+              لسه مفيش باقات في قاعدة البيانات — الموقع بيعرض الأسعار الافتراضية. أضف باقة من الفورم فوق عشان تبدأ التحكم من هنا.
+            </p>
           )}
         </div>
       )}

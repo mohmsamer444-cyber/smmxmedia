@@ -342,12 +342,12 @@ export const GAME_PACKAGES: GamePackage[] = [
   { id: 'tiktok-6', game: 'tiktok', amount: 6607, unit: 'كوينز', priceUSD: 84.99 },
 
   // اشتراكات AI
-  { id: 'ai-1', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 19.99, label: 'ChatGPT Plus' },
-  { id: 'ai-2', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 17.99, label: 'Claude Pro' },
-  { id: 'ai-3', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 9.99, label: 'Midjourney (Standard)' },
-  { id: 'ai-4', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 19.99, label: 'Gemini Advanced' },
-  { id: 'ai-5', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 12.99, label: 'Perplexity Pro' },
-  { id: 'ai-6', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 29.99, label: 'ChatGPT Plus + Claude Pro (باقة مزدوجة)' },
+  { id: 'ai-1', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 16.99, label: 'ChatGPT Plus' },
+  { id: 'ai-2', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 15.29, label: 'Claude Pro' },
+  { id: 'ai-3', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 8.49, label: 'Midjourney (Standard)' },
+  { id: 'ai-4', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 16.99, label: 'Gemini Advanced' },
+  { id: 'ai-5', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 11.04, label: 'Perplexity Pro' },
+  { id: 'ai-6', game: 'ai', amount: 1, unit: 'شهر', priceUSD: 25.49, label: 'ChatGPT Plus + Claude Pro (باقة مزدوجة)' },
 ];
 
 export const INITIAL_POSTS: SocialPost[] = [

@@ -9,6 +9,7 @@ import {
   UserProfile,
   SocialPost,
   ChatConversation,
+  ChatMessage,
   GroupItem,
   NotificationItem,
   GamePackage,
@@ -22,9 +23,11 @@ import {
   INITIAL_CONVERSATIONS,
   INITIAL_GROUPS,
   INITIAL_NOTIFICATIONS,
+  GAME_PACKAGES,
 } from '../data/mockData';
 import { fetchServices, createSMMOrder, cancelSMMOrder, requestRefill, checkOrderStatus } from '../services/smmApi';
 import { supabase } from '../lib/supabaseClient';
+import { playSuccessSound, playErrorSound, playMessageSound } from '../lib/sounds';
 import { useAuth } from './AuthContext';
 
 export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
@@ -113,6 +116,7 @@ interface AppContextType {
 
   isGameModalOpen: boolean;
   selectedGamePackage: GamePackage | null;
+  gamePackages: GamePackage[];
   openGameModal: (pkg: GamePackage) => void;
   closeGameModal: () => void;
 
@@ -217,6 +221,33 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [selectedPlatformFilter, setSelectedPlatformFilter] = useState<string>('all');
   const [orders, setOrders] = useState<SMMOrder[]>(INITIAL_ORDERS);
 
+  // Game top-up / AI subscription packages — start from the static defaults,
+  // then overridden with live prices from Supabase if the admin has customized them.
+  const [gamePackages, setGamePackages] = useState<GamePackage[]>(GAME_PACKAGES);
+
+  const loadGamePackages = async () => {
+    const { data, error } = await supabase
+      .from('game_packages')
+      .select('id, game, amount, unit, price_usd, label')
+      .order('game', { ascending: true });
+    if (!error && data && data.length > 0) {
+      setGamePackages(
+        data.map((row: any) => ({
+          id: row.id,
+          game: row.game,
+          amount: Number(row.amount),
+          unit: row.unit,
+          priceUSD: Number(row.price_usd),
+          label: row.label || undefined,
+        }))
+      );
+    }
+  };
+
+  useEffect(() => {
+    loadGamePackages();
+  }, []);
+
   // Social Feed state — starts empty and is filled with real posts from Supabase
   const [posts, setPosts] = useState<SocialPost[]>([]);
 
@@ -268,6 +299,39 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   );
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [groups] = useState<GroupItem[]>(INITIAL_GROUPS);
+
+  const loadChatMessages = async () => {
+    if (!session?.user?.id) return;
+    const { data, error } = await supabase
+      .from('chat_messages')
+      .select('id, contact_key, text, is_mine, created_at')
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: true });
+
+    if (error || !data) return;
+
+    const byContact: Record<string, ChatMessage[]> = {};
+    data.forEach((row: any) => {
+      const msg: ChatMessage = {
+        id: row.id,
+        senderId: row.is_mine ? user.id : row.contact_key,
+        text: row.text,
+        timestamp: new Date(row.created_at).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+        isMine: !!row.is_mine,
+      };
+      if (!byContact[row.contact_key]) byContact[row.contact_key] = [];
+      byContact[row.contact_key].push(msg);
+    });
+
+    setConversations(prev =>
+      prev.map(c => {
+        const msgs = byContact[c.id];
+        if (!msgs || msgs.length === 0) return c;
+        const last = msgs[msgs.length - 1];
+        return { ...c, messages: msgs, lastMessage: last.text, timestamp: last.timestamp };
+      })
+    );
+  };
 
   useEffect(() => {
     loadPosts();
@@ -329,6 +393,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
     const id = Math.random().toString(36).substring(2, 9);
     setToasts(prev => [...prev, { id, message, type }]);
+    if (type === 'success') playSuccessSound();
+    else if (type === 'error') playErrorSound();
     setTimeout(() => {
       removeToast(id);
     }, 4000);
@@ -674,6 +740,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       };
       setConversations(prev => [newConv, ...prev]);
       saveChatMessageToDb(convId, greeting, false);
+      playMessageSound();
     }
 
     if (initialContext) {
@@ -846,6 +913,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
         isGameModalOpen,
         selectedGamePackage,
+        gamePackages,
         openGameModal,
         closeGameModal,
 

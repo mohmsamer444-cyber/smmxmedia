@@ -80,10 +80,28 @@ export const DepositModal: React.FC = () => {
     setIsLoadingHistory(false);
   };
 
+  // Real payment settings (Vodafone Cash number, Binance address, etc.) — editable from the admin panel
+  const [siteSettings, setSiteSettings] = useState<Record<string, string>>({
+    vodafone_cash_number: '01027804619',
+    binance_address: '0xc8138080a061a905de676C3C215Ecd499c72F1E9',
+    binance_pay_id: '829104829',
+    instapay_address: 'alsharqworld@instapay',
+  });
+
+  const loadSiteSettings = async () => {
+    const { data, error } = await supabase.from('site_settings').select('key, value');
+    if (!error && data && data.length > 0) {
+      const map: Record<string, string> = {};
+      data.forEach((row: any) => { map[row.key] = row.value; });
+      setSiteSettings(prev => ({ ...prev, ...map }));
+    }
+  };
+
   useEffect(() => {
     if (isDepositModalOpen) {
       loadHistory();
       refreshBalance();
+      loadSiteSettings();
     }
   }, [isDepositModalOpen]);
 
@@ -101,9 +119,9 @@ export const DepositModal: React.FC = () => {
         </div>
       ),
       details: {
-        payId: '829104829',
+        payId: siteSettings.binance_pay_id,
         network: 'USDT (TRC20 / BEP20)',
-        address: 'T9xQ2mK9pL1vN8sR7wY4zA6bC3dE5fG1hJ',
+        address: siteSettings.binance_address,
       },
     },
     {
@@ -117,9 +135,9 @@ export const DepositModal: React.FC = () => {
         </div>
       ),
       details: {
-        phone: '01091234567',
+        phone: siteSettings.vodafone_cash_number,
         name: 'عالم الشرق الأوسط - كاش',
-        instruction: 'حول المبلغ المطلوب مع إضافة رسوم التحويل (%1)',
+        instruction: 'حول المبلغ المطلوب بالكامل من غير أي خصم أو إضافة',
       },
     },
     {
@@ -133,7 +151,7 @@ export const DepositModal: React.FC = () => {
         </div>
       ),
       details: {
-        address: 'alsharqworld@instapay',
+        address: siteSettings.instapay_address,
         bankName: 'البنك الأهلي المصري',
         accountName: 'ALSHARQ WORLD SERVICES',
       },
@@ -264,7 +282,7 @@ export const DepositModal: React.FC = () => {
           {/* Header */}
           <div className="p-4 border-b border-[#262626] flex items-center justify-between bg-[#1a1a1a]">
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-[#E31E24]/10 border border-[#E31E24]/30 text-[#E31E24]">
+              <div className="p-2 rounded-lg bg-[#E8123D]/10 border border-[#E8123D]/30 text-[#E8123D]">
                 <Wallet className="w-5 h-5" />
               </div>
               <div>
@@ -286,7 +304,7 @@ export const DepositModal: React.FC = () => {
               onClick={() => setActiveTab('form')}
               className={`flex-1 py-3 text-xs font-bold transition-all border-b-2 text-center flex items-center justify-center gap-2 ${
                 activeTab === 'form'
-                  ? 'border-[#E31E24] text-[#E31E24] bg-[#E31E24]/5'
+                  ? 'border-[#E8123D] text-[#E8123D] bg-[#E8123D]/5'
                   : 'border-transparent text-gray-400 hover:text-white'
               }`}
             >
@@ -297,7 +315,7 @@ export const DepositModal: React.FC = () => {
               onClick={() => setActiveTab('history')}
               className={`flex-1 py-3 text-xs font-bold transition-all border-b-2 text-center flex items-center justify-center gap-2 ${
                 activeTab === 'history'
-                  ? 'border-[#E31E24] text-[#E31E24] bg-[#E31E24]/5'
+                  ? 'border-[#E8123D] text-[#E8123D] bg-[#E8123D]/5'
                   : 'border-transparent text-gray-400 hover:text-white'
               }`}
             >
@@ -315,7 +333,7 @@ export const DepositModal: React.FC = () => {
                 {/* Step 1: Choose Payment Method */}
                 <div>
                   <label className="text-xs font-extrabold text-white block mb-2 flex items-center gap-1.5">
-                    <span className="w-4 h-4 rounded-full bg-[#E31E24] text-white text-[10px] flex items-center justify-center font-bold">1</span>
+                    <span className="w-4 h-4 rounded-full bg-[#E8123D] text-white text-[10px] flex items-center justify-center font-bold">1</span>
                     اختر وسيلة الدفع المناسبة
                   </label>
 
@@ -329,7 +347,7 @@ export const DepositModal: React.FC = () => {
                           onClick={() => setSelectedMethod(m.id)}
                           className={`p-3 rounded-xl border text-right flex items-start gap-3 transition-all ${
                             isSelected
-                              ? 'bg-[#E31E24]/10 border-[#E31E24] shadow-md ring-1 ring-[#E31E24]/50'
+                              ? 'bg-[#E8123D]/10 border-[#E8123D] shadow-md ring-1 ring-[#E8123D]/50'
                               : 'bg-[#0A0A0A] border-[#262626] hover:border-gray-600 hover:bg-[#1a1a1a]'
                           }`}
                         >
@@ -348,11 +366,11 @@ export const DepositModal: React.FC = () => {
                 <div className="p-3.5 bg-[#0A0A0A] border border-[#262626] rounded-xl space-y-2.5">
                   <div className="flex items-center justify-between border-b border-[#262626] pb-2">
                     <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                      <span className="w-4 h-4 rounded-full bg-[#E31E24] text-white text-[10px] flex items-center justify-center font-bold">2</span>
+                      <span className="w-4 h-4 rounded-full bg-[#E8123D] text-white text-[10px] flex items-center justify-center font-bold">2</span>
                       بيانات تحويل الأموال لـ {selectedMethodObj.name}
                     </span>
-                    <span className="text-[10px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md">
-                      بيانات افتراضية للتجربة
+                    <span className="text-[10px] text-green-400 bg-green-500/10 border border-green-500/20 px-2 py-0.5 rounded-md">
+                      بيانات رسمية معتمدة
                     </span>
                   </div>
 
@@ -457,7 +475,7 @@ export const DepositModal: React.FC = () => {
                 <div>
                   <label className="text-xs font-extrabold text-white block mb-1.5 flex items-center justify-between">
                     <span>مبلغ الإيداع المراد شحنه (بالدولار USD)</span>
-                    <span className="text-[#E31E24] font-mono">{formatPrice(amountUSD)}</span>
+                    <span className="text-[#E8123D] font-mono">{formatPrice(amountUSD)}</span>
                   </label>
                   <div className="grid grid-cols-5 gap-1.5 mb-2">
                     {presets.map(p => (
@@ -467,7 +485,7 @@ export const DepositModal: React.FC = () => {
                         onClick={() => setAmountUSD(p)}
                         className={`py-1.5 rounded-lg text-xs font-bold border transition-colors ${
                           amountUSD === p
-                            ? 'bg-[#E31E24] text-white border-[#E31E24]'
+                            ? 'bg-[#E8123D] text-white border-[#E8123D]'
                             : 'bg-[#0A0A0A] text-gray-300 border-[#262626] hover:border-gray-500'
                         }`}
                       >
@@ -482,21 +500,21 @@ export const DepositModal: React.FC = () => {
                     required
                     value={amountUSD}
                     onChange={e => setAmountUSD(Number(e.target.value))}
-                    className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#E31E24] font-mono"
+                    className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#E8123D] font-mono"
                   />
                 </div>
 
                 {/* Step 3: Required Proof of Payment Submission */}
-                <div className="p-3.5 bg-[#1a1a1a] border border-[#E31E24]/30 rounded-xl space-y-3">
+                <div className="p-3.5 bg-[#1a1a1a] border border-[#E8123D]/30 rounded-xl space-y-3">
                   <div className="text-xs font-bold text-white flex items-center gap-1.5 border-b border-[#262626] pb-2">
-                    <span className="w-4 h-4 rounded-full bg-[#E31E24] text-white text-[10px] flex items-center justify-center font-bold">3</span>
+                    <span className="w-4 h-4 rounded-full bg-[#E8123D] text-white text-[10px] flex items-center justify-center font-bold">3</span>
                     تأكيد وإرفاق إثبات الدفع (مطلوب)
                   </div>
 
                   {/* Ref number */}
                   <div>
                     <label className="text-[11px] font-bold text-gray-300 block mb-1">
-                      رقم العملية / رقم التحويل <span className="text-[#E31E24]">*</span>
+                      رقم العملية / رقم التحويل <span className="text-[#E8123D]">*</span>
                     </label>
                     <input
                       type="text"
@@ -504,14 +522,14 @@ export const DepositModal: React.FC = () => {
                       placeholder="مثال: 98124012894 أو Ref ID"
                       value={refNumber}
                       onChange={e => setRefNumber(e.target.value)}
-                      className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E31E24]"
+                      className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E8123D]"
                     />
                   </div>
 
                   {/* Sender name or phone */}
                   <div>
                     <label className="text-[11px] font-bold text-gray-300 block mb-1">
-                      اسم أو رقم المحفظة المُرسِل منها <span className="text-[#E31E24]">*</span>
+                      اسم أو رقم المحفظة المُرسِل منها <span className="text-[#E8123D]">*</span>
                     </label>
                     <input
                       type="text"
@@ -519,18 +537,18 @@ export const DepositModal: React.FC = () => {
                       placeholder="مثال: 01012345678 أو اسم المحول"
                       value={senderInfo}
                       onChange={e => setSenderInfo(e.target.value)}
-                      className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E31E24]"
+                      className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E8123D]"
                     />
                   </div>
 
                   {/* Image Screenshot Upload */}
                   <div>
                     <label className="text-[11px] font-bold text-gray-300 block mb-1">
-                      صورة إثبات الدفع (إرفاق سكرين شوت) <span className="text-[#E31E24]">*</span>
+                      صورة إثبات الدفع (إرفاق سكرين شوت) <span className="text-[#E8123D]">*</span>
                     </label>
 
                     {proofPreview ? (
-                      <div className="relative p-2 bg-[#0A0A0A] border border-[#E31E24] rounded-xl flex items-center gap-3">
+                      <div className="relative p-2 bg-[#0A0A0A] border border-[#E8123D] rounded-xl flex items-center gap-3">
                         <img
                           src={proofPreview}
                           alt="إثبات الدفع"
@@ -551,8 +569,8 @@ export const DepositModal: React.FC = () => {
                         </button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center justify-center p-4 bg-[#0A0A0A] border-2 border-dashed border-[#262626] hover:border-[#E31E24]/60 rounded-xl cursor-pointer transition-colors text-center">
-                        <Upload className="w-6 h-6 text-[#E31E24] mb-1" />
+                      <label className="flex flex-col items-center justify-center p-4 bg-[#0A0A0A] border-2 border-dashed border-[#262626] hover:border-[#E8123D]/60 rounded-xl cursor-pointer transition-colors text-center">
+                        <Upload className="w-6 h-6 text-[#E8123D] mb-1" />
                         <span className="text-xs font-bold text-gray-300">اضغط هنا لإرفاق سكرين شوت التحويل</span>
                         <span className="text-[10px] text-gray-500 mt-0.5">PNG, JPG أو WEBP (بحد أقصى 5MB)</span>
                         <input
@@ -581,7 +599,7 @@ export const DepositModal: React.FC = () => {
                     disabled={!isFormValid || isSubmitting}
                     className={`w-full py-3.5 rounded-xl font-bold text-sm shadow-lg transition-all flex items-center justify-center gap-2 ${
                       isFormValid && !isSubmitting
-                        ? 'bg-[#E31E24] hover:bg-[#c11319] text-white red-glow cursor-pointer'
+                        ? 'bg-[#E8123D] hover:bg-[#b10e31] text-white red-glow cursor-pointer'
                         : 'bg-gray-800 text-gray-500 border border-gray-700 cursor-not-allowed opacity-60'
                     }`}
                   >

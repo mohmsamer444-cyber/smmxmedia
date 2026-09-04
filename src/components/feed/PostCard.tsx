@@ -83,7 +83,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
     return parts.map((part, i) => {
       if (part.startsWith('#')) {
         return (
-          <span key={i} className="text-[#E31E24] font-bold dir-ltr inline-block">
+          <span key={i} className="text-[#E8123D] font-bold dir-ltr inline-block">
             {part}{' '}
           </span>
         );
@@ -99,7 +99,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-[#0A0A0A] border border-[#262626]">
           <div className="flex items-center gap-2 flex-wrap">
             {post.gameTag && (
-              <span className="px-2.5 py-1 rounded-lg bg-[#E31E24]/20 border border-[#E31E24]/40 text-[#E31E24] font-black text-xs flex items-center gap-1">
+              <span className="px-2.5 py-1 rounded-lg bg-[#E8123D]/20 border border-[#E8123D]/40 text-[#E8123D] font-black text-xs flex items-center gap-1">
                 <Tag className="w-3.5 h-3.5" />
                 {post.gameTag}
               </span>
@@ -119,7 +119,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
           <button
             onClick={handleContactNow}
-            className="px-3 py-1.5 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs flex items-center gap-1.5 shadow-md red-glow transition-all shrink-0"
+            className="px-3 py-1.5 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs flex items-center gap-1.5 shadow-md red-glow transition-all shrink-0"
           >
             <MessageSquare className="w-3.5 h-3.5" />
             <span>تواصل الآن</span>
@@ -136,10 +136,10 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           <img
             src={post.author.avatar}
             alt={post.author.name}
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#E31E24] group-hover:scale-105 transition-transform"
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#E8123D] group-hover:scale-105 transition-transform"
           />
           <div>
-            <div className="flex items-center gap-1.5 font-bold text-sm text-white group-hover:text-[#E31E24] transition-colors">
+            <div className="flex items-center gap-1.5 font-bold text-sm text-white group-hover:text-[#E8123D] transition-colors">
               <span>{post.author.name}</span>
               {post.author.verified && (
                 <CheckCircle className="w-4 h-4 text-blue-500 fill-blue-500/20 shrink-0" />
@@ -177,7 +177,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                   }}
                   className="w-full px-3 py-2 text-right hover:bg-[#262626] flex items-center gap-2"
                 >
-                  <Bookmark className="w-3.5 h-3.5 text-[#E31E24]" />
+                  <Bookmark className="w-3.5 h-3.5 text-[#E8123D]" />
                   {post.isBookmarked ? 'إزالة من الحفظ' : 'حفظ المنشور'}
                 </button>
                 <button
@@ -203,7 +203,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
       {/* Location Badge */}
       {post.location && (
         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#1a1a1a] border border-[#262626] text-[11px] text-gray-400">
-          <MapPin className="w-3.5 h-3.5 text-[#E31E24]" />
+          <MapPin className="w-3.5 h-3.5 text-[#E8123D]" />
           <span>{post.location}</span>
         </div>
       )}
@@ -250,7 +250,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all">
                 <button
                   onClick={() => setIsPlayingVideo(true)}
-                  className="w-14 h-14 rounded-full bg-[#E31E24] text-white flex items-center justify-center shadow-2xl red-glow hover:scale-110 transition-transform"
+                  className="w-14 h-14 rounded-full bg-[#E8123D] text-white flex items-center justify-center shadow-2xl red-glow hover:scale-110 transition-transform"
                 >
                   <Play className="w-6 h-6 fill-current ml-1" />
                 </button>
@@ -267,7 +267,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
       {post.poll && (
         <div className="p-3.5 bg-[#0A0A0A] border border-[#262626] rounded-xl space-y-2.5">
           <div className="text-xs font-bold text-white flex items-center gap-2">
-            <BarChart2 className="w-4 h-4 text-[#E31E24]" />
+            <BarChart2 className="w-4 h-4 text-[#E8123D]" />
             {post.poll.question}
           </div>
 
@@ -285,18 +285,18 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                   disabled={!!post.poll?.userVotedId}
                   className={`w-full relative p-2.5 rounded-lg border text-right overflow-hidden transition-all flex items-center justify-between ${
                     isSelected
-                      ? 'border-[#E31E24] bg-[#E31E24]/10'
+                      ? 'border-[#E8123D] bg-[#E8123D]/10'
                       : 'border-[#262626] bg-[#141414] hover:border-gray-500'
                   }`}
                 >
                   {/* Progress fill */}
                   <div
-                    className="absolute top-0 bottom-0 right-0 bg-[#E31E24]/20 transition-all duration-500"
+                    className="absolute top-0 bottom-0 right-0 bg-[#E8123D]/20 transition-all duration-500"
                     style={{ width: `${pct}%` }}
                   />
 
                   <span className="text-xs font-semibold text-white z-10 flex items-center gap-1.5">
-                    {isSelected && <Check className="w-3.5 h-3.5 text-[#E31E24]" />}
+                    {isSelected && <Check className="w-3.5 h-3.5 text-[#E8123D]" />}
                     {option.text}
                   </span>
                   <span className="text-xs font-bold text-gray-400 z-10 font-sans">{pct}%</span>
@@ -315,7 +315,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
       <div className="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-[#262626]/60">
         <div className="flex items-center gap-1">
           <span className="flex -space-x-1 space-x-reverse">
-            <span className="w-4 h-4 rounded-full bg-[#E31E24] text-[10px] flex items-center justify-center text-white">
+            <span className="w-4 h-4 rounded-full bg-[#E8123D] text-[10px] flex items-center justify-center text-white">
               ❤️
             </span>
             <span className="w-4 h-4 rounded-full bg-blue-500 text-[10px] flex items-center justify-center text-white">
@@ -340,7 +340,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           transition={{ type: 'spring', stiffness: 400, damping: 10 }}
           onClick={() => togglePostLike(post.id)}
           className={`py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors ${
-            post.isLiked ? 'text-[#E31E24] bg-[#E31E24]/10' : 'hover:bg-[#1a1a1a] hover:text-white'
+            post.isLiked ? 'text-[#E8123D] bg-[#E8123D]/10' : 'hover:bg-[#1a1a1a] hover:text-white'
           }`}
         >
           <Heart className={`w-4 h-4 ${post.isLiked ? 'fill-current' : ''}`} />
@@ -369,7 +369,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         <button
           onClick={() => togglePostBookmark(post.id)}
           className={`py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors ${
-            post.isBookmarked ? 'text-[#E31E24]' : 'hover:bg-[#1a1a1a] hover:text-white'
+            post.isBookmarked ? 'text-[#E8123D]' : 'hover:bg-[#1a1a1a] hover:text-white'
           }`}
         >
           <Bookmark className={`w-4 h-4 ${post.isBookmarked ? 'fill-current' : ''}`} />
@@ -393,11 +393,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                 value={commentInput}
                 onChange={e => setCommentInput(e.target.value)}
                 placeholder="اكتب تعليقك هنا..."
-                className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E31E24]"
+                className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E8123D]"
               />
               <button
                 type="submit"
-                className="p-2 bg-[#E31E24] hover:bg-[#c11319] text-white rounded-xl font-bold text-xs shrink-0"
+                className="p-2 bg-[#E8123D] hover:bg-[#b10e31] text-white rounded-xl font-bold text-xs shrink-0"
               >
                 <Send className="w-4 h-4" />
               </button>
@@ -420,7 +420,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                   <div className="flex items-center gap-3 pt-1 border-t border-[#1f1f1f]">
                     <button
                       onClick={() => setReplyingToId(replyingToId === comment.id ? null : comment.id)}
-                      className="text-[10px] font-bold text-gray-400 hover:text-[#E31E24] flex items-center gap-1 transition-colors"
+                      className="text-[10px] font-bold text-gray-400 hover:text-[#E8123D] flex items-center gap-1 transition-colors"
                     >
                       <Reply className="w-3 h-3" />
                       <span>رد</span>
@@ -435,11 +435,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                         value={replyInput}
                         onChange={e => setReplyInput(e.target.value)}
                         placeholder={`رد على ${comment.author.name}...`}
-                        className="flex-1 bg-[#141414] border border-[#262626] rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-[#E31E24]"
+                        className="flex-1 bg-[#141414] border border-[#262626] rounded-lg px-2.5 py-1 text-[11px] text-white focus:outline-none focus:border-[#E8123D]"
                       />
                       <button
                         type="submit"
-                        className="px-2.5 py-1 bg-[#E31E24] text-white rounded-lg text-[10px] font-bold"
+                        className="px-2.5 py-1 bg-[#E8123D] text-white rounded-lg text-[10px] font-bold"
                       >
                         إرسال
                       </button>
@@ -448,7 +448,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
                   {/* Nested replies if present */}
                   {comment.replies && comment.replies.length > 0 && (
-                    <div className="mr-4 pr-2 border-r-2 border-[#E31E24]/40 space-y-2 pt-1">
+                    <div className="mr-4 pr-2 border-r-2 border-[#E8123D]/40 space-y-2 pt-1">
                       {comment.replies.map(reply => (
                         <div key={reply.id} className="p-2 rounded-lg bg-[#141414] border border-[#262626] text-[11px]">
                           <div className="flex items-center justify-between mb-0.5">

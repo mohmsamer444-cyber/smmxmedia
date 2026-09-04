@@ -39,14 +39,14 @@ const PLATFORMS: PlatformConfig[] = [
     id: 'tiktok',
     name: 'تيك توك',
     icon: FaTiktok,
-    containerClass: 'bg-black border-2 border-[#E31E24] text-white red-glow',
+    containerClass: 'bg-black border-2 border-[#E8123D] text-white red-glow',
     positionClass: 'top-2 left-2 sm:left-6 w-11 h-11 sm:w-13 sm:h-13',
     bobClass: 'animate-bob-1',
     glowColor: 'rgba(227,30,36,0.8)',
     burstInterval: 2800,
     counterText: '+1.8K',
     particleTypes: ['user', 'heart'],
-    particleColors: ['text-red-500', 'text-pink-400', 'text-[#E31E24]', 'text-cyan-400'],
+    particleColors: ['text-red-500', 'text-pink-400', 'text-[#E8123D]', 'text-cyan-400'],
   },
   {
     id: 'youtube',
@@ -218,7 +218,7 @@ const SinglePlatformIcon: React.FC<{ platform: PlatformConfig }> = ({ platform }
             animate={{ opacity: [0, 1, 1, 0], scale: [0.6, 1.1, 1, 0.85], y: -28 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.8, ease: 'easeOut' }}
-            className="absolute -top-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none px-2 py-0.5 rounded-full bg-black/90 border border-[#E31E24]/60 text-[#E31E24] font-black text-[10px] tracking-wider font-mono shadow-[0_0_12px_rgba(227,30,36,0.6)] whitespace-nowrap"
+            className="absolute -top-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none px-2 py-0.5 rounded-full bg-black/90 border border-[#E8123D]/60 text-[#E8123D] font-black text-[10px] tracking-wider font-mono shadow-[0_0_12px_rgba(227,30,36,0.6)] whitespace-nowrap"
           >
             {platform.counterText}
           </motion.div>
@@ -267,7 +267,7 @@ export const PlatformIconCluster: React.FC = () => {
   return (
     <div className="relative w-64 h-52 sm:w-72 sm:h-56 shrink-0 flex items-center justify-center select-none">
       {/* Red Pedestal Ring Base with Glow Pulse */}
-      <div className="absolute bottom-2 w-48 h-12 rounded-full border-2 border-[#E31E24]/60 bg-[#E31E24]/10 blur-[1px] shadow-[0_0_20px_rgba(227,30,36,0.6)] transform rotate-x-60 animate-pulse-glow" />
+      <div className="absolute bottom-2 w-48 h-12 rounded-full border-2 border-[#E8123D]/60 bg-[#E8123D]/10 blur-[1px] shadow-[0_0_20px_rgba(227,30,36,0.6)] transform rotate-x-60 animate-pulse-glow" />
 
       {/* Render 7 Platform Icons with Particle Emanation */}
       {PLATFORMS.map(platform => (

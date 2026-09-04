@@ -81,7 +81,7 @@ export const OrderHistoryPage: React.FC = () => {
       <div className="bg-[#141414] border border-[#262626] rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xl">
         <div className="space-y-1">
           <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-            <ClipboardList className="w-6 h-6 text-[#E31E24]" />
+            <ClipboardList className="w-6 h-6 text-[#E8123D]" />
             سجل طلباتك ومتابعتها
           </h1>
           <p className="text-xs text-gray-400">
@@ -92,7 +92,7 @@ export const OrderHistoryPage: React.FC = () => {
         <div className="px-4 py-2 rounded-2xl bg-[#0A0A0A] border border-[#262626] flex items-center gap-2 text-xs">
           <ShieldCheck className="w-4 h-4 text-green-400" />
           <span className="text-gray-300 font-bold">إجمالي الطلبات:</span>
-          <span className="font-black text-[#E31E24] font-sans">{orders.length}</span>
+          <span className="font-black text-[#E8123D] font-sans">{orders.length}</span>
         </div>
       </div>
 
@@ -104,7 +104,7 @@ export const OrderHistoryPage: React.FC = () => {
             onClick={() => setStatusFilter('all')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
               statusFilter === 'all'
-                ? 'bg-[#E31E24] text-white shadow-md'
+                ? 'bg-[#E8123D] text-white shadow-md'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -115,7 +115,7 @@ export const OrderHistoryPage: React.FC = () => {
             onClick={() => setStatusFilter('in_progress')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
               statusFilter === 'in_progress'
-                ? 'bg-[#E31E24] text-white shadow-md'
+                ? 'bg-[#E8123D] text-white shadow-md'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -126,7 +126,7 @@ export const OrderHistoryPage: React.FC = () => {
             onClick={() => setStatusFilter('completed')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
               statusFilter === 'completed'
-                ? 'bg-[#E31E24] text-white shadow-md'
+                ? 'bg-[#E8123D] text-white shadow-md'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -141,7 +141,7 @@ export const OrderHistoryPage: React.FC = () => {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="ابحث برقم الطلب أو الخدمة..."
-            className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl pl-3 pr-8 py-2 text-xs text-white focus:outline-none focus:border-[#E31E24]"
+            className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl pl-3 pr-8 py-2 text-xs text-white focus:outline-none focus:border-[#E8123D]"
           />
           <Search className="w-3.5 h-3.5 text-gray-500 absolute right-2.5 top-1/2 -translate-y-1/2" />
         </div>
@@ -176,7 +176,7 @@ export const OrderHistoryPage: React.FC = () => {
                     <td className="p-3.5 font-bold text-white font-sans dir-ltr text-right">
                       <button
                         onClick={() => copyToClipboard(String(order.id), 'رقم الطلب')}
-                        className="inline-flex items-center gap-1 hover:text-[#E31E24]"
+                        className="inline-flex items-center gap-1 hover:text-[#E8123D]"
                       >
                         #{order.id}
                         <Copy className="w-3 h-3 text-gray-500" />
@@ -194,7 +194,7 @@ export const OrderHistoryPage: React.FC = () => {
                         href={order.link}
                         target="_blank"
                         rel="noreferrer"
-                        className="hover:text-[#E31E24] inline-flex items-center gap-1"
+                        className="hover:text-[#E8123D] inline-flex items-center gap-1"
                       >
                         {order.link}
                         <ExternalLink className="w-3 h-3 text-gray-500" />
@@ -207,7 +207,7 @@ export const OrderHistoryPage: React.FC = () => {
                     </td>
 
                     {/* Cost */}
-                    <td className="p-3.5 font-black text-[#E31E24] font-sans">
+                    <td className="p-3.5 font-black text-[#E8123D] font-sans">
                       {formatPrice(order.priceUSD)}
                     </td>
 
@@ -228,7 +228,7 @@ export const OrderHistoryPage: React.FC = () => {
                             showToast(`تم تجهيز إعادة الطلب للخدمة #${order.serviceId}`, 'info');
                           }
                         }}
-                        className="px-2.5 py-1 rounded-lg bg-[#262626] hover:bg-[#E31E24] text-gray-300 hover:text-white font-bold text-[11px] transition-all inline-flex items-center gap-1"
+                        className="px-2.5 py-1 rounded-lg bg-[#262626] hover:bg-[#E8123D] text-gray-300 hover:text-white font-bold text-[11px] transition-all inline-flex items-center gap-1"
                       >
                         <RefreshCw className="w-3 h-3" />
                         إعادة الطلب

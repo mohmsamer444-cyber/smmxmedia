@@ -58,7 +58,7 @@ export const OrderModal: React.FC = () => {
           {/* Modal Header */}
           <div className="p-4 border-b border-[#262626] flex items-center justify-between bg-[#1a1a1a]">
             <h3 className="font-bold text-sm text-white flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4 text-[#E31E24]" />
+              <ShoppingBag className="w-4 h-4 text-[#E8123D]" />
               طلب خدمة جديد
             </h3>
             <button
@@ -72,21 +72,21 @@ export const OrderModal: React.FC = () => {
           <form onSubmit={handleSubmit} className="p-4 space-y-4">
             {/* Service Box Summary */}
             <div className="p-3.5 bg-[#0A0A0A] border border-[#262626] rounded-xl space-y-1">
-              <div className="text-[11px] text-[#E31E24] font-bold">
+              <div className="text-[11px] text-[#E8123D] font-bold">
                 الخدمة المختارة (ID: {selectedServiceForOrder.id})
               </div>
               <h4 className="text-xs font-bold text-white leading-relaxed">
                 {selectedServiceForOrder.name}
               </h4>
               <p className="text-[11px] text-gray-400 mt-1">
-                السعر لكل 1000: <span className="text-[#E31E24] font-bold">{formatPrice(selectedServiceForOrder.rate)}</span> | الحد الأقل: {selectedServiceForOrder.min} - الأقصى: {selectedServiceForOrder.max.toLocaleString()}
+                السعر لكل 1000: <span className="text-[#E8123D] font-bold">{formatPrice(selectedServiceForOrder.rate)}</span> | الحد الأقل: {selectedServiceForOrder.min} - الأقصى: {selectedServiceForOrder.max.toLocaleString()}
               </p>
             </div>
 
             {/* Target Link Input */}
             <div>
               <label className="text-xs font-bold text-white block mb-1.5 flex items-center gap-1.5">
-                <LinkIcon className="w-3.5 h-3.5 text-[#E31E24]" />
+                <LinkIcon className="w-3.5 h-3.5 text-[#E8123D]" />
                 رابط الحساب / المنشور المستهدف
               </label>
               <input
@@ -95,7 +95,7 @@ export const OrderModal: React.FC = () => {
                 value={link}
                 onChange={e => setLink(e.target.value)}
                 placeholder="https://tiktok.com/@username أو https://instagram.com/p/..."
-                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E31E24] dir-ltr text-left"
+                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E8123D] dir-ltr text-left"
               />
             </div>
 
@@ -103,7 +103,7 @@ export const OrderModal: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-xs font-bold text-white flex items-center gap-1.5">
-                  <Hash className="w-3.5 h-3.5 text-[#E31E24]" />
+                  <Hash className="w-3.5 h-3.5 text-[#E8123D]" />
                   الكمية المطلوبة
                 </label>
                 <span className="text-[10px] text-gray-400">
@@ -117,7 +117,7 @@ export const OrderModal: React.FC = () => {
                 max={maxQty}
                 value={quantity}
                 onChange={e => setQuantity(Number(e.target.value))}
-                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#E31E24] font-sans"
+                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#E8123D] font-sans"
               />
             </div>
 
@@ -130,7 +130,7 @@ export const OrderModal: React.FC = () => {
                 </span>
               </div>
               <div className="text-right">
-                <span className="text-lg font-black text-[#E31E24] block">
+                <span className="text-lg font-black text-[#E8123D] block">
                   {formatPrice(priceUSD)}
                 </span>
                 <span className="text-[10px] text-gray-400">
@@ -152,7 +152,7 @@ export const OrderModal: React.FC = () => {
                     closeOrderModal();
                     openDepositModal();
                   }}
-                  className="px-2.5 py-1 rounded-lg bg-[#E31E24] text-white font-bold text-[11px] shrink-0"
+                  className="px-2.5 py-1 rounded-lg bg-[#E8123D] text-white font-bold text-[11px] shrink-0"
                 >
                   إيداع رصيد
                 </button>
@@ -165,7 +165,7 @@ export const OrderModal: React.FC = () => {
               disabled={isSubmitting || !isBalanceSufficient}
               className={`w-full py-3 rounded-xl font-bold text-sm text-white shadow-lg transition-all flex items-center justify-center gap-2 ${
                 isBalanceSufficient && !isSubmitting
-                  ? 'bg-[#E31E24] hover:bg-[#c11319] red-glow'
+                  ? 'bg-[#E8123D] hover:bg-[#b10e31] red-glow'
                   : 'bg-gray-700 cursor-not-allowed opacity-60'
               }`}
             >

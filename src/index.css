@@ -5,10 +5,10 @@
     --bg-dark: #0A0A0A;
     --card-dark: #121212;
     --border-dark: #222222;
-    --primary-red: #E31E24;
+    --primary-red: #E8123D;
     --accent-gold-glow: #FFB432;
-    --color-primary: #E31E24;
-    --color-primary-hover: #C11319;
+    --color-primary: #E8123D;
+    --color-primary-hover: #B10E31;
   }
 
   html, body {
@@ -19,6 +19,16 @@
     padding: 0;
     position: relative;
     touch-action: manipulation;
+    scroll-behavior: smooth;
+  }
+
+  /* Smoother, more premium feel across all interactive elements */
+  button, a, .hover-red-glow {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  button:active {
+    transform: scale(0.97);
   }
 
   #root {
@@ -73,11 +83,11 @@
 }
 
 .red-glow {
-  box-shadow: 0 0 15px rgba(227, 30, 36, 0.25);
+  box-shadow: 0 0 15px rgba(232, 18, 61, 0.25);
 }
 
 .red-glow-lg {
-  box-shadow: 0 0 30px rgba(227, 30, 36, 0.4);
+  box-shadow: 0 0 30px rgba(232, 18, 61, 0.4);
 }
 
 .hover-red-glow {
@@ -85,8 +95,8 @@
 }
 
 .hover-red-glow:hover {
-  box-shadow: 0 4px 20px rgba(227, 30, 36, 0.3);
-  border-color: rgba(227, 30, 36, 0.5) !important;
+  box-shadow: 0 4px 20px rgba(232, 18, 61, 0.3);
+  border-color: rgba(232, 18, 61, 0.5) !important;
   transform: translateY(-2px);
 }
 
@@ -106,7 +116,7 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #E31E24;
+  background: #E8123D;
 }
 
 /* Hide scrollbar for clean horizontal scroll */

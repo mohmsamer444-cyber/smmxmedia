@@ -10,7 +10,7 @@ export const GroupsTab: React.FC = () => {
       <div className="flex items-center justify-between bg-[#141414] border border-[#262626] p-4 rounded-2xl">
         <div>
           <h3 className="font-bold text-sm text-white flex items-center gap-2">
-            <Users className="w-5 h-5 text-[#E31E24]" />
+            <Users className="w-5 h-5 text-[#E8123D]" />
             المجموعات والمنتدى العربي
           </h3>
           <p className="text-xs text-gray-400 mt-1">
@@ -19,7 +19,7 @@ export const GroupsTab: React.FC = () => {
         </div>
         <button
           onClick={() => showToast('تم إرسال طلب إنشاء مجموعة جديدة للإدارة', 'info')}
-          className="px-3.5 py-2 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs flex items-center gap-1.5 shadow-lg red-glow"
+          className="px-3.5 py-2 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs flex items-center gap-1.5 shadow-lg red-glow"
         >
           <Plus className="w-4 h-4" />
           إنشاء مجموعة
@@ -36,7 +36,7 @@ export const GroupsTab: React.FC = () => {
               <img
                 src={group.avatar}
                 alt={group.name}
-                className="w-12 h-12 rounded-2xl object-cover border-2 border-[#E31E24] shrink-0"
+                className="w-12 h-12 rounded-2xl object-cover border-2 border-[#E8123D] shrink-0"
               />
               <div className="overflow-hidden">
                 <div className="flex items-center gap-2">
@@ -54,7 +54,7 @@ export const GroupsTab: React.FC = () => {
               <span className="text-gray-400 font-sans">{group.membersCount.toLocaleString()} أعضاء نشطين</span>
               <button
                 onClick={() => showToast(`تم تقديم طلب الانضمام إلى ${group.name}`, 'success')}
-                className="px-3 py-1.5 rounded-xl bg-[#1f1f1f] hover:bg-[#E31E24] hover:text-white text-gray-200 font-bold transition-all flex items-center gap-1"
+                className="px-3 py-1.5 rounded-xl bg-[#1f1f1f] hover:bg-[#E8123D] hover:text-white text-gray-200 font-bold transition-all flex items-center gap-1"
               >
                 <MessageSquare className="w-3.5 h-3.5" />
                 دخول المجموعة

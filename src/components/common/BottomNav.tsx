@@ -38,12 +38,12 @@ export const BottomNav: React.FC = () => {
           }}
           className={`flex flex-col items-center justify-center flex-1 h-full relative transition-colors ${
             isHomeActive
-              ? 'text-[#E31E24] font-bold'
+              ? 'text-[#E8123D] font-bold'
               : 'text-gray-400 hover:text-gray-200'
           }`}
         >
           {isHomeActive && (
-            <span className="absolute top-0 w-8 h-0.5 bg-[#E31E24] rounded-full red-glow" />
+            <span className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" />
           )}
           <Home className={`w-5 h-5 mb-0.5 ${isHomeActive ? 'stroke-[2.5]' : ''}`} />
           <span className="text-[10px] sm:text-[11px]">الرئيسية</span>
@@ -54,12 +54,12 @@ export const BottomNav: React.FC = () => {
           onClick={() => setActiveTab('services')}
           className={`flex flex-col items-center justify-center flex-1 h-full relative transition-colors ${
             isServicesActive
-              ? 'text-[#E31E24] font-bold'
+              ? 'text-[#E8123D] font-bold'
               : 'text-gray-400 hover:text-gray-200'
           }`}
         >
           {isServicesActive && (
-            <span className="absolute top-0 w-8 h-0.5 bg-[#E31E24] rounded-full red-glow" />
+            <span className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" />
           )}
           <Layers className={`w-5 h-5 mb-0.5 ${isServicesActive ? 'stroke-[2.5]' : ''}`} />
           <span className="text-[10px] sm:text-[11px]">الخدمات</span>
@@ -69,7 +69,7 @@ export const BottomNav: React.FC = () => {
         <div className="relative -top-5 flex items-center justify-center z-10 px-1">
           <button
             onClick={openQuickActionModal}
-            className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#C11319] to-[#E31E24] text-white flex items-center justify-center shadow-lg red-glow active:scale-95 hover:scale-105 transition-all border-4 border-[#0A0A0A]"
+            className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#B10E31] to-[#E8123D] text-white flex items-center justify-center shadow-lg red-glow active:scale-95 hover:scale-105 transition-all border-4 border-[#0A0A0A]"
             title="إضافة منشور / طلب جديد"
           >
             <Plus className="w-7 h-7 stroke-[3]" />
@@ -84,17 +84,17 @@ export const BottomNav: React.FC = () => {
           }}
           className={`flex flex-col items-center justify-center flex-1 h-full relative transition-colors ${
             isMessagesActive
-              ? 'text-[#E31E24] font-bold'
+              ? 'text-[#E8123D] font-bold'
               : 'text-gray-400 hover:text-gray-200'
           }`}
         >
           {isMessagesActive && (
-            <span className="absolute top-0 w-8 h-0.5 bg-[#E31E24] rounded-full red-glow" />
+            <span className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" />
           )}
           <div className="relative">
             <MessageSquare className={`w-5 h-5 mb-0.5 ${isMessagesActive ? 'stroke-[2.5]' : ''}`} />
             {unreadMessagesCount > 0 && (
-              <span className="absolute -top-1.5 -right-2 bg-[#E31E24] text-white text-[9px] font-black px-1.5 py-0.2 rounded-full min-w-4 text-center border border-[#0A0A0A]">
+              <span className="absolute -top-1.5 -right-2 bg-[#E8123D] text-white text-[9px] font-black px-1.5 py-0.2 rounded-full min-w-4 text-center border border-[#0A0A0A]">
                 {unreadMessagesCount}
               </span>
             )}
@@ -107,12 +107,12 @@ export const BottomNav: React.FC = () => {
           onClick={() => setActiveTab('games')}
           className={`flex flex-col items-center justify-center flex-1 h-full relative transition-colors ${
             isGamesActive
-              ? 'text-[#E31E24] font-bold'
+              ? 'text-[#E8123D] font-bold'
               : 'text-gray-400 hover:text-gray-200'
           }`}
         >
           {isGamesActive && (
-            <span className="absolute top-0 w-8 h-0.5 bg-[#E31E24] rounded-full red-glow" />
+            <span className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" />
           )}
           <Gamepad2 className={`w-5 h-5 mb-0.5 ${isGamesActive ? 'stroke-[2.5]' : ''}`} />
           <span className="text-[10px] sm:text-[11px]">الألعاب</span>

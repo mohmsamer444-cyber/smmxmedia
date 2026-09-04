@@ -32,7 +32,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
     <div dir="rtl" className="min-h-screen w-full bg-[#0A0A0A] text-white flex items-center justify-center px-4">
       <div className="w-full max-w-sm bg-[#141414] border border-[#262626] rounded-2xl p-6 sm:p-8 shadow-2xl">
         <div className="text-center mb-6">
-          <h1 className="text-xl font-extrabold text-[#E31E24]">لوحة تحكم الإدارة</h1>
+          <h1 className="text-xl font-extrabold text-[#E8123D]">لوحة تحكم الإدارة</h1>
           <p className="text-xs text-gray-500 mt-1">دخول مخصص للمشرفين فقط</p>
         </div>
 
@@ -45,7 +45,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               required
-              className="w-full bg-[#0A0A0A] border border-[#262626] focus:border-[#E31E24] rounded-xl py-3 pr-10 pl-3 text-sm outline-none transition-colors"
+              className="w-full bg-[#0A0A0A] border border-[#262626] focus:border-[#E8123D] rounded-xl py-3 pr-10 pl-3 text-sm outline-none transition-colors"
             />
           </div>
 
@@ -57,7 +57,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full bg-[#0A0A0A] border border-[#262626] focus:border-[#E31E24] rounded-xl py-3 pr-10 pl-3 text-sm outline-none transition-colors"
+              className="w-full bg-[#0A0A0A] border border-[#262626] focus:border-[#E8123D] rounded-xl py-3 pr-10 pl-3 text-sm outline-none transition-colors"
             />
           </div>
 
@@ -70,7 +70,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onSuccess }) => {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3 rounded-xl bg-[#E31E24] hover:bg-[#c81920] disabled:opacity-60 font-bold text-sm flex items-center justify-center gap-2 transition-colors"
+            className="w-full py-3 rounded-xl bg-[#E8123D] hover:bg-[#c81920] disabled:opacity-60 font-bold text-sm flex items-center justify-center gap-2 transition-colors"
           >
             {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
             دخول

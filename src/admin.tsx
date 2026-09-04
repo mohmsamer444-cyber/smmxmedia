@@ -11,7 +11,7 @@ function AdminApp() {
   if (loading) {
     return (
       <div className="min-h-screen w-full bg-[#0A0A0A] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#E31E24] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#E8123D] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }

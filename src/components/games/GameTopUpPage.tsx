@@ -1,7 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { Footer } from '../common/Footer';
-import { GAME_PACKAGES } from '../../data/mockData';
 import { GamePackage } from '../../types';
 import {
   Gamepad2,
@@ -38,13 +37,14 @@ export const GameTopUpPage: React.FC = () => {
     setActiveTab,
     user,
     formatPrice,
+    gamePackages,
   } = useApp();
 
-  const pubgPackages = GAME_PACKAGES.filter(p => p.game === 'pubg');
-  const freeFirePackages = GAME_PACKAGES.filter(p => p.game === 'freefire');
-  const eFootballPackages = GAME_PACKAGES.filter(p => p.game === 'efootball');
-  const tiktokPackages = GAME_PACKAGES.filter(p => p.game === 'tiktok');
-  const aiPackages = GAME_PACKAGES.filter(p => p.game === 'ai');
+  const pubgPackages = gamePackages.filter(p => p.game === 'pubg');
+  const freeFirePackages = gamePackages.filter(p => p.game === 'freefire');
+  const eFootballPackages = gamePackages.filter(p => p.game === 'efootball');
+  const tiktokPackages = gamePackages.filter(p => p.game === 'tiktok');
+  const aiPackages = gamePackages.filter(p => p.game === 'ai');
 
   // Array of 16 ember particles for random particle positioning & timing
   const emberParticles = [
@@ -83,7 +83,7 @@ export const GameTopUpPage: React.FC = () => {
         </div>
 
         {/* Ambient Red Glow Pulse (Stage Lighting) */}
-        <div className="absolute -bottom-20 right-1/4 w-96 h-96 bg-[#E31E24]/25 blur-[100px] rounded-full pointer-events-none animate-pulse-glow z-0" />
+        <div className="absolute -bottom-20 right-1/4 w-96 h-96 bg-[#E8123D]/25 blur-[100px] rounded-full pointer-events-none animate-pulse-glow z-0" />
 
         {/* Light Sweep Shine Overlay */}
         <div className="absolute inset-0 pointer-events-none z-10 w-1/2 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-light-sweep" />
@@ -93,7 +93,7 @@ export const GameTopUpPage: React.FC = () => {
           {emberParticles.map((pt, idx) => (
             <div
               key={idx}
-              className="absolute w-1.5 h-1.5 bg-gradient-to-t from-amber-500 to-[#E31E24] rounded-full blur-[0.5px] animate-ember"
+              className="absolute w-1.5 h-1.5 bg-gradient-to-t from-amber-500 to-[#E8123D] rounded-full blur-[0.5px] animate-ember"
               style={{
                 left: pt.left,
                 bottom: '-10px',
@@ -118,7 +118,7 @@ export const GameTopUpPage: React.FC = () => {
 
             {/* Trust Badges Row */}
             <div className="flex flex-wrap items-center gap-3 text-xs font-bold pt-2">
-              <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#E31E24]/15 text-[#E31E24] border border-[#E31E24]/40 shadow-sm backdrop-blur-sm">
+              <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#E8123D]/15 text-[#E8123D] border border-[#E8123D]/40 shadow-sm backdrop-blur-sm">
                 ⚡ تسليم فوري
               </span>
               <span className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-green-500/15 text-green-400 border border-green-500/40 shadow-sm backdrop-blur-sm">
@@ -137,7 +137,7 @@ export const GameTopUpPage: React.FC = () => {
               onClick={() => setGameFilter('pubg')}
               className={`relative w-28 sm:w-32 lg:w-36 h-40 sm:h-48 rounded-2xl overflow-hidden border-2 cursor-pointer transition-all duration-500 transform ${
                 gameFilter === 'pubg'
-                  ? 'border-[#E31E24] scale-110 z-30 opacity-100 shadow-[0_0_25px_rgba(227,30,36,0.7)] animate-bob-1'
+                  ? 'border-[#E8123D] scale-110 z-30 opacity-100 shadow-[0_0_25px_rgba(227,30,36,0.7)] animate-bob-1'
                   : 'border-[#333] scale-95 z-10 opacity-60 grayscale-[25%] hover:opacity-90 hover:scale-100'
               }`}
             >
@@ -153,7 +153,7 @@ export const GameTopUpPage: React.FC = () => {
                 <span className="font-black text-xs text-white block uppercase tracking-wider drop-shadow-md">
                   PUBG
                 </span>
-                <span className="text-[9px] text-[#E31E24] font-bold block">MOBILE</span>
+                <span className="text-[9px] text-[#E8123D] font-bold block">MOBILE</span>
               </div>
             </div>
 
@@ -216,7 +216,7 @@ export const GameTopUpPage: React.FC = () => {
           onClick={() => setGameFilter('pubg')}
           className={`py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
             gameFilter === 'pubg'
-              ? 'bg-[#E31E24] text-white shadow-lg red-glow'
+              ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
           }`}
         >
@@ -228,7 +228,7 @@ export const GameTopUpPage: React.FC = () => {
           onClick={() => setGameFilter('freefire')}
           className={`py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
             gameFilter === 'freefire'
-              ? 'bg-[#E31E24] text-white shadow-lg red-glow'
+              ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
           }`}
         >
@@ -240,7 +240,7 @@ export const GameTopUpPage: React.FC = () => {
           onClick={() => setGameFilter('efootball')}
           className={`py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
             gameFilter === 'efootball'
-              ? 'bg-[#E31E24] text-white shadow-lg red-glow'
+              ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
           }`}
         >
@@ -252,7 +252,7 @@ export const GameTopUpPage: React.FC = () => {
           onClick={() => setGameFilter('tiktok')}
           className={`py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
             gameFilter === 'tiktok'
-              ? 'bg-[#E31E24] text-white shadow-lg red-glow'
+              ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
           }`}
         >
@@ -264,7 +264,7 @@ export const GameTopUpPage: React.FC = () => {
           onClick={() => setGameFilter('ai')}
           className={`py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
             gameFilter === 'ai'
-              ? 'bg-[#E31E24] text-white shadow-lg red-glow'
+              ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
           }`}
         >
@@ -278,19 +278,19 @@ export const GameTopUpPage: React.FC = () => {
         {/* Balance Card */}
         <div className="p-4 bg-[#141414] border border-[#262626] rounded-2xl flex items-center justify-between shadow-xl">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-[#E31E24]/10 text-[#E31E24]">
+            <div className="p-2.5 rounded-xl bg-[#E8123D]/10 text-[#E8123D]">
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
               <span className="text-[10px] text-gray-400 font-bold block">رصيد حسابك الحالي</span>
-              <span className="text-base font-black text-[#E31E24]">
+              <span className="text-base font-black text-[#E8123D]">
                 {formatPrice(user.balanceUSD)}
               </span>
             </div>
           </div>
           <button
             onClick={openDepositModal}
-            className="p-2 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs flex items-center gap-1 shadow-md red-glow"
+            className="p-2 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs flex items-center gap-1 shadow-md red-glow"
           >
             <PlusCircle className="w-4 h-4" />
           </button>
@@ -310,10 +310,10 @@ export const GameTopUpPage: React.FC = () => {
         {/* Order History CTA Button */}
         <button
           onClick={() => setActiveTab('orders')}
-          className="p-4 bg-[#141414] border border-[#262626] hover:border-[#E31E24] rounded-2xl flex items-center justify-between shadow-xl transition-colors group"
+          className="p-4 bg-[#141414] border border-[#262626] hover:border-[#E8123D] rounded-2xl flex items-center justify-between shadow-xl transition-colors group"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-400 group-hover:bg-[#E31E24] group-hover:text-white transition-colors">
+            <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-400 group-hover:bg-[#E8123D] group-hover:text-white transition-colors">
               <ClipboardList className="w-5 h-5" />
             </div>
             <span className="font-bold text-xs text-white">سجل الطلبات</span>
@@ -329,7 +329,7 @@ export const GameTopUpPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="font-extrabold text-base text-white flex items-center gap-2">
-              <Flame className="w-5 h-5 text-[#E31E24]" />
+              <Flame className="w-5 h-5 text-[#E8123D]" />
               شحن شدات ببجي موبايل (PUBG Mobile UC)
             </h3>
           </div>
@@ -341,7 +341,7 @@ export const GameTopUpPage: React.FC = () => {
                 className="relative bg-[#141414] border border-[#262626] hover-red-glow rounded-2xl p-4 text-center space-y-3 flex flex-col justify-between shadow-xl group"
               >
                 {pkg.discountBadge && (
-                  <span className="absolute top-2 right-2 bg-[#E31E24] text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md">
+                  <span className="absolute top-2 right-2 bg-[#E8123D] text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md">
                     {pkg.discountBadge}
                   </span>
                 )}
@@ -354,14 +354,14 @@ export const GameTopUpPage: React.FC = () => {
                   {/* UC Icon vector graphic */}
                   <PubgUcGraphic amount={pkg.amount} size={52} className="mx-auto my-1" />
 
-                  <span className="text-sm font-black text-[#E31E24] block font-sans">
+                  <span className="text-sm font-black text-[#E8123D] block font-sans">
                     {formatPrice(pkg.priceUSD)}
                   </span>
                 </div>
 
                 <button
                   onClick={() => openGameModal(pkg)}
-                  className="w-full py-2 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center justify-center gap-1"
+                  className="w-full py-2 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center justify-center gap-1"
                 >
                   <ShoppingCart className="w-3.5 h-3.5" />
                   شحن الآن
@@ -389,7 +389,7 @@ export const GameTopUpPage: React.FC = () => {
                 className="relative bg-[#141414] border border-[#262626] hover-red-glow rounded-2xl p-4 text-center space-y-3 flex flex-col justify-between shadow-xl group"
               >
                 {pkg.discountBadge && (
-                  <span className="absolute top-2 right-2 bg-[#E31E24] text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md">
+                  <span className="absolute top-2 right-2 bg-[#E8123D] text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md">
                     {pkg.discountBadge}
                   </span>
                 )}
@@ -400,14 +400,14 @@ export const GameTopUpPage: React.FC = () => {
                   {/* Diamond Icon vector graphic */}
                   <FreeFireDiamondGraphic amount={pkg.amount} size={52} className="mx-auto my-1" />
 
-                  <span className="text-sm font-black text-[#E31E24] block font-sans">
+                  <span className="text-sm font-black text-[#E8123D] block font-sans">
                     {formatPrice(pkg.priceUSD)}
                   </span>
                 </div>
 
                 <button
                   onClick={() => openGameModal(pkg)}
-                  className="w-full py-2 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center justify-center gap-1"
+                  className="w-full py-2 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center justify-center gap-1"
                 >
                   <ShoppingCart className="w-3.5 h-3.5" />
                   شحن الآن
@@ -435,7 +435,7 @@ export const GameTopUpPage: React.FC = () => {
                 className="relative bg-[#141414] border border-[#262626] hover-red-glow rounded-2xl p-4 text-center space-y-3 flex flex-col justify-between shadow-xl group"
               >
                 {pkg.discountBadge && (
-                  <span className="absolute top-2 right-2 bg-[#E31E24] text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md">
+                  <span className="absolute top-2 right-2 bg-[#E8123D] text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md">
                     {pkg.discountBadge}
                   </span>
                 )}
@@ -446,14 +446,14 @@ export const GameTopUpPage: React.FC = () => {
                   {/* Coin Icon vector graphic */}
                   <EfootballCoinGraphic amount={pkg.amount} size={52} className="mx-auto my-1" />
 
-                  <span className="text-sm font-black text-[#E31E24] block font-sans">
+                  <span className="text-sm font-black text-[#E8123D] block font-sans">
                     {formatPrice(pkg.priceUSD)}
                   </span>
                 </div>
 
                 <button
                   onClick={() => openGameModal(pkg)}
-                  className="w-full py-2 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center justify-center gap-1"
+                  className="w-full py-2 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center justify-center gap-1"
                 >
                   <ShoppingCart className="w-3.5 h-3.5" />
                   شحن الآن
@@ -489,14 +489,14 @@ export const GameTopUpPage: React.FC = () => {
                     <Music2 className="w-6 h-6 text-white" />
                   </div>
 
-                  <span className="text-sm font-black text-[#E31E24] block font-sans">
+                  <span className="text-sm font-black text-[#E8123D] block font-sans">
                     {formatPrice(pkg.priceUSD)}
                   </span>
                 </div>
 
                 <button
                   onClick={() => openGameModal(pkg)}
-                  className="w-full py-2 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center justify-center gap-1"
+                  className="w-full py-2 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center justify-center gap-1"
                 >
                   <ShoppingCart className="w-3.5 h-3.5" />
                   شحن الآن
@@ -533,14 +533,14 @@ export const GameTopUpPage: React.FC = () => {
                   </div>
 
                   <span className="text-[11px] text-gray-400 block">اشتراك شهري</span>
-                  <span className="text-sm font-black text-[#E31E24] block font-sans">
+                  <span className="text-sm font-black text-[#E8123D] block font-sans">
                     {formatPrice(pkg.priceUSD)}
                   </span>
                 </div>
 
                 <button
                   onClick={() => openGameModal(pkg)}
-                  className="w-full py-2 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center justify-center gap-1"
+                  className="w-full py-2 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs shadow-md red-glow transition-all flex items-center justify-center gap-1"
                 >
                   <ShoppingCart className="w-3.5 h-3.5" />
                   اشترك الآن

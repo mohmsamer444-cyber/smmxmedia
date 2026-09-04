@@ -52,7 +52,7 @@ export const LoginPage: React.FC = () => {
     >
       <div className="w-full max-w-sm bg-[#141414] border border-[#262626] rounded-2xl p-6 sm:p-8 shadow-2xl">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-extrabold text-[#E31E24]">عالم الشرق الأوسط</h1>
+          <h1 className="text-2xl font-extrabold text-[#E8123D]">عالم الشرق الأوسط</h1>
           <p className="text-sm text-gray-400 mt-1">
             {mode === 'login' ? 'سجّل دخولك للمتابعة' : 'أنشئ حسابك الجديد'}
           </p>
@@ -68,7 +68,7 @@ export const LoginPage: React.FC = () => {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
-                className="w-full bg-[#0A0A0A] border border-[#262626] focus:border-[#E31E24] rounded-xl py-3 pr-10 pl-3 text-sm outline-none transition-colors"
+                className="w-full bg-[#0A0A0A] border border-[#262626] focus:border-[#E8123D] rounded-xl py-3 pr-10 pl-3 text-sm outline-none transition-colors"
               />
             </div>
           )}
@@ -81,7 +81,7 @@ export const LoginPage: React.FC = () => {
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               required
-              className="w-full bg-[#0A0A0A] border border-[#262626] focus:border-[#E31E24] rounded-xl py-3 pr-10 pl-3 text-sm outline-none transition-colors"
+              className="w-full bg-[#0A0A0A] border border-[#262626] focus:border-[#E8123D] rounded-xl py-3 pr-10 pl-3 text-sm outline-none transition-colors"
             />
           </div>
 
@@ -94,7 +94,7 @@ export const LoginPage: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full bg-[#0A0A0A] border border-[#262626] focus:border-[#E31E24] rounded-xl py-3 pr-10 pl-3 text-sm outline-none transition-colors"
+              className="w-full bg-[#0A0A0A] border border-[#262626] focus:border-[#E8123D] rounded-xl py-3 pr-10 pl-3 text-sm outline-none transition-colors"
             />
           </div>
 
@@ -108,7 +108,7 @@ export const LoginPage: React.FC = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full bg-[#0A0A0A] border border-[#262626] focus:border-[#E31E24] rounded-xl py-3 pr-10 pl-3 text-sm outline-none transition-colors"
+                className="w-full bg-[#0A0A0A] border border-[#262626] focus:border-[#E8123D] rounded-xl py-3 pr-10 pl-3 text-sm outline-none transition-colors"
               />
             </div>
           )}
@@ -127,7 +127,7 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3 rounded-xl bg-[#E31E24] hover:bg-[#c81920] disabled:opacity-60 font-bold text-sm flex items-center justify-center gap-2 transition-colors"
+            className="w-full py-3 rounded-xl bg-[#E8123D] hover:bg-[#c81920] disabled:opacity-60 font-bold text-sm flex items-center justify-center gap-2 transition-colors"
           >
             {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
             {mode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب'}
@@ -144,7 +144,7 @@ export const LoginPage: React.FC = () => {
                   setError(null);
                   setInfo(null);
                 }}
-                className="text-[#E31E24] font-bold"
+                className="text-[#E8123D] font-bold"
               >
                 سجّل دلوقتي
               </button>
@@ -158,7 +158,7 @@ export const LoginPage: React.FC = () => {
                   setError(null);
                   setInfo(null);
                 }}
-                className="text-[#E31E24] font-bold"
+                className="text-[#E8123D] font-bold"
               >
                 تسجيل الدخول
               </button>

@@ -60,12 +60,12 @@ export const RightSidebar: React.FC = () => {
       <div className="bg-[#141414] border border-[#262626] rounded-2xl p-4 space-y-3 shadow-xl">
         <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
           <h3 className="font-bold text-xs text-white flex items-center gap-2">
-            <MessageSquare className="w-4 h-4 text-[#E31E24]" />
+            <MessageSquare className="w-4 h-4 text-[#E8123D]" />
             المحادثات الأخيرة
           </h3>
           <button
             onClick={() => setFeedSubTab('chats')}
-            className="text-[11px] text-[#E31E24] hover:underline font-bold"
+            className="text-[11px] text-[#E8123D] hover:underline font-bold"
           >
             عرض الكل
           </button>
@@ -79,21 +79,21 @@ export const RightSidebar: React.FC = () => {
                 setActiveChatId(chat.id);
                 setFeedSubTab('chats');
               }}
-              className="w-full p-2 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#E31E24]/50 transition-all flex items-center justify-between text-right group"
+              className="w-full p-2 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#E8123D]/50 transition-all flex items-center justify-between text-right group"
             >
               <div className="flex items-center gap-2.5 overflow-hidden">
                 <div className="relative shrink-0">
                   <img
                     src={chat.user.avatar}
                     alt={chat.user.name}
-                    className="w-9 h-9 rounded-full object-cover border border-[#E31E24]"
+                    className="w-9 h-9 rounded-full object-cover border border-[#E8123D]"
                   />
                   {chat.user.isOnline && (
                     <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-[#0A0A0A]" />
                   )}
                 </div>
                 <div className="overflow-hidden">
-                  <div className="font-bold text-xs text-white group-hover:text-[#E31E24] truncate">
+                  <div className="font-bold text-xs text-white group-hover:text-[#E8123D] truncate">
                     {chat.user.name}
                   </div>
                   <div className="text-[11px] text-gray-400 truncate">{chat.lastMessage}</div>
@@ -101,7 +101,7 @@ export const RightSidebar: React.FC = () => {
               </div>
 
               {chat.unreadCount > 0 && (
-                <span className="px-1.5 py-0.5 bg-[#E31E24] text-white text-[10px] font-bold rounded-full shrink-0">
+                <span className="px-1.5 py-0.5 bg-[#E8123D] text-white text-[10px] font-bold rounded-full shrink-0">
                   {chat.unreadCount}
                 </span>
               )}
@@ -114,12 +114,12 @@ export const RightSidebar: React.FC = () => {
       <div className="bg-[#141414] border border-[#262626] rounded-2xl p-4 space-y-3 shadow-xl">
         <div className="flex items-center justify-between pb-2 border-b border-[#262626]">
           <h3 className="font-bold text-xs text-white flex items-center gap-2">
-            <Users className="w-4 h-4 text-[#E31E24]" />
+            <Users className="w-4 h-4 text-[#E8123D]" />
             الجروبات النشطة
           </h3>
           <button
             onClick={() => showToast('افتتح طلب إنشاء مجموعة جديدة لدى الإدارة', 'info')}
-            className="p-1 rounded-lg bg-[#E31E24]/10 text-[#E31E24] hover:bg-[#E31E24] hover:text-white transition-colors"
+            className="p-1 rounded-lg bg-[#E8123D]/10 text-[#E8123D] hover:bg-[#E8123D] hover:text-white transition-colors"
             title="إنشاء مجموعة جديدة"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -131,7 +131,7 @@ export const RightSidebar: React.FC = () => {
             <div
               key={group.id}
               onClick={() => setFeedSubTab('groups')}
-              className="p-2.5 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#E31E24]/50 cursor-pointer transition-all flex items-center justify-between"
+              className="p-2.5 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#E8123D]/50 cursor-pointer transition-all flex items-center justify-between"
             >
               <div className="flex items-center gap-2.5 overflow-hidden">
                 <img
@@ -148,7 +148,7 @@ export const RightSidebar: React.FC = () => {
               </div>
 
               {group.unreadBadge > 0 && (
-                <span className="px-1.5 py-0.5 bg-[#E31E24]/20 text-[#E31E24] text-[10px] font-bold rounded-md shrink-0">
+                <span className="px-1.5 py-0.5 bg-[#E8123D]/20 text-[#E8123D] text-[10px] font-bold rounded-md shrink-0">
                   +{group.unreadBadge}
                 </span>
               )}
@@ -169,7 +169,7 @@ export const RightSidebar: React.FC = () => {
             <button
               key={friend.id}
               onClick={() => openUserProfileModal(friend)}
-              className="w-full p-2 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#E31E24]/50 transition-all flex items-center justify-between text-right"
+              className="w-full p-2 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#E8123D]/50 transition-all flex items-center justify-between text-right"
             >
               <div className="flex items-center gap-2.5">
                 <div className="relative">

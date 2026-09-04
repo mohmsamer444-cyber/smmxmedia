@@ -37,7 +37,7 @@ export const UserProfileModal: React.FC = () => {
           className="bg-[#141414] border border-[#262626] w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden flex flex-col text-right"
         >
           {/* Top Banner */}
-          <div className="h-24 bg-gradient-to-r from-[#C11319] to-[#E31E24] relative p-3 flex justify-end">
+          <div className="h-24 bg-gradient-to-r from-[#B10E31] to-[#E8123D] relative p-3 flex justify-end">
             <button
               onClick={closeUserProfileModal}
               className="p-1 rounded-full bg-black/40 text-white hover:bg-black/60 backdrop-blur-md"
@@ -65,7 +65,7 @@ export const UserProfileModal: React.FC = () => {
                 />
                 {selectedUserProfile.id === user.id && (
                   <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Camera className="w-6 h-6 text-[#E31E24]" />
+                    <Camera className="w-6 h-6 text-[#E8123D]" />
                   </div>
                 )}
               </div>
@@ -76,7 +76,7 @@ export const UserProfileModal: React.FC = () => {
                     closeUserProfileModal();
                     openAvatarModal();
                   }}
-                  className="px-4 py-2 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white text-xs font-bold flex items-center gap-1.5 red-glow transition-all"
+                  className="px-4 py-2 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white text-xs font-bold flex items-center gap-1.5 red-glow transition-all"
                 >
                   <Camera className="w-4 h-4" />
                   <span>تغيير الصورة</span>
@@ -95,7 +95,7 @@ export const UserProfileModal: React.FC = () => {
                   className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
                     isFollowing
                       ? 'bg-[#1f1f1f] border border-[#262626] text-gray-300'
-                      : 'bg-[#E31E24] hover:bg-[#c11319] text-white red-glow'
+                      : 'bg-[#E8123D] hover:bg-[#b10e31] text-white red-glow'
                   }`}
                 >
                   {isFollowing ? (
@@ -152,7 +152,7 @@ export const UserProfileModal: React.FC = () => {
               onClick={handleSendDM}
               className="w-full py-2.5 rounded-xl bg-[#1f1f1f] hover:bg-[#262626] border border-[#262626] text-white text-xs font-bold flex items-center justify-center gap-2 transition-colors"
             >
-              <MessageSquare className="w-4 h-4 text-[#E31E24]" />
+              <MessageSquare className="w-4 h-4 text-[#E8123D]" />
               إرسال رسالة خاصة
             </button>
           </div>

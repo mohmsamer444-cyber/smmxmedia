@@ -5,7 +5,6 @@ import { LoginPage } from './components/auth/LoginPage';
 import { Header } from './components/common/Header';
 import { BottomNav } from './components/common/BottomNav';
 import { Drawer } from './components/common/Drawer';
-import { FloatingButtons } from './components/common/FloatingButtons';
 import { ToastContainer } from './components/common/Toast';
 
 import { SocialFeedPage } from './components/feed/SocialFeedPage';
@@ -60,7 +59,6 @@ const AppContent: React.FC = () => {
       </main>
 
       {/* Floating Action Buttons */}
-      <FloatingButtons />
 
       {/* Bottom Navigation */}
       <BottomNav />
@@ -93,7 +91,7 @@ export default function App() {
   if (loading) {
     return (
       <div className="min-h-screen w-full bg-[#0A0A0A] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#E31E24] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#E8123D] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }

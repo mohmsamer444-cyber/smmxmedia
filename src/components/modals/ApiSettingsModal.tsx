@@ -59,7 +59,7 @@ export const ApiSettingsModal: React.FC = () => {
           {/* Header */}
           <div className="p-4 border-b border-[#262626] flex items-center justify-between bg-[#1a1a1a]">
             <h3 className="font-bold text-sm text-white flex items-center gap-2">
-              <Code className="w-4 h-4 text-[#E31E24]" />
+              <Code className="w-4 h-4 text-[#E8123D]" />
               إعدادات API وربط الموزعين (SMM Reseller API)
             </h3>
             <button
@@ -76,7 +76,7 @@ export const ApiSettingsModal: React.FC = () => {
               onClick={() => setActiveSubTab('myKey')}
               className={`flex-1 py-3 text-xs font-bold transition-colors border-b-2 text-center ${
                 activeSubTab === 'myKey'
-                  ? 'border-[#E31E24] text-[#E31E24] bg-[#E31E24]/5'
+                  ? 'border-[#E8123D] text-[#E8123D] bg-[#E8123D]/5'
                   : 'border-transparent text-gray-400 hover:text-white'
               }`}
             >
@@ -86,7 +86,7 @@ export const ApiSettingsModal: React.FC = () => {
               onClick={() => setActiveSubTab('provider')}
               className={`flex-1 py-3 text-xs font-bold transition-colors border-b-2 text-center ${
                 activeSubTab === 'provider'
-                  ? 'border-[#E31E24] text-[#E31E24] bg-[#E31E24]/5'
+                  ? 'border-[#E8123D] text-[#E8123D] bg-[#E8123D]/5'
                   : 'border-transparent text-gray-400 hover:text-white'
               }`}
             >
@@ -98,9 +98,9 @@ export const ApiSettingsModal: React.FC = () => {
             {activeSubTab === 'myKey' ? (
               <div className="space-y-4">
                 {/* Explanation Banner */}
-                <div className="p-3.5 bg-[#0A0A0A] border border-[#E31E24]/30 rounded-xl space-y-1.5 text-xs text-gray-300">
+                <div className="p-3.5 bg-[#0A0A0A] border border-[#E8123D]/30 rounded-xl space-y-1.5 text-xs text-gray-300">
                   <div className="font-bold text-white flex items-center gap-1.5 text-xs">
-                    <ShieldCheck className="w-4 h-4 text-[#E31E24]" />
+                    <ShieldCheck className="w-4 h-4 text-[#E8123D]" />
                     استخدم هذا المفتاح لربط موقعك الخاص بخدماتنا وبيعها لعملائك
                   </div>
                   <p className="text-[11px] text-gray-400 leading-relaxed">
@@ -112,12 +112,12 @@ export const ApiSettingsModal: React.FC = () => {
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-white block flex items-center justify-between">
                     <span className="flex items-center gap-1.5">
-                      <Key className="w-3.5 h-3.5 text-[#E31E24]" />
+                      <Key className="w-3.5 h-3.5 text-[#E8123D]" />
                       مفتاح الـ API الشخصي (Your Reseller API Key)
                     </span>
                     <button
                       onClick={handleRegenerateKey}
-                      className="text-[10px] text-[#E31E24] hover:underline flex items-center gap-1"
+                      className="text-[10px] text-[#E8123D] hover:underline flex items-center gap-1"
                     >
                       <RefreshCw className="w-3 h-3" />
                       إعادة توليد المفتاح
@@ -132,7 +132,7 @@ export const ApiSettingsModal: React.FC = () => {
                     />
                     <button
                       onClick={handleCopyKey}
-                      className="px-4 py-2.5 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white text-xs font-bold flex items-center gap-1.5 transition-colors shrink-0"
+                      className="px-4 py-2.5 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white text-xs font-bold flex items-center gap-1.5 transition-colors shrink-0"
                     >
                       {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                       {copied ? 'تم النسخ' : 'نسخ المفتاح'}
@@ -143,7 +143,7 @@ export const ApiSettingsModal: React.FC = () => {
                 {/* API Documentation Specs Summary */}
                 <div className="space-y-2 pt-2 border-t border-[#262626]">
                   <h4 className="text-xs font-bold text-white flex items-center gap-2">
-                    <Terminal className="w-4 h-4 text-[#E31E24]" />
+                    <Terminal className="w-4 h-4 text-[#E8123D]" />
                     توثيق واجهة API (API Endpoint Specs)
                   </h4>
                   <div className="p-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-xs space-y-2 font-mono">
@@ -181,7 +181,7 @@ export const ApiSettingsModal: React.FC = () => {
               <form onSubmit={handleTestAndSaveProvider} className="space-y-4">
                 <div className="p-3 bg-[#0A0A0A] border border-[#262626] rounded-xl space-y-2 text-xs text-gray-300">
                   <div className="font-bold text-white flex items-center gap-1.5 text-xs">
-                    <Globe className="w-4 h-4 text-[#E31E24]" />
+                    <Globe className="w-4 h-4 text-[#E8123D]" />
                     ربط الموقع بمزود خدمة خارجي (Upstream Provider)
                   </div>
                   <p className="text-[11px] text-gray-400 leading-relaxed">
@@ -199,7 +199,7 @@ export const ApiSettingsModal: React.FC = () => {
                     value={apiUrl}
                     onChange={e => setApiUrl(e.target.value)}
                     placeholder="https://alsharq-world.com/api/v2"
-                    className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E31E24] dir-ltr text-left font-sans"
+                    className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E8123D] dir-ltr text-left font-sans"
                   />
                 </div>
 
@@ -213,14 +213,14 @@ export const ApiSettingsModal: React.FC = () => {
                     value={providerApiKey}
                     onChange={e => setProviderApiKey(e.target.value)}
                     placeholder="ضع مفتاح API هنا..."
-                    className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E31E24] dir-ltr text-left font-sans"
+                    className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E8123D] dir-ltr text-left font-sans"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={isTesting}
-                  className="w-full py-3 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-sm shadow-lg red-glow transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-sm shadow-lg red-glow transition-all flex items-center justify-center gap-2"
                 >
                   <RefreshCw className={`w-4 h-4 ${isTesting ? 'animate-spin' : ''}`} />
                   {isTesting ? 'جاري اختبار الاتصال...' : 'حفظ واختبار جلب الخدمات'}

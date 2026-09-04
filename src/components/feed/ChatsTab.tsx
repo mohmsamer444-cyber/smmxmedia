@@ -30,7 +30,7 @@ export const ChatsTab: React.FC = () => {
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             placeholder="البحث في المحادثات..."
-            className="w-full bg-[#141414] border border-[#262626] rounded-xl pl-3 pr-8 py-2 text-xs text-white focus:outline-none focus:border-[#E31E24]"
+            className="w-full bg-[#141414] border border-[#262626] rounded-xl pl-3 pr-8 py-2 text-xs text-white focus:outline-none focus:border-[#E8123D]"
           />
           <Search className="w-3.5 h-3.5 text-gray-500 absolute right-2.5 top-1/2 -translate-y-1/2" />
         </div>
@@ -42,7 +42,7 @@ export const ChatsTab: React.FC = () => {
               onClick={() => setActiveChatId(conv.id)}
               className={`w-full p-2.5 rounded-xl border text-right transition-all flex items-center gap-3 ${
                 currentChat?.id === conv.id
-                  ? 'bg-[#E31E24]/10 border-[#E31E24] text-white'
+                  ? 'bg-[#E8123D]/10 border-[#E8123D] text-white'
                   : 'bg-[#141414] border-[#262626] text-gray-300 hover:bg-[#1f1f1f]'
               }`}
             >
@@ -50,7 +50,7 @@ export const ChatsTab: React.FC = () => {
                 <img
                   src={conv.user.avatar}
                   alt={conv.user.name}
-                  className="w-10 h-10 rounded-full object-cover border border-[#E31E24]"
+                  className="w-10 h-10 rounded-full object-cover border border-[#E8123D]"
                 />
                 {conv.user.isOnline && (
                   <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-[#141414]" />
@@ -77,7 +77,7 @@ export const ChatsTab: React.FC = () => {
               <img
                 src={currentChat.user.avatar}
                 alt={currentChat.user.name}
-                className="w-10 h-10 rounded-full object-cover border border-[#E31E24]"
+                className="w-10 h-10 rounded-full object-cover border border-[#E8123D]"
               />
               <div>
                 <h4 className="font-bold text-xs text-white flex items-center gap-1">
@@ -105,7 +105,7 @@ export const ChatsTab: React.FC = () => {
               <div
                 className={`max-w-xs sm:max-w-md p-3 rounded-2xl text-xs leading-relaxed ${
                   msg.isMine
-                    ? 'bg-[#E31E24] text-white rounded-br-none shadow-lg'
+                    ? 'bg-[#E8123D] text-white rounded-br-none shadow-lg'
                     : 'bg-[#1f1f1f] border border-[#262626] text-gray-200 rounded-bl-none'
                 }`}
               >
@@ -125,11 +125,11 @@ export const ChatsTab: React.FC = () => {
             value={msgText}
             onChange={e => setMsgText(e.target.value)}
             placeholder="اكتب رسالتك للوكيل هنا..."
-            className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#E31E24]"
+            className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#E8123D]"
           />
           <button
             type="submit"
-            className="px-4 py-2.5 bg-[#E31E24] hover:bg-[#c11319] text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shrink-0"
+            className="px-4 py-2.5 bg-[#E8123D] hover:bg-[#b10e31] text-white rounded-xl font-bold text-xs flex items-center gap-1.5 shrink-0"
           >
             <Send className="w-4 h-4" />
             إرسال

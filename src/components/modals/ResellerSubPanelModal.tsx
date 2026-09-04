@@ -53,7 +53,7 @@ export const ResellerSubPanelModal: React.FC<ResellerSubPanelModalProps> = ({ is
           {/* Header */}
           <div className="p-4 border-b border-[#262626] flex items-center justify-between bg-[#1a1a1a]">
             <h3 className="font-bold text-sm text-white flex items-center gap-2">
-              <LayoutGrid className="w-4 h-4 text-[#E31E24]" />
+              <LayoutGrid className="w-4 h-4 text-[#E8123D]" />
               اللوحة الفرعية — لوحة إدارة الموزعين (Reseller Dashboard)
             </h3>
             <button
@@ -69,7 +69,7 @@ export const ResellerSubPanelModal: React.FC<ResellerSubPanelModalProps> = ({ is
             <div className="grid grid-cols-3 gap-3">
               <div className="p-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-center">
                 <span className="text-[10px] text-gray-400 block mb-1">نسبة هامش الربح</span>
-                <span className="text-base font-extrabold text-[#E31E24] flex items-center justify-center gap-0.5">
+                <span className="text-base font-extrabold text-[#E8123D] flex items-center justify-center gap-0.5">
                   %{profitMargin}
                   <Percent className="w-3.5 h-3.5" />
                 </span>
@@ -92,10 +92,10 @@ export const ResellerSubPanelModal: React.FC<ResellerSubPanelModalProps> = ({ is
             <div className="p-4 bg-[#1a1a1a] border border-[#262626] rounded-xl space-y-3">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-white flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-[#E31E24]" />
+                  <TrendingUp className="w-4 h-4 text-[#E8123D]" />
                   تحديد هامش الربح التلقائي على الأسعار الأساسية
                 </label>
-                <span className="text-xs font-bold text-[#E31E24]">{profitMargin}%</span>
+                <span className="text-xs font-bold text-[#E8123D]">{profitMargin}%</span>
               </div>
               <input
                 type="range"
@@ -104,7 +104,7 @@ export const ResellerSubPanelModal: React.FC<ResellerSubPanelModalProps> = ({ is
                 step="1"
                 value={profitMargin}
                 onChange={e => setProfitMargin(Number(e.target.value))}
-                className="w-full accent-[#E31E24] bg-[#0A0A0A] h-2 rounded-lg cursor-pointer"
+                className="w-full accent-[#E8123D] bg-[#0A0A0A] h-2 rounded-lg cursor-pointer"
               />
               <p className="text-[11px] text-gray-400 leading-normal">
                 سيتم إضافة هذه النسبة أوتوماتيكياً على تكلفة الخدمات لعملائك الفرعيين وتحويل فارق الربح لرصيدك!
@@ -115,12 +115,12 @@ export const ResellerSubPanelModal: React.FC<ResellerSubPanelModalProps> = ({ is
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-white flex items-center gap-2">
-                  <Users className="w-4 h-4 text-[#E31E24]" />
+                  <Users className="w-4 h-4 text-[#E8123D]" />
                   قائمة المواقع والعملاء المربوطين
                 </h4>
                 <button
                   onClick={() => setIsAdding(!isAdding)}
-                  className="px-2.5 py-1 rounded-lg bg-[#E31E24] hover:bg-[#c11319] text-white text-xs font-bold flex items-center gap-1 transition-colors"
+                  className="px-2.5 py-1 rounded-lg bg-[#E8123D] hover:bg-[#b10e31] text-white text-xs font-bold flex items-center gap-1 transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   إضافة عميل فرعي
@@ -128,17 +128,17 @@ export const ResellerSubPanelModal: React.FC<ResellerSubPanelModalProps> = ({ is
               </div>
 
               {isAdding && (
-                <form onSubmit={handleAddClient} className="p-3 bg-[#0A0A0A] border border-[#E31E24]/40 rounded-xl space-y-2">
+                <form onSubmit={handleAddClient} className="p-3 bg-[#0A0A0A] border border-[#E8123D]/40 rounded-xl space-y-2">
                   <input
                     type="text"
                     value={newClientName}
                     onChange={e => setNewClientName(e.target.value)}
                     placeholder="اسم المتجر أو العميل الفرعي..."
-                    className="w-full bg-[#141414] border border-[#262626] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E31E24]"
+                    className="w-full bg-[#141414] border border-[#262626] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E8123D]"
                   />
                   <button
                     type="submit"
-                    className="w-full py-2 bg-[#E31E24] text-white font-bold text-xs rounded-lg hover:bg-[#c11319]"
+                    className="w-full py-2 bg-[#E8123D] text-white font-bold text-xs rounded-lg hover:bg-[#b10e31]"
                   >
                     حفظ العميل
                   </button>

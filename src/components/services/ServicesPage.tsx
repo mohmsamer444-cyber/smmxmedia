@@ -181,7 +181,7 @@ export const ServicesPage: React.FC = () => {
       {/* Hero Banner matching Screenshot Pixel-for-Pixel */}
       <div className="relative bg-[#111111] border border-[#262626] rounded-3xl p-6 sm:p-8 overflow-hidden shadow-2xl min-h-[260px]">
         {/* Glow Radial Stage */}
-        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-80 h-80 bg-[#E31E24]/20 blur-[90px] rounded-full pointer-events-none animate-pulse-glow" />
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-80 h-80 bg-[#E8123D]/20 blur-[90px] rounded-full pointer-events-none animate-pulse-glow" />
 
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
           {/* Text Content */}
@@ -202,7 +202,7 @@ export const ServicesPage: React.FC = () => {
                 setSelectedPlatformFilter('all');
                 setSelectedCategoryName(null);
               }}
-              className="mt-2 px-6 py-2.5 rounded-xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs shadow-lg red-glow transition-all inline-flex items-center gap-2"
+              className="mt-2 px-6 py-2.5 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs shadow-lg red-glow transition-all inline-flex items-center gap-2"
             >
               <span>عرض جميع الخدمات</span>
               <ArrowLeft className="w-4 h-4" />
@@ -221,7 +221,7 @@ export const ServicesPage: React.FC = () => {
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           placeholder="ابحث عن خدمة..."
-          className="w-full bg-[#141414] border border-[#262626] focus:border-[#E31E24] rounded-2xl pl-4 pr-11 py-3 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none shadow-xl transition-all"
+          className="w-full bg-[#141414] border border-[#262626] focus:border-[#E8123D] rounded-2xl pl-4 pr-11 py-3 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none shadow-xl transition-all"
         />
         <Search className="w-4 h-4 text-gray-400 absolute right-4 top-1/2 -translate-y-1/2" />
       </div>
@@ -243,7 +243,7 @@ export const ServicesPage: React.FC = () => {
               <div
                 className={`w-13 h-13 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all duration-300 border-2 ${
                   isActive
-                    ? 'border-[#E31E24] bg-[#1a1a1a] text-white shadow-[0_0_15px_rgba(227,30,36,0.6)] scale-105'
+                    ? 'border-[#E8123D] bg-[#1a1a1a] text-white shadow-[0_0_15px_rgba(227,30,36,0.6)] scale-105'
                     : 'border-[#262626] bg-[#141414] text-gray-400 hover:border-gray-500 hover:text-white'
                 }`}
               >
@@ -270,7 +270,7 @@ export const ServicesPage: React.FC = () => {
       {/* Trust Strip matching Screenshot */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3 bg-[#141414] border border-[#262626] rounded-2xl flex items-center gap-2.5">
-          <div className="p-2 bg-[#E31E24]/10 text-[#E31E24] rounded-xl shrink-0">
+          <div className="p-2 bg-[#E8123D]/10 text-[#E8123D] rounded-xl shrink-0">
             <DollarSign className="w-4 h-4" />
           </div>
           <div>
@@ -315,7 +315,7 @@ export const ServicesPage: React.FC = () => {
         <div className="flex items-center justify-between">
           <h3 className="font-extrabold text-base text-white flex items-center gap-2">
             <span>قائمة الخدمات المتاحة</span>
-            <span className="text-xs font-bold text-[#E31E24] font-sans">
+            <span className="text-xs font-bold text-[#E8123D] font-sans">
               ({filteredServices.length})
             </span>
           </h3>
@@ -323,7 +323,7 @@ export const ServicesPage: React.FC = () => {
           {selectedCategoryName && (
             <button
               onClick={() => setSelectedCategoryName(null)}
-              className="text-xs text-[#E31E24] hover:underline font-bold"
+              className="text-xs text-[#E8123D] hover:underline font-bold"
             >
               إلغاء تصفية الفئة ({selectedCategoryName})
             </button>
@@ -360,7 +360,7 @@ export const ServicesPage: React.FC = () => {
       {/* Footer Platforms Grid matching Screenshot */}
       <div className="p-6 bg-[#141414] border border-[#262626] rounded-3xl space-y-4 text-center">
         <h4 className="font-extrabold text-sm text-white flex items-center justify-center gap-1.5">
-          <Grid className="w-4 h-4 text-[#E31E24]" />
+          <Grid className="w-4 h-4 text-[#E8123D]" />
           <span>جميع منصات السوشيال ميديا</span>
         </h4>
 
@@ -371,7 +371,7 @@ export const ServicesPage: React.FC = () => {
               <button
                 key={p.id}
                 onClick={() => setSelectedPlatformFilter(p.id)}
-                className="px-3.5 py-2 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#E31E24] text-xs font-bold text-gray-300 flex items-center gap-2 transition-all hover:scale-105"
+                className="px-3.5 py-2 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#E8123D] text-xs font-bold text-gray-300 flex items-center gap-2 transition-all hover:scale-105"
               >
                 <span className={p.textColor}>
                   <IconComp />
@@ -387,7 +387,7 @@ export const ServicesPage: React.FC = () => {
             setSelectedPlatformFilter('all');
             setSelectedCategoryName(null);
           }}
-          className="w-full py-3 rounded-2xl bg-[#E31E24] hover:bg-[#c11319] text-white font-bold text-xs shadow-lg red-glow transition-all flex items-center justify-center gap-2 mt-4"
+          className="w-full py-3 rounded-2xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs shadow-lg red-glow transition-all flex items-center justify-center gap-2 mt-4"
         >
           <span>عرض جميع الخدمات</span>
           <ArrowLeft className="w-4 h-4" />
