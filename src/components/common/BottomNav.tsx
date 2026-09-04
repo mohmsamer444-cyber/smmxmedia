@@ -4,38 +4,30 @@ import {
   Home,
   Layers,
   Plus,
-  MessageSquare,
+  Send,
   Gamepad2,
 } from 'lucide-react';
 
-export const BottomNav: React.FC = () => {
-  const {
-    activeTab,
-    setActiveTab,
-    feedSubTab,
-    setFeedSubTab,
-    openQuickActionModal,
-    conversations,
-  } = useApp();
+const TELEGRAM_ORDER_LINK = 'https://t.me/fx_sa2';
 
-  // Total unread messages count for badge
-  const unreadMessagesCount = conversations.reduce((acc, c) => acc + c.unreadCount, 0) || 12;
+export const BottomNav: React.FC = () => {
+  const { activeTab, setActiveTab, openQuickActionModal } = useApp();
 
   // Active status indicators
-  const isHomeActive = activeTab === 'feed' && feedSubTab !== 'chats';
+  const isHomeActive = activeTab === 'feed';
   const isServicesActive = activeTab === 'services';
-  const isMessagesActive = activeTab === 'feed' && feedSubTab === 'chats';
   const isGamesActive = activeTab === 'games';
+
+  const openTelegram = () => {
+    window.open(TELEGRAM_ORDER_LINK, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 w-full max-w-full z-40 bg-[#0A0A0A]/95 backdrop-blur-lg border-t border-[#1a1a1a] pb-safe">
       <div className="max-w-md mx-auto px-1 h-16 flex items-center justify-between relative">
         {/* Slot 1: الرئيسية */}
         <button
-          onClick={() => {
-            setActiveTab('feed');
-            setFeedSubTab('posts');
-          }}
+          onClick={() => setActiveTab('feed')}
           className={`flex flex-col items-center justify-center flex-1 h-full relative transition-colors ${
             isHomeActive
               ? 'text-[#E8123D] font-bold'
@@ -70,36 +62,19 @@ export const BottomNav: React.FC = () => {
           <button
             onClick={openQuickActionModal}
             className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#B10E31] to-[#E8123D] text-white flex items-center justify-center shadow-lg red-glow active:scale-95 hover:scale-105 transition-all border-4 border-[#0A0A0A]"
-            title="إضافة منشور / طلب جديد"
+            title="طلب جديد"
           >
             <Plus className="w-7 h-7 stroke-[3]" />
           </button>
         </div>
 
-        {/* Slot 4: الرسائل (with unread badge) */}
+        {/* Slot 4: تليجرام (direct order link) */}
         <button
-          onClick={() => {
-            setActiveTab('feed');
-            setFeedSubTab('chats');
-          }}
-          className={`flex flex-col items-center justify-center flex-1 h-full relative transition-colors ${
-            isMessagesActive
-              ? 'text-[#E8123D] font-bold'
-              : 'text-gray-400 hover:text-gray-200'
-          }`}
+          onClick={openTelegram}
+          className="flex flex-col items-center justify-center flex-1 h-full relative text-[#2AABEE] hover:text-[#54c0f7] transition-colors"
         >
-          {isMessagesActive && (
-            <span className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" />
-          )}
-          <div className="relative">
-            <MessageSquare className={`w-5 h-5 mb-0.5 ${isMessagesActive ? 'stroke-[2.5]' : ''}`} />
-            {unreadMessagesCount > 0 && (
-              <span className="absolute -top-1.5 -right-2 bg-[#E8123D] text-white text-[9px] font-black px-1.5 py-0.2 rounded-full min-w-4 text-center border border-[#0A0A0A]">
-                {unreadMessagesCount}
-              </span>
-            )}
-          </div>
-          <span className="text-[10px] sm:text-[11px]">الرسائل</span>
+          <Send className="w-5 h-5 mb-0.5" />
+          <span className="text-[10px] sm:text-[11px]">تليجرام</span>
         </button>
 
         {/* Slot 5: الألعاب */}

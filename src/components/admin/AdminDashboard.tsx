@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search, Settings, Tag, Plus, Trash2 } from 'lucide-react';
+import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search, Settings, Tag, Plus, Trash2, FileText } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 
 interface ProfileRow {
@@ -38,6 +38,16 @@ interface PackageRow {
   label: string | null;
 }
 
+interface PostRow {
+  id: string;
+  content: string;
+  image_url: string | null;
+  game_tag: string | null;
+  price_tag: string | null;
+  hashtags: string[] | null;
+  created_at: string;
+}
+
 const GAME_LABELS: Record<string, string> = {
   pubg: 'ببجي (PUBG)',
   freefire: 'فري فاير',
@@ -47,7 +57,7 @@ const GAME_LABELS: Record<string, string> = {
 };
 
 export const AdminDashboard: React.FC = () => {
-  const [tab, setTab] = useState<'users' | 'deposits' | 'settings' | 'packages'>('users');
+  const [tab, setTab] = useState<'users' | 'deposits' | 'settings' | 'packages' | 'posts'>('users');
   const [users, setUsers] = useState<ProfileRow[]>([]);
   const [deposits, setDeposits] = useState<DepositRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,6 +73,10 @@ export const AdminDashboard: React.FC = () => {
   const [packages, setPackages] = useState<PackageRow[]>([]);
   const [packageEdits, setPackageEdits] = useState<Record<string, string>>({});
   const [newPkg, setNewPkg] = useState({ id: '', game: 'pubg', amount: '', unit: '', price_usd: '', label: '' });
+
+  // Catalog posts (admin-only storefront posts) state
+  const [catalogPosts, setCatalogPosts] = useState<PostRow[]>([]);
+  const [newPost, setNewPost] = useState({ content: '', image_url: '', game_tag: '', price_tag: '', hashtags: '' });
 
   const loadData = async () => {
     setLoading(true);
@@ -86,6 +100,12 @@ export const AdminDashboard: React.FC = () => {
       .select('id, game, amount, unit, price_usd, label')
       .order('game', { ascending: true });
     setPackages((packagesData as any) || []);
+
+    const { data: postsData } = await supabase
+      .from('posts')
+      .select('id, content, image_url, game_tag, price_tag, hashtags, created_at')
+      .order('created_at', { ascending: false });
+    setCatalogPosts((postsData as any) || []);
 
     setLoading(false);
   };
@@ -219,6 +239,48 @@ export const AdminDashboard: React.FC = () => {
     }
   };
 
+  const addCatalogPost = async () => {
+    if (!newPost.content.trim()) {
+      showMsg('اكتب وصف المنشور الأول');
+      return;
+    }
+    const { data: userData } = await supabase.auth.getUser();
+    const uid = userData?.user?.id;
+    if (!uid) {
+      showMsg('تعذر التأكد من حساب الأدمن، سجل دخول تاني');
+      return;
+    }
+    const hashtagsArr = newPost.hashtags
+      .split(',')
+      .map((h) => h.trim())
+      .filter(Boolean);
+    const { error } = await supabase.from('posts').insert({
+      user_id: uid,
+      content: newPost.content.trim(),
+      image_url: newPost.image_url.trim() || null,
+      game_tag: newPost.game_tag.trim() || null,
+      price_tag: newPost.price_tag.trim() || null,
+      hashtags: hashtagsArr.length > 0 ? hashtagsArr : null,
+    });
+    if (!error) {
+      showMsg('تم نشر المنشور في الكتالوج بنجاح');
+      setNewPost({ content: '', image_url: '', game_tag: '', price_tag: '', hashtags: '' });
+      loadData();
+    } else {
+      showMsg('حصل خطأ: ' + error.message);
+    }
+  };
+
+  const deleteCatalogPost = async (postId: string) => {
+    const { error } = await supabase.from('posts').delete().eq('id', postId);
+    if (!error) {
+      showMsg('تم حذف المنشور');
+      loadData();
+    } else {
+      showMsg('حصل خطأ: ' + error.message);
+    }
+  };
+
   return (
     <div dir="rtl" className="min-h-screen w-full bg-[#0A0A0A] text-white">
       <div className="sticky top-0 z-10 bg-[#121212] border-b border-[#262626] px-4 py-3 flex items-center justify-between">
@@ -273,6 +335,15 @@ export const AdminDashboard: React.FC = () => {
         >
           <Tag className="w-4 h-4" />
           الأسعار ({packages.length})
+        </button>
+        <button
+          onClick={() => setTab('posts')}
+          className={`flex-1 min-w-[45%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
+            tab === 'posts' ? 'bg-[#E8123D] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
+          }`}
+        >
+          <FileText className="w-4 h-4" />
+          المنشورات ({catalogPosts.length})
         </button>
       </div>
 
@@ -561,6 +632,92 @@ export const AdminDashboard: React.FC = () => {
           {!loading && packages.length === 0 && (
             <p className="text-center text-gray-500 text-sm py-8">
               لسه مفيش باقات في قاعدة البيانات — الموقع بيعرض الأسعار الافتراضية. أضف باقة من الفورم فوق عشان تبدأ التحكم من هنا.
+            </p>
+          )}
+        </div>
+      )}
+
+      {tab === 'posts' && (
+        <div className="p-4 space-y-3 max-w-2xl mx-auto">
+          <div className="bg-[#141414] border border-[#262626] rounded-xl p-3.5 space-y-2">
+            <p className="text-xs font-bold text-gray-300 flex items-center gap-1.5">
+              <Plus className="w-3.5 h-3.5" />
+              إضافة منشور جديد للكتالوج
+            </p>
+            <textarea
+              placeholder="وصف العرض..."
+              value={newPost.content}
+              onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+              rows={3}
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] resize-none"
+            />
+            <input
+              type="text"
+              dir="ltr"
+              placeholder="رابط الصورة (image URL)"
+              value={newPost.image_url}
+              onChange={(e) => setNewPost({ ...newPost, image_url: e.target.value })}
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] text-left"
+            />
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                type="text"
+                placeholder="تصنيف (مثال: تيك توك)"
+                value={newPost.game_tag}
+                onChange={(e) => setNewPost({ ...newPost, game_tag: e.target.value })}
+                className="bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+              />
+              <input
+                type="text"
+                placeholder="السعر (مثال: 10$)"
+                value={newPost.price_tag}
+                onChange={(e) => setNewPost({ ...newPost, price_tag: e.target.value })}
+                className="bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+              />
+            </div>
+            <input
+              type="text"
+              placeholder="وسوم مفصولة بفاصلة (اختياري)"
+              value={newPost.hashtags}
+              onChange={(e) => setNewPost({ ...newPost, hashtags: e.target.value })}
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+            />
+            <button
+              onClick={addCatalogPost}
+              className="w-full py-2 rounded-lg bg-[#E8123D] text-white text-xs font-bold"
+            >
+              نشر في الكتالوج
+            </button>
+            <p className="text-[10px] text-gray-500">
+              ملحوظة: مفيش دعم لرفع فيديو مباشرة دلوقتي — حط رابط صورة/غلاف بس. لو محتاج فيديو حقيقي هنضيفه لاحقًا.
+            </p>
+          </div>
+
+          {catalogPosts.map((p) => (
+            <div key={p.id} className="bg-[#141414] border border-[#262626] rounded-xl p-3.5 space-y-2">
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-xs text-gray-200 leading-relaxed flex-1">{p.content}</p>
+                <button
+                  onClick={() => deleteCatalogPost(p.id)}
+                  className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 shrink-0"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              {p.image_url && (
+                <img src={p.image_url} alt="" className="w-full h-32 object-cover rounded-lg" />
+              )}
+              <div className="flex items-center gap-2 flex-wrap text-[10px] text-gray-500">
+                {p.game_tag && <span className="px-2 py-0.5 rounded bg-[#0A0A0A] border border-[#262626]">{p.game_tag}</span>}
+                {p.price_tag && <span className="px-2 py-0.5 rounded bg-[#0A0A0A] border border-[#262626]">{p.price_tag}</span>}
+                <span>{new Date(p.created_at).toLocaleString('ar-EG')}</span>
+              </div>
+            </div>
+          ))}
+
+          {!loading && catalogPosts.length === 0 && (
+            <p className="text-center text-gray-500 text-sm py-8">
+              لسه مفيش منشورات في الكتالوج. أضف أول عرض من الفورم فوق.
             </p>
           )}
         </div>

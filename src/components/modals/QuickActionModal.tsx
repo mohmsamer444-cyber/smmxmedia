@@ -1,13 +1,14 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, PenTool, ShoppingBag, Gamepad2, Wallet, ChevronLeft } from 'lucide-react';
+import { X, Send, ShoppingBag, Gamepad2, Wallet, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+
+const TELEGRAM_ORDER_LINK = 'https://t.me/fx_sa2';
 
 export const QuickActionModal: React.FC = () => {
   const {
     isQuickActionModalOpen,
     closeQuickActionModal,
-    openCreatePost,
     setActiveTab,
     openDepositModal,
   } = useApp();
@@ -35,21 +36,21 @@ export const QuickActionModal: React.FC = () => {
           </div>
 
           <div className="p-4 space-y-2">
-            {/* Action 1: Create Post */}
+            {/* Action 1: Order via Telegram */}
             <button
               onClick={() => {
                 closeQuickActionModal();
-                openCreatePost('text');
+                window.open(TELEGRAM_ORDER_LINK, '_blank', 'noopener,noreferrer');
               }}
-              className="w-full p-3 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#E8123D]/60 hover:bg-[#1f1f1f] text-right flex items-center justify-between transition-all group"
+              className="w-full p-3 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#0088cc]/60 hover:bg-[#1f1f1f] text-right flex items-center justify-between transition-all group"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-lg bg-[#E8123D]/10 text-[#E8123D] group-hover:bg-[#E8123D] group-hover:text-white transition-colors">
-                  <PenTool className="w-5 h-5" />
+                <div className="p-2.5 rounded-lg bg-[#0088cc]/10 text-[#2AABEE] group-hover:bg-[#0088cc] group-hover:text-white transition-colors">
+                  <Send className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="font-bold text-xs text-white block">إنشاء منشور جديد</span>
-                  <span className="text-[10px] text-gray-400">شارك نص، صور، أو فيديو في الفيد الاجتماعي</span>
+                  <span className="font-bold text-xs text-white block">اطلب عبر تليجرام</span>
+                  <span className="text-[10px] text-gray-400">تواصل مباشرة لإتمام أي طلب أو استفسار</span>
                 </div>
               </div>
               <ChevronLeft className="w-4 h-4 text-gray-500 group-hover:text-white" />
