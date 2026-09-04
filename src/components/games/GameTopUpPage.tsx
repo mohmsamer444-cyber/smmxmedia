@@ -250,30 +250,26 @@ export const GameTopUpPage: React.FC = () => {
 
         <button
           onClick={() => setGameFilter('tiktok')}
-          className={`relative py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
+          className={`relative py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all overflow-visible ${
             gameFilter === 'tiktok'
               ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
           }`}
         >
-          <span className="absolute -top-2 -left-1.5 bg-green-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-md animate-pulse-glow">
-            -15%
-          </span>
+          <span className="absolute -top-1 -left-1 w-3 h-3 rounded-full bg-gradient-to-br from-pink-400 to-fuchsia-500 shadow-[0_0_10px_rgba(236,72,153,0.9)] animate-pulse-glow" />
           <Music2 className="w-[22px] h-[22px]" />
           <span>TIKTOK</span>
         </button>
 
         <button
           onClick={() => setGameFilter('ai')}
-          className={`relative py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
+          className={`relative py-3 px-4 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all overflow-visible ${
             gameFilter === 'ai'
               ? 'bg-[#E8123D] text-white shadow-lg red-glow'
               : 'text-gray-400 hover:text-white hover:bg-[#1a1a1a]'
           }`}
         >
-          <span className="absolute -top-2 -left-1.5 bg-green-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-md animate-pulse-glow">
-            -15%
-          </span>
+          <span className="absolute -top-1 -left-1 w-3 h-3 rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-500 shadow-[0_0_10px_rgba(139,92,246,0.9)] animate-pulse-glow" />
           <BrainCircuit className="w-[22px] h-[22px]" />
           <span>اشتراكات AI</span>
         </button>
@@ -484,20 +480,16 @@ export const GameTopUpPage: React.FC = () => {
             {tiktokPackages.map(pkg => (
               <div
                 key={pkg.id}
-                className="relative bg-[#141414] border border-[#262626] hover-red-glow rounded-2xl p-4 text-center space-y-3 flex flex-col justify-between shadow-xl group"
+                className="relative bg-[#141414] border border-pink-500/30 rounded-2xl p-4 text-center space-y-3 flex flex-col justify-between shadow-xl group animate-pulse-glow-pink"
               >
-                {pkg.discountBadge && (
-                  <span className="absolute top-2 right-2 bg-[#E8123D] text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md animate-pulse-glow">
-                    {pkg.discountBadge}
-                  </span>
-                )}
+                <span className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-gradient-to-br from-pink-400 to-fuchsia-500 shadow-[0_0_10px_rgba(236,72,153,0.9)] animate-pulse-glow" />
 
                 <div className="space-y-2 pt-2">
                   <span className="font-black text-lg text-white block">
                     {pkg.amount} {pkg.unit}
                   </span>
 
-                  <div className="mx-auto my-1 w-[52px] h-[52px] rounded-full bg-gradient-to-br from-pink-500 to-sky-400 flex items-center justify-center shadow-lg">
+                  <div className="mx-auto my-1 w-[52px] h-[52px] rounded-full bg-gradient-to-br from-pink-500 to-sky-400 flex items-center justify-center shadow-[0_0_18px_rgba(236,72,153,0.55)]">
                     <Music2 className="w-6 h-6 text-white" />
                   </div>
 
@@ -533,20 +525,16 @@ export const GameTopUpPage: React.FC = () => {
             {aiPackages.map(pkg => (
               <div
                 key={pkg.id}
-                className="relative bg-[#141414] border border-[#262626] hover-red-glow rounded-2xl p-4 text-center space-y-3 flex flex-col justify-between shadow-xl group"
+                className="relative bg-[#141414] border border-violet-500/30 rounded-2xl p-4 text-center space-y-3 flex flex-col justify-between shadow-xl group animate-pulse-glow-violet"
               >
-                {pkg.discountBadge && (
-                  <span className="absolute top-2 right-2 bg-[#E8123D] text-white text-[10px] font-black px-2 py-0.5 rounded-md shadow-md animate-pulse-glow">
-                    {pkg.discountBadge}
-                  </span>
-                )}
+                <span className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-500 shadow-[0_0_10px_rgba(139,92,246,0.9)] animate-pulse-glow" />
 
                 <div className="space-y-2 pt-2">
                   <span className="font-black text-sm text-white block leading-snug min-h-[2.5em] flex items-center justify-center">
                     {pkg.label}
                   </span>
 
-                  <div className="mx-auto my-1 w-[52px] h-[52px] rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg">
+                  <div className="mx-auto my-1 w-[52px] h-[52px] rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-[0_0_18px_rgba(139,92,246,0.55)]">
                     <BrainCircuit className="w-6 h-6 text-white" />
                   </div>
 
