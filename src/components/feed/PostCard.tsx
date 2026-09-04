@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { SocialPost } from '../../types';
+import { useApp } from '../../context/AppContext';
 import {
   CheckCircle,
   Play,
@@ -7,6 +8,9 @@ import {
   Tag,
   DollarSign,
   Send,
+  Heart,
+  MessageCircle,
+  Share2,
 } from 'lucide-react';
 
 interface PostCardProps {
@@ -16,7 +20,22 @@ interface PostCardProps {
 const TELEGRAM_ORDER_LINK = 'https://t.me/fx_sa2';
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
+  const { togglePostLike, addPostComment, loadPostComments, sharePost } = useApp();
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [commentText, setCommentText] = useState('');
+
+  const handleToggleComments = () => {
+    const next = !showComments;
+    setShowComments(next);
+    if (next) loadPostComments(post.id);
+  };
+
+  const handleSendComment = () => {
+    if (!commentText.trim()) return;
+    addPostComment(post.id, commentText.trim());
+    setCommentText('');
+  };
 
   const handleOrderOnTelegram = () => {
     window.open(TELEGRAM_ORDER_LINK, '_blank', 'noopener,noreferrer');
@@ -161,6 +180,72 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
               </span>
             </>
           )}
+        </div>
+      )}
+
+      {/* Engagement Bar — Like / Comment / Share */}
+      <div className="flex items-center justify-between border-t border-b border-[#262626] py-2">
+        <button
+          onClick={() => togglePostLike(post.id)}
+          className={`flex items-center gap-1.5 text-xs font-bold transition-colors ${
+            post.isLiked ? 'text-[#E8123D]' : 'text-gray-400 hover:text-[#E8123D]'
+          }`}
+        >
+          <Heart className={`w-4.5 h-4.5 ${post.isLiked ? 'fill-[#E8123D]' : ''}`} />
+          <span className="font-sans">{post.likesCount}</span>
+        </button>
+
+        <button
+          onClick={handleToggleComments}
+          className="flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-white transition-colors"
+        >
+          <MessageCircle className="w-4.5 h-4.5" />
+          <span className="font-sans">{post.commentsCount}</span>
+        </button>
+
+        <button
+          onClick={() => sharePost(post.id)}
+          className="flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-white transition-colors"
+        >
+          <Share2 className="w-4.5 h-4.5" />
+          <span className="font-sans">{post.sharesCount}</span>
+        </button>
+      </div>
+
+      {/* Comments Section */}
+      {showComments && (
+        <div className="space-y-3">
+          {post.comments.length === 0 && (
+            <p className="text-[11px] text-gray-500 text-center py-2">لسه مفيش تعليقات، كن أول من يعلق</p>
+          )}
+          {post.comments.map((c) => (
+            <div key={c.id} className="flex items-start gap-2">
+              <img src={c.author.avatar} alt={c.author.name} className="w-7 h-7 rounded-full object-cover shrink-0" />
+              <div className="bg-[#0A0A0A] border border-[#262626] rounded-xl px-3 py-2 flex-1">
+                <div className="flex items-center gap-1">
+                  <span className="text-[11px] font-bold text-white">{c.author.name}</span>
+                  <span className="text-[10px] text-gray-500">{c.timestamp}</span>
+                </div>
+                <p className="text-xs text-gray-300 mt-0.5">{c.content}</p>
+              </div>
+            </div>
+          ))}
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSendComment()}
+              placeholder="اكتب تعليق..."
+              className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-full py-2 px-4 text-xs outline-none focus:border-[#E8123D]"
+            />
+            <button
+              onClick={handleSendComment}
+              className="p-2 rounded-full bg-[#E8123D] text-white hover:bg-[#B10E31] transition-colors shrink-0"
+            >
+              <Send className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       )}
 

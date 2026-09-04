@@ -86,6 +86,8 @@ interface AppContextType {
   createPost: (postData: Partial<SocialPost>) => void;
   togglePostLike: (postId: string) => void;
   addPostComment: (postId: string, text: string) => void;
+  loadPostComments: (postId: string) => void;
+  sharePost: (postId: string) => void;
   togglePostBookmark: (postId: string) => void;
   votePollOption: (postId: string, optionId: string) => void;
 
@@ -251,7 +253,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Social Feed state — starts empty and is filled with real posts from Supabase
   const [posts, setPosts] = useState<SocialPost[]>([]);
 
-  const mapDbPostToSocialPost = (row: any): SocialPost => ({
+  const mapDbPostToSocialPost = (row: any, likedSet: Set<string>): SocialPost => ({
     id: row.id,
     author: {
       id: row.user_id,
@@ -271,12 +273,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     gameTag: row.game_tag || undefined,
     priceTag: row.price_tag || undefined,
     images: row.image_url ? [row.image_url] : undefined,
+    video: row.video_url ? { url: row.video_url, duration: '' } : undefined,
     location: row.location || undefined,
-    likesCount: 0,
-    isLiked: false,
-    commentsCount: 0,
+    likesCount: row.post_likes?.[0]?.count || 0,
+    isLiked: likedSet.has(row.id),
+    commentsCount: row.post_comments?.[0]?.count || 0,
     comments: [],
-    sharesCount: 0,
+    sharesCount: row.shares_count || 0,
     isBookmarked: false,
     category: 'all',
   });
@@ -284,11 +287,23 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const loadPosts = async () => {
     const { data, error } = await supabase
       .from('posts')
-      .select('id, user_id, content, hashtags, game_tag, price_tag, location, image_url, created_at, profiles(full_name)')
+      .select(
+        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, video_url, shares_count, created_at, profiles(full_name), post_likes(count), post_comments(count)'
+      )
       .order('created_at', { ascending: false })
       .limit(100);
+
+    let likedSet = new Set<string>();
+    if (session?.user?.id) {
+      const { data: likedRows } = await supabase
+        .from('post_likes')
+        .select('post_id')
+        .eq('user_id', session.user.id);
+      likedSet = new Set((likedRows || []).map((r: any) => r.post_id));
+    }
+
     if (!error && data) {
-      setPosts(data.map(mapDbPostToSocialPost));
+      setPosts(data.map((row: any) => mapDbPostToSocialPost(row, likedSet)));
     }
   };
 
@@ -602,7 +617,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     showToast('تم نشر منشورك بنجاح!', 'success');
   };
 
-  const togglePostLike = (postId: string) => {
+  const togglePostLike = async (postId: string) => {
+    const target = posts.find(p => p.id === postId);
+    if (!target || !session?.user?.id) return;
+    const wasLiked = target.isLiked;
+
+    // Optimistic UI update
     setPosts(prev =>
       prev.map(p => {
         if (p.id === postId) {
@@ -616,23 +636,39 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         return p;
       })
     );
+
+    if (wasLiked) {
+      const { error } = await supabase
+        .from('post_likes')
+        .delete()
+        .eq('post_id', postId)
+        .eq('user_id', session.user.id);
+      if (error) loadPosts(); // revert on failure
+    } else {
+      const { error } = await supabase
+        .from('post_likes')
+        .insert({ post_id: postId, user_id: session.user.id });
+      if (error) loadPosts(); // revert on failure
+    }
   };
 
-  const addPostComment = (postId: string, text: string) => {
-    if (!text.trim()) return;
+  const addPostComment = async (postId: string, text: string) => {
+    if (!text.trim() || !session?.user?.id) return;
+    const newComment = {
+      id: 'c-' + Date.now(),
+      author: {
+        name: user.name,
+        avatar: user.avatar,
+        verified: user.verified,
+      },
+      content: text,
+      timestamp: 'الآن',
+    };
+
+    // Optimistic UI update
     setPosts(prev =>
       prev.map(p => {
         if (p.id === postId) {
-          const newComment = {
-            id: 'c-' + Date.now(),
-            author: {
-              name: user.name,
-              avatar: user.avatar,
-              verified: user.verified,
-            },
-            content: text,
-            timestamp: 'الآن',
-          };
           return {
             ...p,
             commentsCount: p.commentsCount + 1,
@@ -642,7 +678,76 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         return p;
       })
     );
+
+    const { error } = await supabase.from('post_comments').insert({
+      post_id: postId,
+      user_id: session.user.id,
+      content: text.trim(),
+    });
+
+    if (error) {
+      showToast('تعذر حفظ التعليق، حاول تاني', 'error');
+      loadPosts();
+      return;
+    }
+
     showToast('تمت إضافة تعليقك', 'success');
+  };
+
+  const loadPostComments = async (postId: string) => {
+    const { data, error } = await supabase
+      .from('post_comments')
+      .select('id, content, created_at, profiles(full_name)')
+      .eq('post_id', postId)
+      .order('created_at', { ascending: true });
+
+    if (!error && data) {
+      const comments = data.map((row: any) => ({
+        id: row.id,
+        author: {
+          name: row.profiles?.full_name || 'مستخدم',
+          avatar: DEFAULT_AVATAR,
+          verified: false,
+        },
+        content: row.content,
+        timestamp: new Date(row.created_at).toLocaleString('ar-EG'),
+      }));
+      setPosts(prev => prev.map(p => (p.id === postId ? { ...p, comments } : p)));
+    }
+  };
+
+  const sharePost = async (postId: string) => {
+    const target = posts.find(p => p.id === postId);
+    if (!target) return;
+
+    // Optimistic UI update
+    setPosts(prev =>
+      prev.map(p => (p.id === postId ? { ...p, sharesCount: p.sharesCount + 1 } : p))
+    );
+
+    await supabase
+      .from('posts')
+      .update({ shares_count: target.sharesCount + 1 })
+      .eq('id', postId);
+
+    // Best-effort native share / clipboard copy
+    const shareUrl = `${window.location.origin}/#post-${postId}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'عالم الشرق الأوسط', text: target.content, url: shareUrl });
+      } catch {
+        /* user cancelled — ignore */
+      }
+    } else if (navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        showToast('تم نسخ رابط المنشور', 'success');
+      } catch {
+        showToast('تمت مشاركة المنشور', 'success');
+      }
+    } else {
+      showToast('تمت مشاركة المنشور', 'success');
+    }
   };
 
   const togglePostBookmark = (postId: string) => {
@@ -886,6 +991,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         createPost,
         togglePostLike,
         addPostComment,
+        loadPostComments,
+        sharePost,
         togglePostBookmark,
         votePollOption,
 

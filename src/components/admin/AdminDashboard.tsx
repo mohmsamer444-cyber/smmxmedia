@@ -42,6 +42,7 @@ interface PostRow {
   id: string;
   content: string;
   image_url: string | null;
+  video_url: string | null;
   game_tag: string | null;
   price_tag: string | null;
   hashtags: string[] | null;
@@ -76,7 +77,7 @@ export const AdminDashboard: React.FC = () => {
 
   // Catalog posts (admin-only storefront posts) state
   const [catalogPosts, setCatalogPosts] = useState<PostRow[]>([]);
-  const [newPost, setNewPost] = useState({ content: '', image_url: '', game_tag: '', price_tag: '', hashtags: '' });
+  const [newPost, setNewPost] = useState({ content: '', image_url: '', video_url: '', game_tag: '', price_tag: '', hashtags: '' });
 
   const loadData = async () => {
     setLoading(true);
@@ -103,7 +104,7 @@ export const AdminDashboard: React.FC = () => {
 
     const { data: postsData } = await supabase
       .from('posts')
-      .select('id, content, image_url, game_tag, price_tag, hashtags, created_at')
+      .select('id, content, image_url, video_url, game_tag, price_tag, hashtags, created_at')
       .order('created_at', { ascending: false });
     setCatalogPosts((postsData as any) || []);
 
@@ -258,13 +259,14 @@ export const AdminDashboard: React.FC = () => {
       user_id: uid,
       content: newPost.content.trim(),
       image_url: newPost.image_url.trim() || null,
+      video_url: newPost.video_url.trim() || null,
       game_tag: newPost.game_tag.trim() || null,
       price_tag: newPost.price_tag.trim() || null,
       hashtags: hashtagsArr.length > 0 ? hashtagsArr : null,
     });
     if (!error) {
       showMsg('تم نشر المنشور في الكتالوج بنجاح');
-      setNewPost({ content: '', image_url: '', game_tag: '', price_tag: '', hashtags: '' });
+      setNewPost({ content: '', image_url: '', video_url: '', game_tag: '', price_tag: '', hashtags: '' });
       loadData();
     } else {
       showMsg('حصل خطأ: ' + error.message);
@@ -659,6 +661,14 @@ export const AdminDashboard: React.FC = () => {
               onChange={(e) => setNewPost({ ...newPost, image_url: e.target.value })}
               className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] text-left"
             />
+            <input
+              type="text"
+              dir="ltr"
+              placeholder="رابط الفيديو (video URL — اختياري)"
+              value={newPost.video_url}
+              onChange={(e) => setNewPost({ ...newPost, video_url: e.target.value })}
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] text-left"
+            />
             <div className="grid grid-cols-2 gap-2">
               <input
                 type="text"
@@ -689,7 +699,7 @@ export const AdminDashboard: React.FC = () => {
               نشر في الكتالوج
             </button>
             <p className="text-[10px] text-gray-500">
-              ملحوظة: مفيش دعم لرفع فيديو مباشرة دلوقتي — حط رابط صورة/غلاف بس. لو محتاج فيديو حقيقي هنضيفه لاحقًا.
+              الفيديو والصورة اختياريين — تقدر تحط واحد بس أو الاتنين أو تسيبهم فاضيين.
             </p>
           </div>
 
@@ -706,6 +716,9 @@ export const AdminDashboard: React.FC = () => {
               </div>
               {p.image_url && (
                 <img src={p.image_url} alt="" className="w-full h-32 object-cover rounded-lg" />
+              )}
+              {p.video_url && (
+                <video src={p.video_url} controls className="w-full h-32 object-cover rounded-lg bg-black" />
               )}
               <div className="flex items-center gap-2 flex-wrap text-[10px] text-gray-500">
                 {p.game_tag && <span className="px-2 py-0.5 rounded bg-[#0A0A0A] border border-[#262626]">{p.game_tag}</span>}
