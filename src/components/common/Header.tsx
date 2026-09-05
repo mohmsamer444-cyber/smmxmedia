@@ -306,12 +306,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="flex items-center gap-2 p-1 rounded-full border border-transparent hover:border-[#E8123D]/50 transition-all"
+              className="flex items-center gap-2 p-1 rounded-full border border-transparent hover:border-[#E8123D]/50 transition-all shrink-0"
             >
               <img
                 src={user.avatar}
                 alt={user.name}
-                className="w-8 h-8 rounded-full object-cover border border-[#E8123D]/60"
+                className="w-8 h-8 rounded-full object-cover border border-[#E8123D]/60 shrink-0"
               />
             </button>
 

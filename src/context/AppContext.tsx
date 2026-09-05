@@ -406,8 +406,37 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     loadChatMessages();
   }, [session?.user?.id]);
 
-  // Notifications state
-  const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
+  // Notifications state — real, per-account, loaded from Supabase
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+
+  const loadNotifications = async () => {
+    if (!session?.user?.id) {
+      setNotifications([]);
+      return;
+    }
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('id, title, description, type, read, created_at')
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (!error && data) {
+      setNotifications(
+        data.map((row: any) => ({
+          id: row.id,
+          title: row.title,
+          description: row.description,
+          timestamp: new Date(row.created_at).toLocaleString('ar-EG'),
+          type: row.type || 'system',
+          read: row.read,
+        }))
+      );
+    }
+  };
+
+  useEffect(() => {
+    loadNotifications();
+  }, [session?.user?.id]);
 
   // Modals state
   const [isCreatePostOpen, setIsCreatePostOpen] = useState<boolean>(false);
@@ -749,7 +778,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const { error } = await supabase
         .from('post_likes')
         .insert({ post_id: postId, user_id: session.user.id });
-      if (error) loadPosts(); // revert on failure
+      if (error) {
+        loadPosts(); // revert on failure
+      } else if (target.author.id && target.author.id !== session.user.id) {
+        await supabase.from('notifications').insert({
+          user_id: target.author.id,
+          title: 'إعجاب جديد بمنشورك',
+          description: `${user.name} أعجب بمنشورك`,
+          type: 'social',
+        });
+      }
     }
   };
 
@@ -790,6 +828,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       showToast('تعذر حفظ التعليق، حاول تاني', 'error');
       loadPosts();
       return;
+    }
+
+    // Notify the post owner (only if someone else commented, not themselves)
+    const targetPost = posts.find(p => p.id === postId);
+    if (targetPost && targetPost.author.id && targetPost.author.id !== session.user.id) {
+      await supabase.from('notifications').insert({
+        user_id: targetPost.author.id,
+        title: 'تعليق جديد على منشورك',
+        description: `${user.name}: ${text.trim().slice(0, 80)}`,
+        type: 'social',
+      });
     }
 
     showToast('تمت إضافة تعليقك', 'success');
@@ -999,11 +1048,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const unreadNotifCount = notifications.filter(n => !n.read).length;
 
-  const markNotificationsRead = () => {
+  const markNotificationsRead = async () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    if (session?.user?.id) {
+      await supabase.from('notifications').update({ read: true }).eq('user_id', session.user.id).eq('read', false);
+    }
   };
 
-  const addNotification = (
+  const addNotification = async (
     title: string,
     description: string,
     type: 'order' | 'deposit' | 'social' | 'system'
@@ -1017,6 +1069,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       read: false,
     };
     setNotifications(prev => [newN, ...prev]);
+
+    if (session?.user?.id) {
+      await supabase.from('notifications').insert({
+        user_id: session.user.id,
+        title,
+        description,
+        type,
+      });
+    }
   };
 
   // Modal open helpers

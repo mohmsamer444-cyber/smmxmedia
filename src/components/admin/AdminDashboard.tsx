@@ -298,6 +298,14 @@ export const AdminDashboard: React.FC = () => {
           .eq('id', deposit.user_id);
       }
     }
+    await supabase.from('notifications').insert({
+      user_id: deposit.user_id,
+      title: approve ? 'تم قبول طلب الشحن' : 'تم رفض طلب الشحن',
+      description: approve
+        ? `تم إضافة $${deposit.amount} إلى رصيدك بنجاح.`
+        : `تم رفض طلب الشحن الخاص بمبلغ $${deposit.amount}. تواصل معنا لمعرفة السبب.`,
+      type: 'deposit',
+    });
     showMsg(approve ? 'تمت الموافقة وإضافة الرصيد' : 'تم رفض الطلب');
     loadData();
   };
@@ -305,6 +313,21 @@ export const AdminDashboard: React.FC = () => {
   const updateOrderStatus = async (orderId: number, newStatus: string) => {
     const { error } = await supabase.from('service_orders').update({ status: newStatus }).eq('id', orderId);
     if (!error) {
+      const order = orders.find((o) => o.id === orderId);
+      if (order) {
+        const statusLabels: Record<string, string> = {
+          completed: 'تم تنفيذ طلبك بنجاح',
+          processing: 'جاري تنفيذ طلبك الآن',
+          cancelled: 'تم إلغاء طلبك',
+          pending: 'طلبك قيد المراجعة',
+        };
+        await supabase.from('notifications').insert({
+          user_id: order.user_id,
+          title: statusLabels[newStatus] || 'تم تحديث حالة طلبك',
+          description: `طلب "${order.service_name}" — الحالة الجديدة: ${statusLabels[newStatus] || newStatus}`,
+          type: 'order',
+        });
+      }
       showMsg('تم تحديث حالة الطلب');
       loadData();
     } else {
