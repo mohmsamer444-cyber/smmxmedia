@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search, Settings, Tag, Plus, Trash2, FileText, ClipboardList, Copy } from 'lucide-react';
+import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search, Settings, Tag, Plus, Trash2, FileText, ClipboardList, Copy, Upload, Loader2 } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
+import { useAuth } from '../../context/AuthContext';
 
 interface ProfileRow {
   id: string;
@@ -73,6 +74,8 @@ const GAME_LABELS: Record<string, string> = {
 };
 
 export const AdminDashboard: React.FC = () => {
+  const { session } = useAuth();
+  const [uploadingField, setUploadingField] = useState<'image' | 'video' | 'audio' | null>(null);
   const [tab, setTab] = useState<'users' | 'deposits' | 'orders' | 'settings' | 'packages' | 'posts'>('users');
   const [users, setUsers] = useState<ProfileRow[]>([]);
   const [deposits, setDeposits] = useState<DepositRow[]>([]);
@@ -94,6 +97,35 @@ export const AdminDashboard: React.FC = () => {
   // Catalog posts (admin-only storefront posts) state
   const [catalogPosts, setCatalogPosts] = useState<PostRow[]>([]);
   const [newPost, setNewPost] = useState({ content: '', image_url: '', video_url: '', audio_url: '', game_tag: '', price_tag: '', hashtags: '' });
+
+  const getFileExtension = (file: File): string => {
+    const parts = file.name.split('.');
+    return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : 'bin';
+  };
+
+  const uploadPostMedia = async (file: File, field: 'image' | 'video' | 'audio') => {
+    if (!session?.user?.id) {
+      showMsg('لازم تكون مسجل دخول عشان ترفع ملف');
+      return;
+    }
+    setUploadingField(field);
+    const ext = getFileExtension(file);
+    const path = `admin-posts/${session.user.id}/${field}-${Date.now()}-${Math.floor(Math.random() * 1e6)}.${ext}`;
+    const { error } = await supabase.storage.from('media').upload(path, file, {
+      cacheControl: '3600',
+      upsert: false,
+    });
+    if (error) {
+      showMsg('تعذر رفع الملف: ' + error.message);
+      setUploadingField(null);
+      return;
+    }
+    const { data } = supabase.storage.from('media').getPublicUrl(path);
+    const key = field === 'image' ? 'image_url' : field === 'video' ? 'video_url' : 'audio_url';
+    setNewPost(prev => ({ ...prev, [key]: data.publicUrl }));
+    setUploadingField(null);
+    showMsg('تم رفع الملف بنجاح');
+  };
 
   const loadData = async () => {
     setLoading(true);
@@ -787,10 +819,80 @@ export const AdminDashboard: React.FC = () => {
               className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] resize-none"
             />
             <p className="text-[10px] text-gray-500 text-left dir-ltr">{newPost.content.length} / 5000</p>
+
+            {/* Image upload */}
+            <div className="space-y-1.5">
+              <label className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-dashed border-[#333] bg-[#0A0A0A] text-xs font-bold text-gray-300 cursor-pointer hover:border-[#E8123D] transition-colors">
+                {uploadingField === 'image' ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4" />
+                )}
+                {newPost.image_url ? 'تغيير الصورة' : 'ارفع صورة من الجهاز'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  disabled={uploadingField !== null}
+                  onChange={(e) => e.target.files?.[0] && uploadPostMedia(e.target.files[0], 'image')}
+                />
+              </label>
+              {newPost.image_url && (
+                <img src={newPost.image_url} alt="" className="w-full h-28 object-cover rounded-lg" />
+              )}
+            </div>
+
+            {/* Video upload */}
+            <div className="space-y-1.5">
+              <label className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-dashed border-[#333] bg-[#0A0A0A] text-xs font-bold text-gray-300 cursor-pointer hover:border-[#E8123D] transition-colors">
+                {uploadingField === 'video' ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4" />
+                )}
+                {newPost.video_url ? 'تغيير الفيديو' : 'ارفع فيديو من الجهاز (اختياري)'}
+                <input
+                  type="file"
+                  accept="video/*"
+                  className="hidden"
+                  disabled={uploadingField !== null}
+                  onChange={(e) => e.target.files?.[0] && uploadPostMedia(e.target.files[0], 'video')}
+                />
+              </label>
+              {newPost.video_url && (
+                <video src={newPost.video_url} controls className="w-full h-28 object-cover rounded-lg bg-black" />
+              )}
+            </div>
+
+            {/* Audio upload */}
+            <div className="space-y-1.5">
+              <label className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-dashed border-[#333] bg-[#0A0A0A] text-xs font-bold text-gray-300 cursor-pointer hover:border-[#E8123D] transition-colors">
+                {uploadingField === 'audio' ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4" />
+                )}
+                {newPost.audio_url ? 'تغيير الصوت' : 'ارفع أغنية/صوت من الجهاز (اختياري)'}
+                <input
+                  type="file"
+                  accept="audio/*"
+                  className="hidden"
+                  disabled={uploadingField !== null}
+                  onChange={(e) => e.target.files?.[0] && uploadPostMedia(e.target.files[0], 'audio')}
+                />
+              </label>
+              {newPost.audio_url && (
+                <audio src={newPost.audio_url} controls className="w-full h-9" />
+              )}
+            </div>
+
+            <p className="text-[10px] text-gray-500">
+              أو تقدر تلصق رابط جاهز بدل الرفع لو حابب:
+            </p>
             <input
               type="text"
               dir="ltr"
-              placeholder="رابط الصورة (image URL)"
+              placeholder="رابط صورة جاهز (اختياري)"
               value={newPost.image_url}
               onChange={(e) => setNewPost({ ...newPost, image_url: e.target.value })}
               className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] text-left"
@@ -798,7 +900,7 @@ export const AdminDashboard: React.FC = () => {
             <input
               type="text"
               dir="ltr"
-              placeholder="رابط الفيديو (video URL — اختياري)"
+              placeholder="رابط فيديو جاهز (اختياري)"
               value={newPost.video_url}
               onChange={(e) => setNewPost({ ...newPost, video_url: e.target.value })}
               className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] text-left"
@@ -806,7 +908,7 @@ export const AdminDashboard: React.FC = () => {
             <input
               type="text"
               dir="ltr"
-              placeholder="رابط أغنية/صوت (audio URL — اختياري)"
+              placeholder="رابط صوت جاهز (اختياري)"
               value={newPost.audio_url}
               onChange={(e) => setNewPost({ ...newPost, audio_url: e.target.value })}
               className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] text-left"
@@ -836,9 +938,10 @@ export const AdminDashboard: React.FC = () => {
             />
             <button
               onClick={addCatalogPost}
-              className="w-full py-2 rounded-lg bg-[#E8123D] text-white text-xs font-bold"
+              disabled={uploadingField !== null}
+              className="w-full py-2 rounded-lg bg-[#E8123D] text-white text-xs font-bold disabled:opacity-50"
             >
-              نشر في الكتالوج
+              {uploadingField !== null ? 'جاري رفع الملف...' : 'نشر في الكتالوج'}
             </button>
             <p className="text-[10px] text-gray-500">
               الفيديو والصورة اختياريين — تقدر تحط واحد بس أو الاتنين أو تسيبهم فاضيين.
