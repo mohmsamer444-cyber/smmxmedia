@@ -317,7 +317,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             }
           : undefined,
       location: row.location || undefined,
-      likesCount: row.post_likes?.[0]?.count || 0,
+      likesCount: (row.post_likes?.[0]?.count || 0) + (row.boosted_likes || 0),
       isLiked: likedSet.has(row.id),
       commentsCount: row.post_comments?.[0]?.count || 0,
       comments: [],
@@ -331,7 +331,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const { data, error } = await supabase
       .from('posts')
       .select(
-        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, image_urls, video_url, video_duration_seconds, poll_question, poll_options, audio_url, shares_count, created_at, profiles(full_name), post_likes(count), post_comments(count)'
+        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, image_urls, video_url, video_duration_seconds, poll_question, poll_options, audio_url, shares_count, boosted_likes, created_at, profiles(full_name), post_likes(count), post_comments(count)'
       )
       .order('created_at', { ascending: false })
       .limit(100);
@@ -784,7 +784,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const loadPostComments = async (postId: string) => {
     const { data, error } = await supabase
       .from('post_comments')
-      .select('id, content, created_at, profiles(full_name)')
+      .select('id, content, created_at, display_name, profiles(full_name)')
       .eq('post_id', postId)
       .order('created_at', { ascending: true });
 
@@ -792,7 +792,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const comments = data.map((row: any) => ({
         id: row.id,
         author: {
-          name: row.profiles?.full_name || 'مستخدم',
+          name: row.display_name || row.profiles?.full_name || 'مستخدم',
           avatar: DEFAULT_AVATAR,
           verified: false,
         },

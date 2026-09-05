@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search, Settings, Tag, Plus, Trash2, FileText, ClipboardList, Copy, Upload, Loader2 } from 'lucide-react';
+import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search, Settings, Tag, Plus, Trash2, FileText, ClipboardList, Copy, Upload, Loader2, Heart, MessageSquarePlus } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 
@@ -49,6 +49,15 @@ interface PostRow {
   price_tag: string | null;
   hashtags: string[] | null;
   created_at: string;
+  boosted_likes: number;
+}
+
+interface FakeCommentRow {
+  id: string;
+  post_id: string;
+  display_name: string;
+  content: string;
+  created_at: string;
 }
 
 interface OrderRow {
@@ -96,6 +105,75 @@ export const AdminDashboard: React.FC = () => {
 
   // Catalog posts (admin-only storefront posts) state
   const [catalogPosts, setCatalogPosts] = useState<PostRow[]>([]);
+  const [likeEdits, setLikeEdits] = useState<Record<string, string>>({});
+  const [fakeComments, setFakeComments] = useState<Record<string, FakeCommentRow[]>>({});
+  const [newFakeComment, setNewFakeComment] = useState<Record<string, { name: string; text: string }>>({});
+  const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
+
+  const updateBoostedLikes = async (postId: string) => {
+    const value = likeEdits[postId];
+    if (value === undefined || value === '') return;
+    const numeric = parseInt(value, 10);
+    if (isNaN(numeric) || numeric < 0) return;
+    const { error } = await supabase.from('posts').update({ boosted_likes: numeric }).eq('id', postId);
+    if (!error) {
+      showMsg('تم تحديث عدد اللايكات بنجاح');
+      loadData();
+    } else {
+      showMsg('حصل خطأ: ' + error.message);
+    }
+  };
+
+  const loadFakeCommentsFor = async (postId: string) => {
+    const { data, error } = await supabase
+      .from('post_comments')
+      .select('id, post_id, display_name, content, created_at')
+      .eq('post_id', postId)
+      .not('display_name', 'is', null)
+      .order('created_at', { ascending: true });
+    if (!error && data) {
+      setFakeComments(prev => ({ ...prev, [postId]: data as any }));
+    }
+  };
+
+  const toggleExpandPost = (postId: string) => {
+    const next = expandedPostId === postId ? null : postId;
+    setExpandedPostId(next);
+    if (next) loadFakeCommentsFor(postId);
+  };
+
+  const addFakeComment = async (postId: string) => {
+    const entry = newFakeComment[postId];
+    if (!entry?.name?.trim() || !entry?.text?.trim() || !session?.user?.id) {
+      showMsg('اكتب اسم المعلق ونص التعليق الأول');
+      return;
+    }
+    const { error } = await supabase.from('post_comments').insert({
+      post_id: postId,
+      user_id: session.user.id,
+      display_name: entry.name.trim(),
+      content: entry.text.trim(),
+    });
+    if (!error) {
+      showMsg('تمت إضافة التعليق الوهمي بنجاح');
+      setNewFakeComment(prev => ({ ...prev, [postId]: { name: '', text: '' } }));
+      loadFakeCommentsFor(postId);
+      loadData();
+    } else {
+      showMsg('حصل خطأ: ' + error.message);
+    }
+  };
+
+  const deleteFakeComment = async (commentId: string, postId: string) => {
+    const { error } = await supabase.from('post_comments').delete().eq('id', commentId);
+    if (!error) {
+      showMsg('تم حذف التعليق');
+      loadFakeCommentsFor(postId);
+      loadData();
+    } else {
+      showMsg('حصل خطأ: ' + error.message);
+    }
+  };
   const [newPost, setNewPost] = useState({ content: '', image_url: '', video_url: '', audio_url: '', game_tag: '', price_tag: '', hashtags: '' });
 
   const getFileExtension = (file: File): string => {
@@ -158,7 +236,7 @@ export const AdminDashboard: React.FC = () => {
 
     const { data: postsData } = await supabase
       .from('posts')
-      .select('id, content, image_url, video_url, audio_url, game_tag, price_tag, hashtags, created_at')
+      .select('id, content, image_url, video_url, audio_url, game_tag, price_tag, hashtags, created_at, boosted_likes')
       .order('created_at', { ascending: false });
     setCatalogPosts((postsData as any) || []);
 
@@ -973,6 +1051,83 @@ export const AdminDashboard: React.FC = () => {
                 {p.price_tag && <span className="px-2 py-0.5 rounded bg-[#0A0A0A] border border-[#262626]">{p.price_tag}</span>}
                 <span>{new Date(p.created_at).toLocaleString('ar-EG')}</span>
               </div>
+
+              {/* Boost likes */}
+              <div className="flex items-center gap-2 pt-1">
+                <Heart className="w-3.5 h-3.5 text-[#E8123D] shrink-0" />
+                <span className="text-[10px] text-gray-400 shrink-0">لايكات وهمية حالية: {p.boosted_likes || 0}</span>
+                <input
+                  type="number"
+                  min={0}
+                  placeholder="عدد جديد"
+                  value={likeEdits[p.id] ?? ''}
+                  onChange={(e) => setLikeEdits({ ...likeEdits, [p.id]: e.target.value })}
+                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-1.5 px-2 text-[11px] outline-none focus:border-[#E8123D]"
+                />
+                <button
+                  onClick={() => updateBoostedLikes(p.id)}
+                  className="px-2.5 py-1.5 rounded-lg bg-[#E8123D] text-white text-[11px] font-bold shrink-0"
+                >
+                  تحديث
+                </button>
+              </div>
+
+              {/* Fake comments toggle */}
+              <button
+                onClick={() => toggleExpandPost(p.id)}
+                className="w-full text-[11px] text-gray-400 hover:text-white flex items-center justify-center gap-1.5 py-1.5 border-t border-[#262626] mt-1"
+              >
+                <MessageSquarePlus className="w-3.5 h-3.5" />
+                {expandedPostId === p.id ? 'إخفاء التعليقات الوهمية' : 'إضافة/عرض تعليقات وهمية'}
+              </button>
+
+              {expandedPostId === p.id && (
+                <div className="space-y-2 pt-1">
+                  {(fakeComments[p.id] || []).map((c) => (
+                    <div key={c.id} className="flex items-start justify-between gap-2 bg-[#0A0A0A] border border-[#262626] rounded-lg px-2.5 py-2">
+                      <div className="flex-1">
+                        <p className="text-[11px] font-bold text-white">{c.display_name}</p>
+                        <p className="text-[11px] text-gray-400">{c.content}</p>
+                      </div>
+                      <button
+                        onClick={() => deleteFakeComment(c.id, p.id)}
+                        className="p-1.5 rounded bg-red-500/10 text-red-400 hover:bg-red-500/20 shrink-0"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                  {(fakeComments[p.id] || []).length === 0 && (
+                    <p className="text-[11px] text-gray-500 text-center py-1">لسه مفيش تعليقات وهمية على المنشور ده</p>
+                  )}
+                  <input
+                    type="text"
+                    placeholder="اسم المعلق (وهمي)"
+                    value={newFakeComment[p.id]?.name || ''}
+                    onChange={(e) =>
+                      setNewFakeComment({ ...newFakeComment, [p.id]: { name: e.target.value, text: newFakeComment[p.id]?.text || '' } })
+                    }
+                    className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-1.5 px-2.5 text-[11px] outline-none focus:border-[#E8123D]"
+                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="نص التعليق"
+                      value={newFakeComment[p.id]?.text || ''}
+                      onChange={(e) =>
+                        setNewFakeComment({ ...newFakeComment, [p.id]: { name: newFakeComment[p.id]?.name || '', text: e.target.value } })
+                      }
+                      className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-1.5 px-2.5 text-[11px] outline-none focus:border-[#E8123D]"
+                    />
+                    <button
+                      onClick={() => addFakeComment(p.id)}
+                      className="px-2.5 py-1.5 rounded-lg bg-[#E8123D] text-white text-[11px] font-bold shrink-0"
+                    >
+                      إضافة
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
 
