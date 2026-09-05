@@ -22,13 +22,16 @@ function AdminApp() {
 
   return (
     <div>
+      <div className="sticky top-0 z-50 bg-[#0A0A0A] border-b border-[#262626] px-4 py-3 flex items-center justify-between">
+        <span className="text-sm font-black text-white">لوحة تحكم الأدمن</span>
+        <button
+          onClick={() => signOut()}
+          className="px-4 py-2 rounded-xl bg-[#141414] border border-[#262626] text-red-400 text-xs font-bold hover:bg-red-500/10 transition-colors"
+        >
+          تسجيل خروج
+        </button>
+      </div>
       <AdminDashboard />
-      <button
-        onClick={() => signOut()}
-        className="fixed bottom-4 left-4 z-50 px-4 py-2 rounded-xl bg-[#141414] border border-[#262626] text-red-400 text-xs font-bold"
-      >
-        تسجيل خروج
-      </button>
     </div>
   );
 }

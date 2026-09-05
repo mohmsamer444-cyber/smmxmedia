@@ -183,7 +183,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const fetchProfile = () =>
       supabase
         .from('profiles')
-        .select('id, full_name, balance')
+        .select('id, full_name, balance, avatar_url')
         .eq('id', session.user.id)
         .maybeSingle();
 
@@ -200,6 +200,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         ...prev,
         id: data.id,
         name: data.full_name || prev.name,
+        avatar: data.avatar_url || prev.avatar,
         balanceUSD: typeof data.balance === 'number' ? data.balance : 0,
       }));
     } else {
@@ -285,7 +286,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         id: row.user_id,
         name: row.profiles?.full_name || 'مستخدم',
         username: row.profiles?.full_name ? row.profiles.full_name.replace(/\s+/g, '_') : 'user',
-        avatar: DEFAULT_AVATAR,
+        avatar: row.profiles?.avatar_url || DEFAULT_AVATAR,
         verified: false,
         bio: '',
         followers: 0,
@@ -331,7 +332,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const { data, error } = await supabase
       .from('posts')
       .select(
-        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, image_urls, video_url, video_duration_seconds, poll_question, poll_options, audio_url, shares_count, boosted_likes, created_at, profiles(full_name), post_likes(count), post_comments(count)'
+        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, image_urls, video_url, video_duration_seconds, poll_question, poll_options, audio_url, shares_count, boosted_likes, created_at, profiles(full_name, avatar_url), post_likes(count), post_comments(count)'
       )
       .order('created_at', { ascending: false })
       .limit(100);
@@ -434,23 +435,36 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const openAvatarModal = () => setIsAvatarModalOpen(true);
   const closeAvatarModal = () => setIsAvatarModalOpen(false);
 
-  const updateUserAvatar = (newAvatarUrl: string) => {
+  const updateUserAvatar = async (newAvatarUrl: string) => {
     setUser(prev => ({ ...prev, avatar: newAvatarUrl }));
     setPosts(prev =>
       prev.map(p =>
         p.author.id === user.id ? { ...p, author: { ...p.author, avatar: newAvatarUrl } } : p
       )
     );
+    if (session?.user?.id) {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ avatar_url: newAvatarUrl })
+        .eq('id', session.user.id);
+      if (error) {
+        showToast('اتحفظت الصورة محليًا بس، حصل خطأ في الحفظ الدائم', 'error');
+        return;
+      }
+    }
     showToast('تم تحديث الصورة الشخصية بنجاح! ✨', 'success');
   };
 
-  const removeUserAvatar = () => {
+  const removeUserAvatar = async () => {
     setUser(prev => ({ ...prev, avatar: DEFAULT_AVATAR }));
     setPosts(prev =>
       prev.map(p =>
         p.author.id === user.id ? { ...p, author: { ...p.author, avatar: DEFAULT_AVATAR } } : p
       )
     );
+    if (session?.user?.id) {
+      await supabase.from('profiles').update({ avatar_url: null }).eq('id', session.user.id);
+    }
     showToast('تمت إزالة الصورة الشخصية والعودة للصورة الافتراضية', 'info');
   };
 
@@ -784,7 +798,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const loadPostComments = async (postId: string) => {
     const { data, error } = await supabase
       .from('post_comments')
-      .select('id, content, created_at, display_name, profiles(full_name)')
+      .select('id, content, created_at, display_name, profiles(full_name, avatar_url)')
       .eq('post_id', postId)
       .order('created_at', { ascending: true });
 
@@ -793,7 +807,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         id: row.id,
         author: {
           name: row.display_name || row.profiles?.full_name || 'مستخدم',
-          avatar: DEFAULT_AVATAR,
+          avatar: row.profiles?.avatar_url || DEFAULT_AVATAR,
           verified: false,
         },
         content: row.content,

@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabaseClient';
 import {
   X,
   Camera,
@@ -11,10 +13,12 @@ import {
   Check,
   Move,
   User,
+  Loader2,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export const AvatarUploadModal: React.FC = () => {
+  const { session } = useAuth();
   const {
     user,
     isAvatarModalOpen,
@@ -28,6 +32,7 @@ export const AvatarUploadModal: React.FC = () => {
   const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -95,8 +100,9 @@ export const AvatarUploadModal: React.FC = () => {
     });
   };
 
-  const handleConfirmSave = () => {
-    if (!selectedImage) return;
+  const handleConfirmSave = async () => {
+    if (!selectedImage || !session?.user?.id) return;
+    setIsSaving(true);
 
     // Canvas cropping step
     const canvas = document.createElement('canvas');
@@ -106,7 +112,7 @@ export const AvatarUploadModal: React.FC = () => {
     const ctx = canvas.getContext('2d');
 
     if (!ctx || !imgRef.current) {
-      updateUserAvatar(selectedImage);
+      setIsSaving(false);
       closeAvatarModal();
       return;
     }
@@ -141,9 +147,31 @@ export const AvatarUploadModal: React.FC = () => {
     ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
     ctx.restore();
 
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
-    updateUserAvatar(dataUrl);
-    closeAvatarModal();
+    canvas.toBlob(
+      async (blob) => {
+        if (!blob) {
+          setIsSaving(false);
+          return;
+        }
+        const path = `avatars/${session.user.id}/avatar-${Date.now()}.jpg`;
+        const { error } = await supabase.storage.from('media').upload(path, blob, {
+          cacheControl: '3600',
+          upsert: false,
+          contentType: 'image/jpeg',
+        });
+        if (error) {
+          setIsSaving(false);
+          alert('تعذر رفع الصورة: ' + error.message);
+          return;
+        }
+        const { data } = supabase.storage.from('media').getPublicUrl(path);
+        await updateUserAvatar(data.publicUrl);
+        setIsSaving(false);
+        closeAvatarModal();
+      },
+      'image/jpeg',
+      0.92
+    );
   };
 
   const handleRemove = () => {
@@ -310,10 +338,11 @@ export const AvatarUploadModal: React.FC = () => {
                 <div className="flex items-center gap-3 w-full">
                   <button
                     onClick={handleConfirmSave}
-                    className="w-full py-3 px-4 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs flex items-center justify-center gap-2 red-glow transition-all"
+                    disabled={isSaving}
+                    className="w-full py-3 px-4 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-xs flex items-center justify-center gap-2 red-glow transition-all disabled:opacity-60"
                   >
-                    <Check className="w-4 h-4" />
-                    <span>حفظ الصورة الشخصية</span>
+                    {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                    <span>{isSaving ? 'جاري الحفظ...' : 'حفظ الصورة الشخصية'}</span>
                   </button>
 
                   <button
