@@ -27,8 +27,7 @@ import {
 } from '../data/mockData';
 import { fetchServices, createSMMOrder, cancelSMMOrder, requestRefill, checkOrderStatus } from '../services/smmApi';
 import { supabase } from '../lib/supabaseClient';
-import { playSuccessSound, playErrorSound, playMessageSound } from '../lib/sounds';
-import { useAuth } from './AuthContext';
+import { playSuccessSound, playErrorSound, playMessageSound } from '../lib/sounds';import { useAuth } from './AuthContext';
 
 export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
   USD: { code: 'USD', symbol: '$', rate: 1.0, flag: '🇺🇸' },
@@ -183,7 +182,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const fetchProfile = () =>
       supabase
         .from('profiles')
-        .select('id, full_name, balance, avatar_url')
+        .select('id, full_name, balance, avatar_url, is_verified')
         .eq('id', session.user.id)
         .maybeSingle();
 
@@ -201,6 +200,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         id: data.id,
         name: data.full_name || prev.name,
         avatar: data.avatar_url || prev.avatar,
+        verified: !!data.is_verified,
         balanceUSD: typeof data.balance === 'number' ? data.balance : 0,
       }));
     } else {
@@ -287,7 +287,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         name: row.profiles?.full_name || 'مستخدم',
         username: row.profiles?.full_name ? row.profiles.full_name.replace(/\s+/g, '_') : 'user',
         avatar: row.profiles?.avatar_url || DEFAULT_AVATAR,
-        verified: false,
+        verified: !!row.profiles?.is_verified,
         bio: '',
         followers: 0,
         following: 0,
@@ -332,7 +332,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const { data, error } = await supabase
       .from('posts')
       .select(
-        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, image_urls, video_url, video_duration_seconds, poll_question, poll_options, audio_url, shares_count, boosted_likes, created_at, profiles(full_name, avatar_url), post_likes(count), post_comments(count)'
+        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, image_urls, video_url, video_duration_seconds, poll_question, poll_options, audio_url, shares_count, boosted_likes, created_at, profiles(full_name, avatar_url, is_verified), post_likes(count), post_comments(count)'
       )
       .order('created_at', { ascending: false })
       .limit(100);
@@ -847,7 +847,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const loadPostComments = async (postId: string) => {
     const { data, error } = await supabase
       .from('post_comments')
-      .select('id, content, created_at, display_name, profiles(full_name, avatar_url)')
+      .select('id, content, created_at, display_name, profiles(full_name, avatar_url, is_verified)')
       .eq('post_id', postId)
       .order('created_at', { ascending: true });
 
@@ -857,7 +857,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         author: {
           name: row.display_name || row.profiles?.full_name || 'مستخدم',
           avatar: row.profiles?.avatar_url || DEFAULT_AVATAR,
-          verified: false,
+          verified: row.display_name ? false : !!row.profiles?.is_verified,
         },
         content: row.content,
         timestamp: new Date(row.created_at).toLocaleString('ar-EG'),

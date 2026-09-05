@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp, CURRENCIES } from '../../context/AppContext';
 import { CurrencyCode } from '../../types';
+import { VerifiedBadge } from './VerifiedBadge';
 import {
   Bell,
   Moon,
@@ -337,7 +338,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
                     <div className="overflow-hidden flex-1">
                       <div className="text-xs font-bold text-white flex items-center gap-1 truncate">
                         {user.name}
-                        {user.verified && <CheckCircle className="w-3.5 h-3.5 text-blue-500 fill-blue-500/20 shrink-0" />}
+                        {user.verified && <VerifiedBadge size={14} />}
                       </div>
                       <div className="text-[11px] text-gray-400 dir-ltr text-right truncate">
                         @{user.username}

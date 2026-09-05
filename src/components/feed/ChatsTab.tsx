@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Send, CheckCircle, Search, ShieldCheck } from 'lucide-react';
+import { VerifiedBadge } from '../common/VerifiedBadge';
 
 export const ChatsTab: React.FC = () => {
   const { conversations, activeChatId, setActiveChatId, sendChatMessage, user } = useApp();
@@ -82,7 +83,7 @@ export const ChatsTab: React.FC = () => {
               <div>
                 <h4 className="font-bold text-xs text-white flex items-center gap-1">
                   {currentChat.user.name}
-                  {currentChat.user.verified && <CheckCircle className="w-3.5 h-3.5 text-blue-500" />}
+                  {currentChat.user.verified && <VerifiedBadge size={14} />}
                 </h4>
                 <span className="text-[10px] text-green-400 font-medium">متصل الآن</span>
               </div>

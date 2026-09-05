@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { X, CheckCircle, UserPlus, UserCheck, MessageSquare, ShieldCheck, Camera } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { VerifiedBadge } from '../common/VerifiedBadge';
 
 export const UserProfileModal: React.FC = () => {
   const {
@@ -116,9 +117,7 @@ export const UserProfileModal: React.FC = () => {
             <div>
               <div className="flex items-center gap-1.5 font-extrabold text-base text-white">
                 <span>{selectedUserProfile.name}</span>
-                {selectedUserProfile.verified && (
-                  <CheckCircle className="w-4 h-4 text-blue-500 fill-blue-500/20 shrink-0" />
-                )}
+                {selectedUserProfile.verified && <VerifiedBadge size={16} />}
               </div>
               <div className="text-xs text-gray-400 dir-ltr text-right">
                 @{selectedUserProfile.username}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search, Settings, Tag, Plus, Trash2, FileText, ClipboardList, Copy, Upload, Loader2, Heart, MessageSquarePlus } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
+import { VerifiedBadge } from '../common/VerifiedBadge';
 
 interface ProfileRow {
   id: string;
@@ -10,6 +11,7 @@ interface ProfileRow {
   full_name: string | null;
   balance: number;
   is_admin: boolean;
+  is_verified: boolean;
   created_at: string;
 }
 
@@ -209,7 +211,7 @@ export const AdminDashboard: React.FC = () => {
     setLoading(true);
     const { data: usersData } = await supabase
       .from('profiles')
-      .select('id, email, phone, full_name, balance, is_admin, created_at')
+      .select('id, email, phone, full_name, balance, is_admin, is_verified, created_at')
       .order('created_at', { ascending: false });
     setUsers(usersData || []);
 
@@ -273,6 +275,16 @@ export const AdminDashboard: React.FC = () => {
       .eq('id', userId);
     if (!error) {
       showMsg(`تم إضافة ${amount} للرصيد`);
+      loadData();
+    } else {
+      showMsg('حصل خطأ: ' + error.message);
+    }
+  };
+
+  const toggleVerified = async (userId: string, current: boolean) => {
+    const { error } = await supabase.from('profiles').update({ is_verified: !current }).eq('id', userId);
+    if (!error) {
+      showMsg(!current ? 'تم توثيق الحساب بنجاح ✔' : 'تم إلغاء توثيق الحساب');
       loadData();
     } else {
       showMsg('حصل خطأ: ' + error.message);
@@ -540,10 +552,9 @@ export const AdminDashboard: React.FC = () => {
           {filteredUsers.map((u) => (
             <div key={u.id} className="bg-[#141414] border border-[#262626] rounded-xl p-3.5 space-y-2">
               <div className="flex items-center justify-between">
-                <div>
+                <div className="flex items-center gap-1.5">
                   <p className="font-bold text-sm">{u.full_name || 'بدون اسم'}</p>
-                  <p className="text-[11px] text-gray-500">{u.email}</p>
-                  {u.phone && <p className="text-[11px] text-gray-500">{u.phone}</p>}
+                  {u.is_verified && <VerifiedBadge size={15} />}
                 </div>
                 {u.is_admin && (
                   <span className="text-[10px] bg-[#E8123D]/20 text-[#E8123D] px-2 py-1 rounded-full font-bold">
@@ -551,6 +562,22 @@ export const AdminDashboard: React.FC = () => {
                   </span>
                 )}
               </div>
+              <div>
+                <p className="text-[11px] text-gray-500">{u.email}</p>
+                {u.phone && <p className="text-[11px] text-gray-500">{u.phone}</p>}
+              </div>
+
+              <button
+                onClick={() => toggleVerified(u.id, u.is_verified)}
+                className={`w-full py-1.5 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1.5 border transition-colors ${
+                  u.is_verified
+                    ? 'bg-blue-500/10 border-blue-500/40 text-blue-400 hover:bg-blue-500/20'
+                    : 'bg-[#0A0A0A] border-[#262626] text-gray-400 hover:text-white'
+                }`}
+              >
+                <VerifiedBadge size={13} />
+                {u.is_verified ? 'إلغاء التوثيق' : 'توثيق الحساب'}
+              </button>
 
               <div className="flex items-center gap-2">
                 <span className="text-xs text-gray-400">الرصيد الحالي:</span>

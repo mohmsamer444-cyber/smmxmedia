@@ -12,6 +12,7 @@ import {
   MessageCircle,
   Share2,
 } from 'lucide-react';
+import { VerifiedBadge } from '../common/VerifiedBadge';
 
 interface PostCardProps {
   post: SocialPost;
@@ -99,9 +100,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           <div>
             <div className="flex items-center gap-1.5 font-bold text-sm text-white">
               <span>{post.author.name}</span>
-              {post.author.verified && (
-                <CheckCircle className="w-4 h-4 text-blue-500 fill-blue-500/20 shrink-0" />
-              )}
+              {post.author.verified && <VerifiedBadge size={16} />}
             </div>
             <div className="flex items-center gap-2 text-[11px] text-gray-400 font-sans">
               <span>@{post.author.username}</span>
