@@ -20,7 +20,7 @@ interface PostCardProps {
 const TELEGRAM_ORDER_LINK = 'https://t.me/fx_sa2';
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
-  const { togglePostLike, addPostComment, loadPostComments, sharePost, votePollOption } = useApp();
+  const { togglePostLike, addPostComment, loadPostComments, sharePost, votePollOption, startDirectChatWithUser, user } = useApp();
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -39,6 +39,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
   const handleOrderOnTelegram = () => {
     window.open(TELEGRAM_ORDER_LINK, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleChatWithPoster = () => {
+    if (post.author.id === user.id) return; // can't chat with yourself
+    startDirectChatWithUser(post.author, `مرحبًا، أنا مهتم بالعرض: "${post.content.slice(0, 60)}"`);
   };
 
   // Helper to format hashtags
@@ -114,6 +119,16 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         >
           <Send className="w-4.5 h-4.5" />
         </button>
+
+        {post.author.id !== user.id && (
+          <button
+            onClick={handleChatWithPoster}
+            title="راسل صاحب المنشور"
+            className="p-2.5 rounded-xl bg-[#E8123D]/15 border border-[#E8123D]/40 text-[#E8123D] hover:bg-[#E8123D]/25 transition-colors shrink-0"
+          >
+            <MessageCircle className="w-4.5 h-4.5" />
+          </button>
+        )}
       </div>
 
       {/* Post Text Body */}
@@ -299,13 +314,24 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
       )}
 
       {/* Order CTA */}
-      <button
-        onClick={handleOrderOnTelegram}
-        className="w-full py-3 rounded-xl bg-[#0088cc] hover:bg-[#0077b3] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all"
-      >
-        <Send className="w-4 h-4" />
-        <span>اطلب الآن عبر تليجرام — خد اسكرين شوت للمنشور وابعته</span>
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={handleOrderOnTelegram}
+          className="flex-1 py-3 rounded-xl bg-[#0088cc] hover:bg-[#0077b3] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all"
+        >
+          <Send className="w-4 h-4" />
+          <span>عبر تليجرام</span>
+        </button>
+        {post.author.id !== user.id && (
+          <button
+            onClick={handleChatWithPoster}
+            className="flex-1 py-3 rounded-xl bg-[#E8123D] hover:bg-[#B10E31] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all red-glow"
+          >
+            <MessageCircle className="w-4 h-4" />
+            <span>راسل داخل الموقع</span>
+          </button>
+        )}
+      </div>
     </div>
   );
 };
