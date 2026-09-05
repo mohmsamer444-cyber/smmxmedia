@@ -1,10 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { X, Image, Video, FileText, BarChart2, MapPin, Plus, Trash2, Send, Upload } from 'lucide-react';
+import { supabase } from '../../lib/supabaseClient';
+import { X, Image, Video, FileText, BarChart2, MapPin, Plus, Trash2, Send, Upload, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
+const MAX_CONTENT_LENGTH = 5000;
+const MAX_VIDEO_SECONDS = 60 * 60; // 1 hour
+
+function formatDurationFromSeconds(totalSeconds: number): string {
+  const total = Math.round(totalSeconds);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const ss = String(s).padStart(2, '0');
+  if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${ss}`;
+  return `${m}:${ss}`;
+}
+
+function getFileExtension(file: File): string {
+  const parts = file.name.split('.');
+  if (parts.length > 1) return parts[parts.length - 1].toLowerCase();
+  return file.type.split('/')[1] || 'bin';
+}
+
 export const CreatePostModal: React.FC = () => {
-  const { isCreatePostOpen, closeCreatePost, initialPostType, user, createPost } = useApp();
+  const { isCreatePostOpen, closeCreatePost, initialPostType, user, createPost, showToast } = useApp();
 
   const [contentType, setContentType] = useState<string>('text');
   const [text, setText] = useState<string>('');
@@ -15,9 +35,13 @@ export const CreatePostModal: React.FC = () => {
   const [videoUrl, setVideoUrl] = useState<string>('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string>('');
+  const [videoDurationSeconds, setVideoDurationSeconds] = useState<number | null>(null);
+  const [videoError, setVideoError] = useState<string>('');
   const [location, setLocation] = useState<string>('');
   const [pollQuestion, setPollQuestion] = useState<string>('');
   const [pollOptions, setPollOptions] = useState<string[]>(['', '']);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [uploadStage, setUploadStage] = useState<string>('');
 
   useEffect(() => {
     if (initialPostType) {
@@ -34,6 +58,7 @@ export const CreatePostModal: React.FC = () => {
       const newUrls = files.map(file => URL.createObjectURL(file as Blob));
       setImagePreviews(prev => [...prev, ...newUrls]);
     }
+    e.target.value = '';
   };
 
   const handleRemoveImage = (index: number) => {
@@ -47,15 +72,37 @@ export const CreatePostModal: React.FC = () => {
 
   const handleVideoFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+    setVideoError('');
+
+    const url = URL.createObjectURL(file);
+    const probe = document.createElement('video');
+    probe.preload = 'metadata';
+    probe.onloadedmetadata = () => {
+      const duration = probe.duration;
+      if (isFinite(duration) && duration > MAX_VIDEO_SECONDS) {
+        setVideoError('مدة الفيديو أطول من ساعة، من فضلك اختر فيديو أقصر.');
+        URL.revokeObjectURL(url);
+        return;
+      }
+      setVideoDurationSeconds(isFinite(duration) ? duration : null);
       setVideoFile(file);
-      const url = URL.createObjectURL(file);
       setVideoPreviewUrl(url);
-    }
+    };
+    probe.onerror = () => {
+      // Couldn't read metadata — allow the file through without a known duration.
+      setVideoDurationSeconds(null);
+      setVideoFile(file);
+      setVideoPreviewUrl(url);
+    };
+    probe.src = url;
+    e.target.value = '';
   };
 
   const handleRemoveVideo = () => {
     setVideoFile(null);
+    setVideoDurationSeconds(null);
+    setVideoError('');
     if (videoPreviewUrl.startsWith('blob:')) {
       URL.revokeObjectURL(videoPreviewUrl);
     }
@@ -83,9 +130,35 @@ export const CreatePostModal: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const uploadFileToMedia = async (file: File, subfolder: string): Promise<string | null> => {
+    const ext = getFileExtension(file);
+    const path = `posts/${user.id}/${subfolder}-${Date.now()}-${Math.floor(Math.random() * 1e6)}.${ext}`;
+    const { error } = await supabase.storage.from('media').upload(path, file, {
+      cacheControl: '3600',
+      upsert: false,
+    });
+    if (error) {
+      showToast('تعذر رفع الملف: ' + error.message, 'error');
+      return null;
+    }
+    const { data } = supabase.storage.from('media').getPublicUrl(path);
+    return data.publicUrl;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim() && contentType === 'text') return;
+    if (videoError) return;
+
+    if (contentType === 'poll') {
+      const filledOptions = pollOptions.filter(o => o.trim().length > 0);
+      if (!pollQuestion.trim() || filledOptions.length < 2) {
+        showToast('اكتب سؤال الاستطلاع مع خيارين على الأقل', 'error');
+        return;
+      }
+    }
+
+    setIsSubmitting(true);
 
     const parsedHashtags = hashtagsText
       .split(' ')
@@ -107,20 +180,49 @@ export const CreatePostModal: React.FC = () => {
       };
     }
 
-    const finalVideoUrl = videoPreviewUrl || videoUrl;
-    const finalImages = imagePreviews.length > 0 
-      ? imagePreviews 
-      : imageUrl 
-      ? [imageUrl] 
-      : contentType === 'image' 
-      ? ['https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'] 
-      : undefined;
+    // Upload real image files (if any) to Supabase Storage
+    let finalImages: string[] | undefined;
+    if (imageFiles.length > 0) {
+      setUploadStage('جاري رفع الصور...');
+      const uploaded: string[] = [];
+      for (let i = 0; i < imageFiles.length; i++) {
+        const url = await uploadFileToMedia(imageFiles[i], `img-${i}`);
+        if (url) uploaded.push(url);
+      }
+      finalImages = uploaded.length > 0 ? uploaded : undefined;
+    } else if (imageUrl) {
+      finalImages = [imageUrl];
+    } else if (contentType === 'image') {
+      finalImages = ['https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'];
+    }
+
+    // Upload the real video file (if any) to Supabase Storage
+    let finalVideoUrl = '';
+    let finalDurationSeconds: number | undefined;
+    if (videoFile) {
+      setUploadStage('جاري رفع الفيديو...');
+      const url = await uploadFileToMedia(videoFile, 'video');
+      if (url) {
+        finalVideoUrl = url;
+        finalDurationSeconds = videoDurationSeconds ?? undefined;
+      }
+    } else if (videoUrl) {
+      finalVideoUrl = videoUrl;
+    }
+
+    setUploadStage('');
 
     createPost({
       content: text,
       hashtags: parsedHashtags.length ? parsedHashtags : ['عالم_الشرق_الأوسط'],
       images: finalImages,
-      video: finalVideoUrl ? { url: finalVideoUrl, duration: '0:45' } : undefined,
+      video: finalVideoUrl
+        ? {
+            url: finalVideoUrl,
+            duration: finalDurationSeconds ? formatDurationFromSeconds(finalDurationSeconds) : '',
+            durationSeconds: finalDurationSeconds,
+          }
+        : undefined,
       location: location || undefined,
       poll: pollData,
     });
@@ -133,9 +235,12 @@ export const CreatePostModal: React.FC = () => {
     setVideoUrl('');
     setVideoFile(null);
     setVideoPreviewUrl('');
+    setVideoDurationSeconds(null);
+    setVideoError('');
     setLocation('');
     setPollQuestion('');
     setPollOptions(['', '']);
+    setIsSubmitting(false);
     closeCreatePost();
   };
 
@@ -146,10 +251,10 @@ export const CreatePostModal: React.FC = () => {
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="bg-[#141414] border border-[#262626] w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+          className="bg-[#141414] border border-[#262626] w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
         >
           {/* Header */}
-          <div className="p-4 border-b border-[#262626] flex items-center justify-between bg-[#1a1a1a]">
+          <div className="p-4 border-b border-[#262626] flex items-center justify-between bg-[#1a1a1a] shrink-0">
             <h3 className="font-bold text-sm text-white flex items-center gap-2">
               <Send className="w-4 h-4 text-[#E8123D]" />
               إنشاء منشور جديد
@@ -162,7 +267,7 @@ export const CreatePostModal: React.FC = () => {
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-4 space-y-4">
+          <form onSubmit={handleSubmit} className="p-4 space-y-4 overflow-y-auto">
             {/* User row */}
             <div className="flex items-center gap-3">
               <img
@@ -177,14 +282,20 @@ export const CreatePostModal: React.FC = () => {
             </div>
 
             {/* Content Input */}
-            <textarea
-              value={text}
-              onChange={e => setText(e.target.value)}
-              placeholder="اكتب وصف حسابك (ببجي / بيس / فري فاير)... اذكر الرتبة، الأسكنات، عدد الشدات/الجواهر، والسعر المطلوب"
-              rows={4}
-              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl p-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E8123D] resize-none"
-              required={contentType === 'text'}
-            />
+            <div>
+              <textarea
+                value={text}
+                onChange={e => setText(e.target.value.slice(0, MAX_CONTENT_LENGTH))}
+                maxLength={MAX_CONTENT_LENGTH}
+                placeholder="اكتب وصف حسابك (ببجي / بيس / فري فاير)... اذكر الرتبة، الأسكنات، عدد الشدات/الجواهر، والسعر المطلوب"
+                rows={4}
+                className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl p-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#E8123D] resize-none"
+                required={contentType === 'text'}
+              />
+              <p className="text-[10px] text-gray-500 text-left dir-ltr mt-1">
+                {text.length} / {MAX_CONTENT_LENGTH}
+              </p>
+            </div>
 
             {/* Hashtags Input */}
             <div>
@@ -261,7 +372,7 @@ export const CreatePostModal: React.FC = () => {
             {contentType === 'video' && (
               <div className="p-3.5 bg-[#0A0A0A] border border-[#262626] rounded-xl space-y-3">
                 <label className="text-[11px] font-bold text-white block">
-                  مقطع الفيديو (رفع مباشر من الجهاز أو رابط)
+                  مقطع الفيديو (رفع مباشر من الجهاز أو رابط) — الحد الأقصى للمدة ساعة
                 </label>
 
                 {/* Local Video Preview or File Picker */}
@@ -276,6 +387,11 @@ export const CreatePostModal: React.FC = () => {
                     >
                       <X className="w-4 h-4" />
                     </button>
+                    {videoDurationSeconds != null && (
+                      <span className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] font-bold px-2 py-1 rounded-md font-sans">
+                        {formatDurationFromSeconds(videoDurationSeconds)}
+                      </span>
+                    )}
                   </div>
                 ) : (
                   <label className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#262626] hover:border-[#E8123D]/60 rounded-xl cursor-pointer bg-[#141414] hover:bg-[#1f1f1f] transition-all group">
@@ -283,7 +399,7 @@ export const CreatePostModal: React.FC = () => {
                       <Upload className="w-6 h-6" />
                     </div>
                     <span className="text-xs font-bold text-white mb-1">انقر لإرفاق فيديو من جهازك</span>
-                    <span className="text-[10px] text-gray-400">يدعم صيغ (MP4, MOV, WebM)</span>
+                    <span className="text-[10px] text-gray-400">يدعم صيغ (MP4, MOV, WebM) — حتى ساعة كاملة</span>
                     <input
                       type="file"
                       accept="video/*"
@@ -291,6 +407,12 @@ export const CreatePostModal: React.FC = () => {
                       className="hidden"
                     />
                   </label>
+                )}
+
+                {videoError && (
+                  <div className="text-[11px] text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
+                    {videoError}
+                  </div>
                 )}
 
                 {/* Secondary Link Option */}
@@ -301,14 +423,10 @@ export const CreatePostModal: React.FC = () => {
                   <input
                     type="url"
                     value={videoUrl}
-                    onChange={e => {
-                      setVideoUrl(e.target.value);
-                      if (e.target.value && !videoPreviewUrl) {
-                        setVideoPreviewUrl(e.target.value);
-                      }
-                    }}
+                    onChange={e => setVideoUrl(e.target.value)}
                     placeholder="https://www.youtube.com/watch?v=... أو تيك توك"
-                    className="w-full bg-[#141414] border border-[#262626] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E8123D]"
+                    disabled={!!videoFile}
+                    className="w-full bg-[#141414] border border-[#262626] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#E8123D] disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -430,10 +548,20 @@ export const CreatePostModal: React.FC = () => {
             {/* Submit CTA */}
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] text-white font-bold text-sm shadow-lg red-glow transition-all flex items-center justify-center gap-2"
+              disabled={isSubmitting}
+              className="w-full py-3 rounded-xl bg-[#E8123D] hover:bg-[#b10e31] disabled:opacity-60 text-white font-bold text-sm shadow-lg red-glow transition-all flex items-center justify-center gap-2"
             >
-              <Send className="w-4 h-4" />
-              نشر الآن
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  {uploadStage || 'جاري النشر...'}
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  نشر الآن
+                </>
+              )}
             </button>
           </form>
         </motion.div>

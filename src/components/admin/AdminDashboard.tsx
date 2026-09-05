@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search, Settings, Tag, Plus, Trash2, FileText } from 'lucide-react';
+import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search, Settings, Tag, Plus, Trash2, FileText, ClipboardList, Copy } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 
 interface ProfileRow {
@@ -50,6 +50,20 @@ interface PostRow {
   created_at: string;
 }
 
+interface OrderRow {
+  id: number;
+  user_id: string;
+  order_type: string;
+  service_name: string;
+  platform: string | null;
+  target_link: string;
+  quantity: number;
+  price_usd: number;
+  status: string;
+  created_at: string;
+  profiles?: { full_name: string | null; email: string | null; phone: string | null } | null;
+}
+
 const GAME_LABELS: Record<string, string> = {
   pubg: 'ببجي (PUBG)',
   freefire: 'فري فاير',
@@ -59,9 +73,10 @@ const GAME_LABELS: Record<string, string> = {
 };
 
 export const AdminDashboard: React.FC = () => {
-  const [tab, setTab] = useState<'users' | 'deposits' | 'settings' | 'packages' | 'posts'>('users');
+  const [tab, setTab] = useState<'users' | 'deposits' | 'orders' | 'settings' | 'packages' | 'posts'>('users');
   const [users, setUsers] = useState<ProfileRow[]>([]);
   const [deposits, setDeposits] = useState<DepositRow[]>([]);
+  const [orders, setOrders] = useState<OrderRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [balanceEdits, setBalanceEdits] = useState<Record<string, string>>({});
@@ -93,6 +108,12 @@ export const AdminDashboard: React.FC = () => {
       .select('id, user_id, amount, method, note, proof_image_url, status, created_at, profiles(full_name, email)')
       .order('created_at', { ascending: false });
     setDeposits((depositsData as any) || []);
+
+    const { data: ordersData } = await supabase
+      .from('service_orders')
+      .select('id, user_id, order_type, service_name, platform, target_link, quantity, price_usd, status, created_at, profiles(full_name, email, phone)')
+      .order('created_at', { ascending: false });
+    setOrders((ordersData as any) || []);
 
     const { data: settingsData } = await supabase.from('site_settings').select('key, value');
     setSettings(settingsData || []);
@@ -169,6 +190,16 @@ export const AdminDashboard: React.FC = () => {
     }
     showMsg(approve ? 'تمت الموافقة وإضافة الرصيد' : 'تم رفض الطلب');
     loadData();
+  };
+
+  const updateOrderStatus = async (orderId: number, newStatus: string) => {
+    const { error } = await supabase.from('service_orders').update({ status: newStatus }).eq('id', orderId);
+    if (!error) {
+      showMsg('تم تحديث حالة الطلب');
+      loadData();
+    } else {
+      showMsg('حصل خطأ: ' + error.message);
+    }
   };
 
   const filteredUsers = users.filter((u) => {
@@ -321,6 +352,15 @@ export const AdminDashboard: React.FC = () => {
         >
           <Wallet className="w-4 h-4" />
           طلبات الشحن ({deposits.filter((d) => d.status === 'pending').length})
+        </button>
+        <button
+          onClick={() => setTab('orders')}
+          className={`flex-1 min-w-[45%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
+            tab === 'orders' ? 'bg-[#E8123D] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
+          }`}
+        >
+          <ClipboardList className="w-4 h-4" />
+          طلبات الخدمات ({orders.filter((o) => o.status === 'pending' || o.status === 'in_progress').length})
         </button>
         <button
           onClick={() => setTab('settings')}
@@ -491,6 +531,96 @@ export const AdminDashboard: React.FC = () => {
 
           {!loading && deposits.length === 0 && (
             <p className="text-center text-gray-500 text-sm py-8">مفيش طلبات شحن</p>
+          )}
+        </div>
+      )}
+      {tab === 'orders' && (
+        <div className="p-4 space-y-3 max-w-2xl mx-auto">
+          {orders.map((o) => (
+            <div key={o.id} className="bg-[#141414] border border-[#262626] rounded-xl p-3.5 space-y-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-bold text-sm">{o.service_name}</p>
+                  <p className="text-[11px] text-gray-500">
+                    {o.profiles?.full_name || 'مستخدم'}
+                    {o.profiles?.phone ? ` — ${o.profiles.phone}` : o.profiles?.email ? ` — ${o.profiles.email}` : ''}
+                  </p>
+                </div>
+                <span
+                  className={`text-[10px] px-2 py-1 rounded-full font-bold shrink-0 ${
+                    o.status === 'pending' || o.status === 'in_progress'
+                      ? 'bg-yellow-500/20 text-yellow-400'
+                      : o.status === 'completed'
+                      ? 'bg-emerald-500/20 text-emerald-400'
+                      : 'bg-red-500/20 text-red-400'
+                  }`}
+                >
+                  {o.status === 'pending'
+                    ? 'قيد الانتظار'
+                    : o.status === 'in_progress'
+                    ? 'جاري التنفيذ'
+                    : o.status === 'completed'
+                    ? 'مكتمل'
+                    : 'ملغي'}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 flex-wrap text-[11px] text-gray-400">
+                <span className="bg-[#0A0A0A] border border-[#262626] rounded-md px-2 py-1">
+                  النوع: {o.order_type === 'game' ? 'شحن لعبة' : 'خدمة SMM'}
+                </span>
+                {o.platform && (
+                  <span className="bg-[#0A0A0A] border border-[#262626] rounded-md px-2 py-1">
+                    {o.platform}
+                  </span>
+                )}
+                <span className="bg-[#0A0A0A] border border-[#262626] rounded-md px-2 py-1">
+                  الكمية: {o.quantity}
+                </span>
+                <span className="bg-[#0A0A0A] border border-[#262626] rounded-md px-2 py-1 text-emerald-400 font-bold">
+                  ${o.price_usd}
+                </span>
+              </div>
+
+              <div className="bg-[#0A0A0A] border border-[#E8123D]/40 rounded-lg p-2 flex items-center justify-between gap-2">
+                <p className="text-xs text-white break-all font-sans" dir="ltr">
+                  {o.target_link}
+                </p>
+                <button
+                  onClick={() => {
+                    navigator.clipboard?.writeText(o.target_link);
+                    showMsg('تم نسخ الرابط/البيانات');
+                  }}
+                  className="shrink-0 p-1.5 rounded-md bg-[#141414] border border-[#262626] text-gray-300 hover:text-white"
+                  title="نسخ"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {(o.status === 'pending' || o.status === 'in_progress') && (
+                <div className="flex gap-2 pt-1">
+                  <button
+                    onClick={() => updateOrderStatus(o.id, 'completed')}
+                    className="flex-1 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center gap-1"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    تم التنفيذ
+                  </button>
+                  <button
+                    onClick={() => updateOrderStatus(o.id, 'canceled')}
+                    className="flex-1 py-2 rounded-lg bg-red-500/20 text-red-400 text-xs font-bold flex items-center justify-center gap-1"
+                  >
+                    <XCircle className="w-3.5 h-3.5" />
+                    إلغاء
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+
+          {!loading && orders.length === 0 && (
+            <p className="text-center text-gray-500 text-sm py-8">مفيش طلبات خدمات لسه</p>
           )}
         </div>
       )}

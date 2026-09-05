@@ -89,7 +89,7 @@ interface AppContextType {
   loadPostComments: (postId: string) => void;
   sharePost: (postId: string) => void;
   togglePostBookmark: (postId: string) => void;
-  votePollOption: (postId: string, optionId: string) => void;
+  votePollOption: (postId: string, optionId: string) => Promise<void>;
 
   // Chats & Groups
   conversations: ChatConversation[];
@@ -253,58 +253,109 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Social Feed state — starts empty and is filled with real posts from Supabase
   const [posts, setPosts] = useState<SocialPost[]>([]);
 
-  const mapDbPostToSocialPost = (row: any, likedSet: Set<string>): SocialPost => ({
-    id: row.id,
-    author: {
-      id: row.user_id,
-      name: row.profiles?.full_name || 'مستخدم',
-      username: row.profiles?.full_name ? row.profiles.full_name.replace(/\s+/g, '_') : 'user',
-      avatar: DEFAULT_AVATAR,
-      verified: false,
-      bio: '',
-      followers: 0,
-      following: 0,
-      balanceUSD: 0,
-      ordersCount: 0,
-    },
-    timestamp: new Date(row.created_at).toLocaleString('ar-EG'),
-    content: row.content || '',
-    hashtags: row.hashtags || [],
-    gameTag: row.game_tag || undefined,
-    priceTag: row.price_tag || undefined,
-    images: row.image_url ? [row.image_url] : undefined,
-    video: row.video_url ? { url: row.video_url, duration: '' } : undefined,
-    audioUrl: row.audio_url || undefined,
-    location: row.location || undefined,
-    likesCount: row.post_likes?.[0]?.count || 0,
-    isLiked: likedSet.has(row.id),
-    commentsCount: row.post_comments?.[0]?.count || 0,
-    comments: [],
-    sharesCount: row.shares_count || 0,
-    isBookmarked: false,
-    category: 'all',
-  });
+  const formatDurationFromSeconds = (totalSeconds: number): string => {
+    const total = Math.round(totalSeconds);
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    const ss = String(s).padStart(2, '0');
+    if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${ss}`;
+    return `${m}:${ss}`;
+  };
+
+  const mapDbPostToSocialPost = (
+    row: any,
+    likedSet: Set<string>,
+    votedMap: Record<string, string>
+  ): SocialPost => {
+    const pollOptions = Array.isArray(row.poll_options) ? row.poll_options : null;
+    const totalVotes = pollOptions
+      ? pollOptions.reduce((sum: number, o: any) => sum + (o.votes || 0), 0)
+      : 0;
+    const images =
+      row.image_urls && row.image_urls.length > 0
+        ? row.image_urls
+        : row.image_url
+        ? [row.image_url]
+        : undefined;
+
+    return {
+      id: row.id,
+      author: {
+        id: row.user_id,
+        name: row.profiles?.full_name || 'مستخدم',
+        username: row.profiles?.full_name ? row.profiles.full_name.replace(/\s+/g, '_') : 'user',
+        avatar: DEFAULT_AVATAR,
+        verified: false,
+        bio: '',
+        followers: 0,
+        following: 0,
+        balanceUSD: 0,
+        ordersCount: 0,
+      },
+      timestamp: new Date(row.created_at).toLocaleString('ar-EG'),
+      content: row.content || '',
+      hashtags: row.hashtags || [],
+      gameTag: row.game_tag || undefined,
+      priceTag: row.price_tag || undefined,
+      images,
+      video: row.video_url
+        ? {
+            url: row.video_url,
+            duration: row.video_duration_seconds ? formatDurationFromSeconds(row.video_duration_seconds) : '',
+            durationSeconds: row.video_duration_seconds || undefined,
+          }
+        : undefined,
+      audioUrl: row.audio_url || undefined,
+      poll:
+        row.poll_question && pollOptions
+          ? {
+              question: row.poll_question,
+              options: pollOptions,
+              totalVotes,
+              userVotedId: votedMap[row.id],
+            }
+          : undefined,
+      location: row.location || undefined,
+      likesCount: row.post_likes?.[0]?.count || 0,
+      isLiked: likedSet.has(row.id),
+      commentsCount: row.post_comments?.[0]?.count || 0,
+      comments: [],
+      sharesCount: row.shares_count || 0,
+      isBookmarked: false,
+      category: 'all',
+    };
+  };
 
   const loadPosts = async () => {
     const { data, error } = await supabase
       .from('posts')
       .select(
-        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, video_url, audio_url, shares_count, created_at, profiles(full_name), post_likes(count), post_comments(count)'
+        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, image_urls, video_url, video_duration_seconds, poll_question, poll_options, audio_url, shares_count, created_at, profiles(full_name), post_likes(count), post_comments(count)'
       )
       .order('created_at', { ascending: false })
       .limit(100);
 
     let likedSet = new Set<string>();
+    let votedMap: Record<string, string> = {};
     if (session?.user?.id) {
       const { data: likedRows } = await supabase
         .from('post_likes')
         .select('post_id')
         .eq('user_id', session.user.id);
       likedSet = new Set((likedRows || []).map((r: any) => r.post_id));
+
+      const { data: votedRows } = await supabase
+        .from('post_poll_votes')
+        .select('post_id, option_id')
+        .eq('user_id', session.user.id);
+      (votedRows || []).forEach((r: any) => {
+        votedMap[r.post_id] = r.option_id;
+      });
     }
 
     if (!error && data) {
-      setPosts(data.map((row: any) => mapDbPostToSocialPost(row, likedSet)));
+      setPosts(data.map((row: any) => mapDbPostToSocialPost(row, likedSet, votedMap)));
     }
   };
 
@@ -498,6 +549,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         ordersCount: prev.ordersCount + 1,
       }));
 
+      if (session?.user?.id) {
+        await supabase.from('service_orders').insert({
+          user_id: session.user.id,
+          order_type: 'smm',
+          service_name: service.name,
+          platform: service.platform,
+          target_link: link,
+          quantity,
+          price_usd: priceUSD,
+          status: res.status,
+        });
+      }
+
       addNotification(
         'تم تقديم طلب جديد 🚀',
         `طلب #${res.orderId} - ${service.name} (${quantity})`,
@@ -543,6 +607,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       balanceUSD: Math.max(0, prev.balanceUSD - pkg.priceUSD),
       ordersCount: prev.ordersCount + 1,
     }));
+
+    if (session?.user?.id) {
+      await supabase.from('service_orders').insert({
+        user_id: session.user.id,
+        order_type: 'game',
+        service_name: `${gameNameText} ${pkg.amount} ${pkg.unit}`,
+        platform: pkg.game,
+        target_link: playerUID,
+        quantity: pkg.amount,
+        price_usd: pkg.priceUSD,
+        status: 'in_progress',
+      });
+    }
 
     addNotification(
       'تم شحن الحساب بنجاح 🎮',
@@ -599,6 +676,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setPosts(prev => [newPost, ...prev]);
 
     if (session?.user?.id) {
+      const pollOptionsPayload = postData.poll
+        ? postData.poll.options.map(o => ({ id: o.id, text: o.text, votes: 0 }))
+        : null;
+
       const { error } = await supabase.from('posts').insert({
         user_id: session.user.id,
         content: postData.content || '',
@@ -607,6 +688,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         price_tag: postData.priceTag || null,
         location: postData.location || null,
         image_url: postData.images && postData.images.length > 0 ? postData.images[0] : null,
+        image_urls: postData.images && postData.images.length > 0 ? postData.images : null,
+        video_url: postData.video?.url || null,
+        video_duration_seconds: postData.video?.durationSeconds ?? null,
+        poll_question: postData.poll?.question || null,
+        poll_options: pollOptionsPayload,
       });
       if (error) {
         showToast('تم النشر محليًا فقط، تعذر حفظه في قاعدة البيانات: ' + error.message, 'error');
@@ -764,13 +850,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     );
   };
 
-  const votePollOption = (postId: string, optionId: string) => {
+  const votePollOption = async (postId: string, optionId: string) => {
+    const target = posts.find(p => p.id === postId);
+    if (!target || !target.poll || target.poll.userVotedId || !session?.user?.id) return;
+
+    const updatedOptions = target.poll.options.map(opt =>
+      opt.id === optionId ? { ...opt, votes: opt.votes + 1 } : opt
+    );
+
+    // Optimistic UI update
     setPosts(prev =>
       prev.map(p => {
-        if (p.id === postId && p.poll && !p.poll.userVotedId) {
-          const updatedOptions = p.poll.options.map(opt =>
-            opt.id === optionId ? { ...opt, votes: opt.votes + 1 } : opt
-          );
+        if (p.id === postId && p.poll) {
           return {
             ...p,
             poll: {
@@ -784,6 +875,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         return p;
       })
     );
+
+    const { error: voteError } = await supabase
+      .from('post_poll_votes')
+      .insert({ post_id: postId, user_id: session.user.id, option_id: optionId });
+
+    if (voteError) {
+      showToast('تعذر تسجيل صوتك، يبدو أنك صوّتت من قبل', 'error');
+      loadPosts();
+      return;
+    }
+
+    await supabase.from('posts').update({ poll_options: updatedOptions }).eq('id', postId);
   };
 
   const saveChatMessageToDb = async (contactKey: string, text: string, isMine: boolean) => {

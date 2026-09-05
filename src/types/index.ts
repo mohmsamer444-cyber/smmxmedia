@@ -82,6 +82,7 @@ export interface SocialPost {
   video?: {
     url: string;
     duration: string;
+    durationSeconds?: number;
     thumbnail?: string;
   };
   audioUrl?: string;

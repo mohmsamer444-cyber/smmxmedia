@@ -20,7 +20,7 @@ interface PostCardProps {
 const TELEGRAM_ORDER_LINK = 'https://t.me/fx_sa2';
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
-  const { togglePostLike, addPostComment, loadPostComments, sharePost } = useApp();
+  const { togglePostLike, addPostComment, loadPostComments, sharePost, votePollOption } = useApp();
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -187,6 +187,48 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
       {post.audioUrl && (
         <div className="rounded-xl overflow-hidden border border-[#262626] bg-[#0A0A0A] p-3">
           <audio src={post.audioUrl} controls className="w-full h-9" />
+        </div>
+      )}
+
+      {/* Poll / Survey */}
+      {post.poll && (
+        <div className="rounded-xl border border-[#262626] bg-[#0A0A0A] p-3.5 space-y-2.5">
+          <p className="text-xs font-bold text-white">{post.poll.question}</p>
+          <div className="space-y-2">
+            {post.poll.options.map(opt => {
+              const hasVoted = !!post.poll!.userVotedId;
+              const percent =
+                post.poll!.totalVotes > 0 ? Math.round((opt.votes / post.poll!.totalVotes) * 100) : 0;
+              const isMyVote = post.poll!.userVotedId === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  disabled={hasVoted}
+                  onClick={() => votePollOption(post.id, opt.id)}
+                  className={`relative w-full text-right rounded-lg border overflow-hidden transition-colors ${
+                    isMyVote ? 'border-[#E8123D]' : 'border-[#262626]'
+                  } ${hasVoted ? 'cursor-default' : 'hover:border-[#E8123D]/60 cursor-pointer'}`}
+                >
+                  {hasVoted && (
+                    <div
+                      className={`absolute inset-y-0 right-0 ${isMyVote ? 'bg-[#E8123D]/25' : 'bg-white/10'}`}
+                      style={{ width: `${percent}%` }}
+                    />
+                  )}
+                  <div className="relative flex items-center justify-between px-3 py-2">
+                    <span className="text-[11px] font-bold text-white">{opt.text}</span>
+                    {hasVoted && (
+                      <span className="text-[10px] font-sans font-bold text-gray-300">{percent}%</span>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-[10px] text-gray-500 font-sans">
+            {post.poll.totalVotes} صوت
+          </p>
         </div>
       )}
 
