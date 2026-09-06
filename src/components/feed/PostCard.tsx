@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SocialPost } from '../../types';
+import { SocialPost, PostComment } from '../../types';
 import { useApp } from '../../context/AppContext';
 import {
   CheckCircle,
@@ -23,7 +23,7 @@ interface PostCardProps {
 const TELEGRAM_ORDER_LINK = 'https://t.me/fx_sa2';
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
-  const { togglePostLike, addPostComment, loadPostComments, toggleCommentLike, deleteComment, sharePost, votePollOption, user } = useApp();
+  const { togglePostLike, addPostComment, loadPostComments, sharePost, votePollOption, user } = useApp();
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -285,42 +285,13 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
             <p className="text-[11px] text-gray-500 text-center py-2">لسه مفيش تعليقات، كن أول من يعلق</p>
           )}
           {post.comments.map((c, idx) => (
-            <div
+            <CommentItem
               key={c.id}
-              className="flex items-start gap-2 animate-slide-up"
-              style={{ animationDelay: `${Math.min(idx, 6) * 40}ms`, animationFillMode: 'backwards' }}
-            >
-              <img src={c.author.avatar} alt={c.author.name} className="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-[#E8123D]/30" />
-              <div className="flex-1 min-w-0">
-                <div className="bg-gradient-to-br from-[#161616] to-[#0A0A0A] border border-[#262626] rounded-2xl rounded-tr-sm px-3.5 py-2.5 hover-red-glow">
-                  <div className="flex items-center gap-1">
-                    <span className="text-[11px] font-bold text-white">{c.author.name}</span>
-                    {c.author.verified && <VerifiedBadge size={11} />}
-                  </div>
-                  <p className="text-xs text-gray-200 mt-0.5 leading-relaxed">{c.content}</p>
-                </div>
-                <div className="flex items-center gap-3 mt-1 px-2">
-                  <button
-                    onClick={() => toggleCommentLike(post.id, c.id)}
-                    className={`flex items-center gap-1 text-[10px] font-bold transition-colors ${
-                      c.isLiked ? 'text-[#E8123D]' : 'text-gray-500 hover:text-[#E8123D]'
-                    }`}
-                  >
-                    <Heart className={`w-3 h-3 ${c.isLiked ? 'fill-[#E8123D]' : ''}`} />
-                    <span>إعجاب{c.likesCount > 0 ? ` · ${c.likesCount}` : ''}</span>
-                  </button>
-                  {c.authorId === user.id && (
-                    <button
-                      onClick={() => deleteComment(post.id, c.id)}
-                      className="flex items-center gap-1 text-[10px] font-bold text-gray-500 hover:text-red-400 transition-colors"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      <span>حذف</span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
+              comment={c}
+              postId={post.id}
+              currentUserId={user.id}
+              index={idx}
+            />
           ))}
           <div className="flex items-center gap-2">
             <input
@@ -350,6 +321,108 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           <Send className="w-4 h-4" />
           <span>عبر تليجرام</span>
         </button>
+      </div>
+    </div>
+  );
+};
+
+interface CommentItemProps {
+  comment: PostComment;
+  postId: string;
+  currentUserId: string;
+  index: number;
+  depth?: number;
+}
+
+const CommentItem: React.FC<CommentItemProps> = ({ comment: c, postId, currentUserId, index, depth = 0 }) => {
+  const { toggleCommentLike, deleteComment, addPostComment } = useApp();
+  const [showReplyBox, setShowReplyBox] = useState(false);
+  const [replyText, setReplyText] = useState('');
+
+  const handleSendReply = () => {
+    if (!replyText.trim()) return;
+    addPostComment(postId, replyText.trim(), c.id);
+    setReplyText('');
+    setShowReplyBox(false);
+  };
+
+  return (
+    <div
+      className="flex items-start gap-2 animate-slide-up"
+      style={{ animationDelay: depth === 0 ? `${Math.min(index, 6) * 40}ms` : '0ms', animationFillMode: 'backwards' }}
+    >
+      <img src={c.author.avatar} alt={c.author.name} className="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-[#E8123D]/30" />
+      <div className="flex-1 min-w-0">
+        <div className="bg-gradient-to-br from-[#161616] to-[#0A0A0A] border border-[#262626] rounded-2xl rounded-tr-sm px-3.5 py-2.5 hover-red-glow">
+          <div className="flex items-center gap-1">
+            <span className="text-[11px] font-bold text-white">{c.author.name}</span>
+            {c.author.verified && <VerifiedBadge size={11} />}
+          </div>
+          <p className="text-xs text-gray-200 mt-0.5 leading-relaxed">{c.content}</p>
+        </div>
+        <div className="flex items-center gap-3 mt-1 px-2">
+          <button
+            onClick={() => toggleCommentLike(postId, c.id)}
+            className={`flex items-center gap-1 text-[10px] font-bold transition-colors ${
+              c.isLiked ? 'text-[#E8123D]' : 'text-gray-500 hover:text-[#E8123D]'
+            }`}
+          >
+            <Heart className={`w-3 h-3 ${c.isLiked ? 'fill-[#E8123D]' : ''}`} />
+            <span>إعجاب{c.likesCount > 0 ? ` · ${c.likesCount}` : ''}</span>
+          </button>
+          {depth === 0 && (
+            <button
+              onClick={() => setShowReplyBox(v => !v)}
+              className="text-[10px] font-bold text-gray-500 hover:text-[#2AABEE] transition-colors"
+            >
+              رد
+            </button>
+          )}
+          {c.authorId === currentUserId && (
+            <button
+              onClick={() => deleteComment(postId, c.id)}
+              className="flex items-center gap-1 text-[10px] font-bold text-gray-500 hover:text-red-400 transition-colors"
+            >
+              <Trash2 className="w-3 h-3" />
+              <span>حذف</span>
+            </button>
+          )}
+        </div>
+
+        {showReplyBox && (
+          <div className="flex items-center gap-2 mt-2 animate-slide-up">
+            <input
+              type="text"
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSendReply()}
+              placeholder={`الرد على ${c.author.name}...`}
+              autoFocus
+              className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-full py-1.5 px-3 text-[11px] outline-none focus:border-[#2AABEE] transition-colors"
+            />
+            <button
+              onClick={handleSendReply}
+              className="p-1.5 rounded-full bg-[#0088cc] text-white hover:bg-[#0077b3] hover:scale-105 active:scale-95 transition-all shrink-0"
+            >
+              <Send className="w-3 h-3" />
+            </button>
+          </div>
+        )}
+
+        {!!c.replies?.length && (
+          <div className="mt-2 space-y-2 border-r-2 border-[#262626] pr-3">
+            {c.replies.map((r, ridx) => (
+              <CommentItem
+                key={r.id}
+                comment={r}
+                postId={postId}
+                currentUserId={currentUserId}
+                index={ridx}
+                depth={depth + 1}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

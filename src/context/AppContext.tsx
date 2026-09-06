@@ -29,6 +29,45 @@ import { fetchServices, createSMMOrder, cancelSMMOrder, requestRefill, checkOrde
 import { supabase } from '../lib/supabaseClient';
 import { playSuccessSound, playErrorSound, playMessageSound } from '../lib/sounds';import { useAuth } from './AuthContext';
 
+// A pool of varied, realistic-looking placeholder avatars used for admin-added
+// fake comments so they don't all show the same identical photo.
+const FAKE_AVATAR_POOL = Array.from({ length: 20 }, (_, i) => `https://i.pravatar.cc/150?img=${i + 1}`);
+function fakeAvatarFor(seed: string): string {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  return FAKE_AVATAR_POOL[hash % FAKE_AVATAR_POOL.length];
+}
+
+// Recursively find a comment (or reply, at any depth) by id
+function findCommentInTree(comments: any[], commentId: string): any | null {
+  for (const c of comments) {
+    if (c.id === commentId) return c;
+    if (c.replies?.length) {
+      const found = findCommentInTree(c.replies, commentId);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+// Recursively apply an update to a comment (or reply) by id, leaving everything else untouched
+function updateCommentInTree(comments: any[], commentId: string, updater: (c: any) => any): any[] {
+  return comments.map(c => {
+    if (c.id === commentId) return updater(c);
+    if (c.replies?.length) return { ...c, replies: updateCommentInTree(c.replies, commentId, updater) };
+    return c;
+  });
+}
+
+// Recursively remove a comment (or reply) by id from the tree
+function removeCommentFromTree(comments: any[], commentId: string): any[] {
+  return comments
+    .filter(c => c.id !== commentId)
+    .map(c => (c.replies?.length ? { ...c, replies: removeCommentFromTree(c.replies, commentId) } : c));
+}
+
 export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
   USD: { code: 'USD', symbol: '$', rate: 1.0, flag: '🇺🇸' },
   EUR: { code: 'EUR', symbol: '€', rate: 0.92, flag: '🇪🇺' },
@@ -84,7 +123,7 @@ interface AppContextType {
   posts: SocialPost[];
   createPost: (postData: Partial<SocialPost>) => void;
   togglePostLike: (postId: string, reactionType?: 'heart' | 'thumb') => void;
-  addPostComment: (postId: string, text: string) => void;
+  addPostComment: (postId: string, text: string, parentId?: string) => void;
   loadPostComments: (postId: string) => void;
   toggleCommentLike: (postId: string, commentId: string) => void;
   deleteComment: (postId: string, commentId: string) => void;
@@ -826,7 +865,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
-  const addPostComment = async (postId: string, text: string) => {
+  const addPostComment = async (postId: string, text: string, parentId?: string) => {
     if (!text.trim() || !session?.user?.id) return;
     const newComment = {
       id: 'c-' + Date.now(),
@@ -840,19 +879,27 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       timestamp: 'الآن',
       likesCount: 0,
       isLiked: false,
+      replies: [],
     };
 
-    // Optimistic UI update
+    // Optimistic UI update — insert into replies array if this is a reply, otherwise top-level
     setPosts(prev =>
       prev.map(p => {
-        if (p.id === postId) {
+        if (p.id !== postId) return p;
+        if (parentId) {
           return {
             ...p,
             commentsCount: p.commentsCount + 1,
-            comments: [...p.comments, newComment],
+            comments: p.comments.map(c =>
+              c.id === parentId ? { ...c, replies: [...(c.replies || []), newComment] } : c
+            ),
           };
         }
-        return p;
+        return {
+          ...p,
+          commentsCount: p.commentsCount + 1,
+          comments: [...p.comments, newComment],
+        };
       })
     );
 
@@ -862,6 +909,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         post_id: postId,
         user_id: session.user.id,
         content: text.trim(),
+        parent_id: parentId || null,
       })
       .select('id')
       .single();
@@ -875,11 +923,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     // Replace the temporary optimistic id with the real DB id so like/delete work immediately
     if (inserted?.id) {
       setPosts(prev =>
-        prev.map(p =>
-          p.id === postId
-            ? { ...p, comments: p.comments.map(c => (c.id === newComment.id ? { ...c, id: inserted.id } : c)) }
-            : p
-        )
+        prev.map(p => {
+          if (p.id !== postId) return p;
+          if (parentId) {
+            return {
+              ...p,
+              comments: p.comments.map(c =>
+                c.id === parentId
+                  ? { ...c, replies: (c.replies || []).map(r => (r.id === newComment.id ? { ...r, id: inserted.id } : r)) }
+                  : c
+              ),
+            };
+          }
+          return { ...p, comments: p.comments.map(c => (c.id === newComment.id ? { ...c, id: inserted.id } : c)) };
+        })
       );
     }
 
@@ -900,7 +957,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const loadPostComments = async (postId: string) => {
     const { data, error } = await supabase
       .from('post_comments')
-      .select('id, user_id, content, created_at, display_name, profiles(full_name, avatar_url, is_verified)')
+      .select('id, user_id, parent_id, content, created_at, display_name, profiles(full_name, avatar_url, is_verified)')
       .eq('post_id', postId)
       .order('created_at', { ascending: true });
 
@@ -920,26 +977,43 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       });
     }
 
-    const comments = data.map((row: any) => ({
-      id: row.id,
-      authorId: row.user_id,
-      author: {
-        name: row.display_name || row.profiles?.full_name || 'مستخدم',
-        avatar: row.profiles?.avatar_url || DEFAULT_AVATAR,
-        verified: row.display_name ? false : !!row.profiles?.is_verified,
-      },
-      content: row.content,
-      timestamp: new Date(row.created_at).toLocaleString('ar-EG'),
-      likesCount: likeCounts[row.id] || 0,
-      isLiked: likedSet.has(row.id),
-    }));
-    setPosts(prev => prev.map(p => (p.id === postId ? { ...p, comments } : p)));
+    // Build a flat map first, then nest replies under their parent comment
+    const commentsById: Record<string, any> = {};
+    data.forEach((row: any) => {
+      const isFake = !!row.display_name;
+      commentsById[row.id] = {
+        id: row.id,
+        authorId: row.user_id,
+        author: {
+          name: row.display_name || row.profiles?.full_name || 'مستخدم',
+          avatar: isFake ? fakeAvatarFor(row.display_name + row.id) : row.profiles?.avatar_url || DEFAULT_AVATAR,
+          verified: isFake ? false : !!row.profiles?.is_verified,
+        },
+        content: row.content,
+        timestamp: new Date(row.created_at).toLocaleString('ar-EG'),
+        likesCount: likeCounts[row.id] || 0,
+        isLiked: likedSet.has(row.id),
+        replies: [],
+      };
+    });
+
+    const roots: any[] = [];
+    data.forEach((row: any) => {
+      const c = commentsById[row.id];
+      if (row.parent_id && commentsById[row.parent_id]) {
+        commentsById[row.parent_id].replies.push(c);
+      } else {
+        roots.push(c);
+      }
+    });
+
+    setPosts(prev => prev.map(p => (p.id === postId ? { ...p, comments: roots } : p)));
   };
 
   const toggleCommentLike = async (postId: string, commentId: string) => {
     if (!session?.user?.id) return;
     const targetPost = posts.find(p => p.id === postId);
-    const targetComment = targetPost?.comments.find(c => c.id === commentId);
+    const targetComment = targetPost ? findCommentInTree(targetPost.comments, commentId) : null;
     if (!targetComment) return;
     const wasLiked = targetComment.isLiked;
 
@@ -948,11 +1022,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         p.id === postId
           ? {
               ...p,
-              comments: p.comments.map(c =>
-                c.id === commentId
-                  ? { ...c, isLiked: !wasLiked, likesCount: wasLiked ? c.likesCount - 1 : c.likesCount + 1 }
-                  : c
-              ),
+              comments: updateCommentInTree(p.comments, commentId, c => ({
+                ...c,
+                isLiked: !wasLiked,
+                likesCount: wasLiked ? c.likesCount - 1 : c.likesCount + 1,
+              })),
             }
           : p
       )
@@ -974,7 +1048,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         p.id === postId
           ? {
               ...p,
-              comments: p.comments.filter(c => c.id !== commentId),
+              comments: removeCommentFromTree(p.comments, commentId),
               commentsCount: Math.max(0, p.commentsCount - 1),
             }
           : p
