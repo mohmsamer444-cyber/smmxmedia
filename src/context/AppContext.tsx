@@ -29,15 +29,10 @@ import { fetchServices, createSMMOrder, cancelSMMOrder, requestRefill, checkOrde
 import { supabase } from '../lib/supabaseClient';
 import { playSuccessSound, playErrorSound, playMessageSound } from '../lib/sounds';import { useAuth } from './AuthContext';
 
-// A pool of varied, realistic-looking placeholder avatars used for admin-added
-// fake comments so they don't all show the same identical photo.
-const FAKE_AVATAR_POOL = Array.from({ length: 20 }, (_, i) => `https://i.pravatar.cc/150?img=${i + 1}`);
+// Fun, illustrated (non-photo) avatars for admin-added fake comments so they
+// look varied and clearly "avatar" style, generated deterministically per name.
 function fakeAvatarFor(seed: string): string {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) {
-    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
-  }
-  return FAKE_AVATAR_POOL[hash % FAKE_AVATAR_POOL.length];
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}`;
 }
 
 // Recursively find a comment (or reply, at any depth) by id
