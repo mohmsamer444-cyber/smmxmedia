@@ -21,7 +21,7 @@ interface PostCardProps {
 const TELEGRAM_ORDER_LINK = 'https://t.me/fx_sa2';
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
-  const { togglePostLike, addPostComment, loadPostComments, sharePost, votePollOption, startDirectChatWithUser, user } = useApp();
+  const { togglePostLike, addPostComment, loadPostComments, sharePost, votePollOption } = useApp();
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -40,11 +40,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
 
   const handleOrderOnTelegram = () => {
     window.open(TELEGRAM_ORDER_LINK, '_blank', 'noopener,noreferrer');
-  };
-
-  const handleChatWithPoster = () => {
-    if (post.author.id === user.id) return; // can't chat with yourself
-    startDirectChatWithUser(post.author, `مرحبًا، أنا مهتم بالعرض: "${post.content.slice(0, 60)}"`);
   };
 
   // Helper to format hashtags
@@ -118,16 +113,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         >
           <Send className="w-4.5 h-4.5" />
         </button>
-
-        {post.author.id !== user.id && (
-          <button
-            onClick={handleChatWithPoster}
-            title="راسل صاحب المنشور"
-            className="p-2.5 rounded-xl bg-[#E8123D]/15 border border-[#E8123D]/40 text-[#E8123D] hover:bg-[#E8123D]/25 transition-colors shrink-0"
-          >
-            <MessageCircle className="w-4.5 h-4.5" />
-          </button>
-        )}
       </div>
 
       {/* Post Text Body */}
@@ -143,21 +128,27 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         </div>
       )}
 
-      {/* Image Gallery */}
+      {/* Image Gallery — full image, no cropping (matches video behavior) */}
       {post.images && post.images.length > 0 && (
         <div
           className={`grid gap-2 rounded-xl overflow-hidden ${
             post.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
           }`}
         >
-          {post.images.map((img, idx) => (
-            <img
-              key={idx}
-              src={img}
-              alt="وسائط المنشور"
-              className="w-full h-48 sm:h-64 object-cover rounded-lg"
-            />
-          ))}
+          {post.images.map((img, idx) =>
+            post.images!.length === 1 ? (
+              <img
+                key={idx}
+                src={img}
+                alt="وسائط المنشور"
+                className="w-full h-auto max-h-[600px] object-contain bg-black rounded-lg"
+              />
+            ) : (
+              <div key={idx} className="bg-black rounded-lg overflow-hidden flex items-center justify-center h-48 sm:h-64">
+                <img src={img} alt="وسائط المنشور" className="w-full h-full object-contain" />
+              </div>
+            )
+          )}
         </div>
       )}
 
@@ -321,15 +312,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           <Send className="w-4 h-4" />
           <span>عبر تليجرام</span>
         </button>
-        {post.author.id !== user.id && (
-          <button
-            onClick={handleChatWithPoster}
-            className="flex-1 py-3 rounded-xl bg-[#E8123D] hover:bg-[#B10E31] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all red-glow"
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span>راسل داخل الموقع</span>
-          </button>
-        )}
       </div>
     </div>
   );
