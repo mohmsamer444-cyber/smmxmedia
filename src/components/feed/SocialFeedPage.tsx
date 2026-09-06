@@ -43,9 +43,9 @@ export const SocialFeedPage: React.FC = () => {
         </div>
 
         {/* Security Banner Card */}
-        <div className="bg-[#141414] border-2 border-[#E8123D]/80 rounded-2xl p-4 shadow-2xl relative overflow-hidden red-glow">
+        <div className="bg-[#141414] border-2 border-[#0088CC]/80 rounded-2xl p-4 shadow-2xl relative overflow-hidden red-glow">
           <div className="flex items-start gap-3">
-            <div className="p-2.5 rounded-xl bg-[#E8123D]/20 text-[#E8123D] shrink-0">
+            <div className="p-2.5 rounded-xl bg-[#0088CC]/20 text-[#0088CC] shrink-0">
               <ShieldAlert className="w-6 h-6" />
             </div>
             <div>
@@ -66,7 +66,7 @@ export const SocialFeedPage: React.FC = () => {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="ابحث في العروض والوسوم..."
-            className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl pl-3 pr-8 py-2 text-xs text-white focus:outline-none focus:border-[#E8123D]"
+            className="w-full bg-[#0A0A0A] border border-[#262626] rounded-xl pl-3 pr-8 py-2 text-xs text-white focus:outline-none focus:border-[#0088CC]"
           />
           <Search className="w-3.5 h-3.5 text-gray-500 absolute right-6 top-1/2 -translate-y-1/2" />
         </div>

@@ -480,7 +480,7 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div dir="rtl" className="min-h-screen w-full bg-[#0A0A0A] text-white">
       <div className="sticky top-0 z-10 bg-[#121212] border-b border-[#262626] px-4 py-3 flex items-center justify-between">
-        <h1 className="font-extrabold text-lg text-[#E8123D]">لوحة تحكم الأدمن</h1>
+        <h1 className="font-extrabold text-lg text-[#0088CC]">لوحة تحكم الأدمن</h1>
         <button
           onClick={loadData}
           className="p-2 rounded-lg bg-[#1a1a1a] text-gray-400 hover:text-white hover:bg-[#262626] transition-colors"
@@ -499,7 +499,7 @@ export const AdminDashboard: React.FC = () => {
         <button
           onClick={() => setTab('users')}
           className={`flex-1 min-w-[45%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
-            tab === 'users' ? 'bg-[#E8123D] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
+            tab === 'users' ? 'bg-[#0088CC] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
           }`}
         >
           <Users className="w-4 h-4" />
@@ -508,7 +508,7 @@ export const AdminDashboard: React.FC = () => {
         <button
           onClick={() => setTab('deposits')}
           className={`flex-1 min-w-[45%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
-            tab === 'deposits' ? 'bg-[#E8123D] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
+            tab === 'deposits' ? 'bg-[#0088CC] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
           }`}
         >
           <Wallet className="w-4 h-4" />
@@ -517,7 +517,7 @@ export const AdminDashboard: React.FC = () => {
         <button
           onClick={() => setTab('orders')}
           className={`flex-1 min-w-[45%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
-            tab === 'orders' ? 'bg-[#E8123D] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
+            tab === 'orders' ? 'bg-[#0088CC] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
           }`}
         >
           <ClipboardList className="w-4 h-4" />
@@ -526,7 +526,7 @@ export const AdminDashboard: React.FC = () => {
         <button
           onClick={() => setTab('settings')}
           className={`flex-1 min-w-[45%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
-            tab === 'settings' ? 'bg-[#E8123D] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
+            tab === 'settings' ? 'bg-[#0088CC] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
           }`}
         >
           <Settings className="w-4 h-4" />
@@ -535,7 +535,7 @@ export const AdminDashboard: React.FC = () => {
         <button
           onClick={() => setTab('packages')}
           className={`flex-1 min-w-[45%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
-            tab === 'packages' ? 'bg-[#E8123D] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
+            tab === 'packages' ? 'bg-[#0088CC] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
           }`}
         >
           <Tag className="w-4 h-4" />
@@ -544,7 +544,7 @@ export const AdminDashboard: React.FC = () => {
         <button
           onClick={() => setTab('posts')}
           className={`flex-1 min-w-[45%] py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors ${
-            tab === 'posts' ? 'bg-[#E8123D] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
+            tab === 'posts' ? 'bg-[#0088CC] text-white' : 'bg-[#141414] text-gray-400 border border-[#262626]'
           }`}
         >
           <FileText className="w-4 h-4" />
@@ -561,7 +561,7 @@ export const AdminDashboard: React.FC = () => {
               placeholder="ابحث بالاسم أو الإيميل أو الرقم..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#141414] border border-[#262626] rounded-xl py-2.5 pr-10 pl-3 text-sm outline-none focus:border-[#E8123D]"
+              className="w-full bg-[#141414] border border-[#262626] rounded-xl py-2.5 pr-10 pl-3 text-sm outline-none focus:border-[#0088CC]"
             />
           </div>
 
@@ -573,7 +573,7 @@ export const AdminDashboard: React.FC = () => {
                   {u.is_verified && <VerifiedBadge size={15} />}
                 </div>
                 {u.is_admin && (
-                  <span className="text-[10px] bg-[#E8123D]/20 text-[#E8123D] px-2 py-1 rounded-full font-bold">
+                  <span className="text-[10px] bg-[#0088CC]/20 text-[#0088CC] px-2 py-1 rounded-full font-bold">
                     أدمن
                   </span>
                 )}
@@ -606,11 +606,11 @@ export const AdminDashboard: React.FC = () => {
                   placeholder="رصيد جديد"
                   value={balanceEdits[u.id] ?? ''}
                   onChange={(e) => setBalanceEdits({ ...balanceEdits, [u.id]: e.target.value })}
-                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC]"
                 />
                 <button
                   onClick={() => updateBalance(u.id)}
-                  className="px-3 py-2 rounded-lg bg-[#E8123D] text-white text-xs font-bold"
+                  className="px-3 py-2 rounded-lg bg-[#0088CC] text-white text-xs font-bold"
                 >
                   تعيين
                 </button>
@@ -758,7 +758,7 @@ export const AdminDashboard: React.FC = () => {
                 </span>
               </div>
 
-              <div className="bg-[#0A0A0A] border border-[#E8123D]/40 rounded-lg p-2 flex items-center justify-between gap-2">
+              <div className="bg-[#0A0A0A] border border-[#0088CC]/40 rounded-lg p-2 flex items-center justify-between gap-2">
                 <p className="text-xs text-white break-all font-sans" dir="ltr">
                   {o.target_link}
                 </p>
@@ -824,11 +824,11 @@ export const AdminDashboard: React.FC = () => {
                   placeholder={field.placeholder}
                   value={settingEdits[field.key] ?? getSetting(field.key)}
                   onChange={(e) => setSettingEdits({ ...settingEdits, [field.key]: e.target.value })}
-                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] dir-ltr text-left"
+                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC] dir-ltr text-left"
                 />
                 <button
                   onClick={() => saveSetting(field.key)}
-                  className="px-3 py-2 rounded-lg bg-[#E8123D] text-white text-xs font-bold shrink-0"
+                  className="px-3 py-2 rounded-lg bg-[#0088CC] text-white text-xs font-bold shrink-0"
                 >
                   حفظ
                 </button>
@@ -848,7 +848,7 @@ export const AdminDashboard: React.FC = () => {
             <select
               value={newPkg.game}
               onChange={(e) => setNewPkg({ ...newPkg, game: e.target.value })}
-              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC]"
             >
               <option value="pubg">ببجي (PUBG)</option>
               <option value="freefire">فري فاير</option>
@@ -861,7 +861,7 @@ export const AdminDashboard: React.FC = () => {
               placeholder="كود الباقة (مثال: pubg-7)"
               value={newPkg.id}
               onChange={(e) => setNewPkg({ ...newPkg, id: e.target.value })}
-              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC]"
             />
             <div className="grid grid-cols-2 gap-2">
               <input
@@ -869,14 +869,14 @@ export const AdminDashboard: React.FC = () => {
                 placeholder="الكمية"
                 value={newPkg.amount}
                 onChange={(e) => setNewPkg({ ...newPkg, amount: e.target.value })}
-                className="bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+                className="bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC]"
               />
               <input
                 type="text"
                 placeholder="الوحدة (UC / شهر)"
                 value={newPkg.unit}
                 onChange={(e) => setNewPkg({ ...newPkg, unit: e.target.value })}
-                className="bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+                className="bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC]"
               />
             </div>
             <input
@@ -885,18 +885,18 @@ export const AdminDashboard: React.FC = () => {
               placeholder="السعر بالدولار"
               value={newPkg.price_usd}
               onChange={(e) => setNewPkg({ ...newPkg, price_usd: e.target.value })}
-              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC]"
             />
             <input
               type="text"
               placeholder="اسم مخصص (اختياري - لاشتراكات AI مثلاً)"
               value={newPkg.label}
               onChange={(e) => setNewPkg({ ...newPkg, label: e.target.value })}
-              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC]"
             />
             <button
               onClick={addPackage}
-              className="w-full py-2 rounded-lg bg-[#E8123D] text-white text-xs font-bold"
+              className="w-full py-2 rounded-lg bg-[#0088CC] text-white text-xs font-bold"
             >
               إضافة الباقة
             </button>
@@ -927,11 +927,11 @@ export const AdminDashboard: React.FC = () => {
                   placeholder="سعر جديد"
                   value={packageEdits[p.id] ?? ''}
                   onChange={(e) => setPackageEdits({ ...packageEdits, [p.id]: e.target.value })}
-                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC]"
                 />
                 <button
                   onClick={() => savePackagePrice(p.id)}
-                  className="px-3 py-2 rounded-lg bg-[#E8123D] text-white text-xs font-bold"
+                  className="px-3 py-2 rounded-lg bg-[#0088CC] text-white text-xs font-bold"
                 >
                   تحديث
                 </button>
@@ -960,13 +960,13 @@ export const AdminDashboard: React.FC = () => {
               onChange={(e) => setNewPost({ ...newPost, content: e.target.value.slice(0, 5000) })}
               rows={4}
               maxLength={5000}
-              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] resize-none"
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC] resize-none"
             />
             <p className="text-[10px] text-gray-500 text-left dir-ltr">{newPost.content.length} / 5000</p>
 
             {/* Image upload */}
             <div className="space-y-1.5">
-              <label className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-dashed border-[#333] bg-[#0A0A0A] text-xs font-bold text-gray-300 cursor-pointer hover:border-[#E8123D] transition-colors">
+              <label className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-dashed border-[#333] bg-[#0A0A0A] text-xs font-bold text-gray-300 cursor-pointer hover:border-[#0088CC] transition-colors">
                 {uploadingField === 'image' ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
@@ -988,7 +988,7 @@ export const AdminDashboard: React.FC = () => {
 
             {/* Video upload */}
             <div className="space-y-1.5">
-              <label className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-dashed border-[#333] bg-[#0A0A0A] text-xs font-bold text-gray-300 cursor-pointer hover:border-[#E8123D] transition-colors">
+              <label className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-dashed border-[#333] bg-[#0A0A0A] text-xs font-bold text-gray-300 cursor-pointer hover:border-[#0088CC] transition-colors">
                 {uploadingField === 'video' ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
@@ -1010,7 +1010,7 @@ export const AdminDashboard: React.FC = () => {
 
             {/* Audio upload */}
             <div className="space-y-1.5">
-              <label className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-dashed border-[#333] bg-[#0A0A0A] text-xs font-bold text-gray-300 cursor-pointer hover:border-[#E8123D] transition-colors">
+              <label className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-dashed border-[#333] bg-[#0A0A0A] text-xs font-bold text-gray-300 cursor-pointer hover:border-[#0088CC] transition-colors">
                 {uploadingField === 'audio' ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
@@ -1039,7 +1039,7 @@ export const AdminDashboard: React.FC = () => {
               placeholder="رابط صورة جاهز (اختياري)"
               value={newPost.image_url}
               onChange={(e) => setNewPost({ ...newPost, image_url: e.target.value })}
-              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] text-left"
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC] text-left"
             />
             <input
               type="text"
@@ -1047,7 +1047,7 @@ export const AdminDashboard: React.FC = () => {
               placeholder="رابط فيديو جاهز (اختياري)"
               value={newPost.video_url}
               onChange={(e) => setNewPost({ ...newPost, video_url: e.target.value })}
-              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] text-left"
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC] text-left"
             />
             <input
               type="text"
@@ -1055,7 +1055,7 @@ export const AdminDashboard: React.FC = () => {
               placeholder="رابط صوت جاهز (اختياري)"
               value={newPost.audio_url}
               onChange={(e) => setNewPost({ ...newPost, audio_url: e.target.value })}
-              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D] text-left"
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC] text-left"
             />
             <div className="grid grid-cols-2 gap-2">
               <input
@@ -1063,14 +1063,14 @@ export const AdminDashboard: React.FC = () => {
                 placeholder="تصنيف (مثال: تيك توك)"
                 value={newPost.game_tag}
                 onChange={(e) => setNewPost({ ...newPost, game_tag: e.target.value })}
-                className="bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+                className="bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC]"
               />
               <input
                 type="text"
                 placeholder="السعر (مثال: 10$)"
                 value={newPost.price_tag}
                 onChange={(e) => setNewPost({ ...newPost, price_tag: e.target.value })}
-                className="bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+                className="bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC]"
               />
             </div>
             <input
@@ -1078,12 +1078,12 @@ export const AdminDashboard: React.FC = () => {
               placeholder="وسوم مفصولة بفاصلة (اختياري)"
               value={newPost.hashtags}
               onChange={(e) => setNewPost({ ...newPost, hashtags: e.target.value })}
-              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#E8123D]"
+              className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-2 px-3 text-xs outline-none focus:border-[#0088CC]"
             />
             <button
               onClick={addCatalogPost}
               disabled={uploadingField !== null}
-              className="w-full py-2 rounded-lg bg-[#E8123D] text-white text-xs font-bold disabled:opacity-50"
+              className="w-full py-2 rounded-lg bg-[#0088CC] text-white text-xs font-bold disabled:opacity-50"
             >
               {uploadingField !== null ? 'جاري رفع الملف...' : 'نشر في الكتالوج'}
             </button>
@@ -1120,7 +1120,7 @@ export const AdminDashboard: React.FC = () => {
 
               {/* Boost hearts ❤️ */}
               <div className="flex items-center gap-2 pt-1">
-                <Heart className="w-3.5 h-3.5 text-[#E8123D] shrink-0" />
+                <Heart className="w-3.5 h-3.5 text-[#0088CC] shrink-0" />
                 <span className="text-[10px] text-gray-400 shrink-0">قلوب ❤️ وهمية حالية: {p.boosted_likes || 0}</span>
                 <input
                   type="number"
@@ -1128,11 +1128,11 @@ export const AdminDashboard: React.FC = () => {
                   placeholder="عدد جديد"
                   value={likeEdits[p.id] ?? ''}
                   onChange={(e) => setLikeEdits({ ...likeEdits, [p.id]: e.target.value })}
-                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-1.5 px-2 text-[11px] outline-none focus:border-[#E8123D]"
+                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-1.5 px-2 text-[11px] outline-none focus:border-[#0088CC]"
                 />
                 <button
                   onClick={() => updateBoostedLikes(p.id)}
-                  className="px-2.5 py-1.5 rounded-lg bg-[#E8123D] text-white text-[11px] font-bold shrink-0"
+                  className="px-2.5 py-1.5 rounded-lg bg-[#0088CC] text-white text-[11px] font-bold shrink-0"
                 >
                   تحديث
                 </button>
@@ -1193,7 +1193,7 @@ export const AdminDashboard: React.FC = () => {
                     onChange={(e) =>
                       setNewFakeComment({ ...newFakeComment, [p.id]: { name: e.target.value, text: newFakeComment[p.id]?.text || '' } })
                     }
-                    className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-1.5 px-2.5 text-[11px] outline-none focus:border-[#E8123D]"
+                    className="w-full bg-[#0A0A0A] border border-[#262626] rounded-lg py-1.5 px-2.5 text-[11px] outline-none focus:border-[#0088CC]"
                   />
                   <div className="flex items-center gap-2">
                     <input
@@ -1203,11 +1203,11 @@ export const AdminDashboard: React.FC = () => {
                       onChange={(e) =>
                         setNewFakeComment({ ...newFakeComment, [p.id]: { name: newFakeComment[p.id]?.name || '', text: e.target.value } })
                       }
-                      className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-1.5 px-2.5 text-[11px] outline-none focus:border-[#E8123D]"
+                      className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-1.5 px-2.5 text-[11px] outline-none focus:border-[#0088CC]"
                     />
                     <button
                       onClick={() => addFakeComment(p.id)}
-                      className="px-2.5 py-1.5 rounded-lg bg-[#E8123D] text-white text-[11px] font-bold shrink-0"
+                      className="px-2.5 py-1.5 rounded-lg bg-[#0088CC] text-white text-[11px] font-bold shrink-0"
                     >
                       إضافة
                     </button>

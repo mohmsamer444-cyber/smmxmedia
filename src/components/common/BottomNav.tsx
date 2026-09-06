@@ -31,12 +31,12 @@ export const BottomNav: React.FC = () => {
           onClick={() => setActiveTab('feed')}
           className={`flex flex-col items-center justify-center flex-1 h-full relative transition-colors ${
             isHomeActive
-              ? 'text-[#E8123D] font-bold'
+              ? 'text-[#0088CC] font-bold'
               : 'text-gray-400 hover:text-gray-200'
           }`}
         >
           {isHomeActive && (
-            <motion.span layoutId="nav-indicator" className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
+            <motion.span layoutId="nav-indicator" className="absolute top-0 w-8 h-0.5 bg-[#0088CC] rounded-full red-glow" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
           )}
           <motion.div whileTap={{ scale: 0.85 }}>
             <Home className={`w-5 h-5 mb-0.5 ${isHomeActive ? 'stroke-[2.5]' : ''}`} />
@@ -49,12 +49,12 @@ export const BottomNav: React.FC = () => {
           onClick={() => setActiveTab('services')}
           className={`flex flex-col items-center justify-center flex-1 h-full relative transition-colors ${
             isServicesActive
-              ? 'text-[#E8123D] font-bold'
+              ? 'text-[#0088CC] font-bold'
               : 'text-gray-400 hover:text-gray-200'
           }`}
         >
           {isServicesActive && (
-            <motion.span layoutId="nav-indicator" className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
+            <motion.span layoutId="nav-indicator" className="absolute top-0 w-8 h-0.5 bg-[#0088CC] rounded-full red-glow" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
           )}
           <motion.div whileTap={{ scale: 0.85 }}>
             <Layers className={`w-5 h-5 mb-0.5 ${isServicesActive ? 'stroke-[2.5]' : ''}`} />
@@ -67,7 +67,7 @@ export const BottomNav: React.FC = () => {
           <motion.button
             whileTap={{ scale: 0.9, rotate: 90 }}
             onClick={openQuickActionModal}
-            className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#B10E31] to-[#E8123D] text-white flex items-center justify-center shadow-lg red-glow hover:scale-105 transition-transform border-4 border-[#0A0A0A]"
+            className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#006699] to-[#0088CC] text-white flex items-center justify-center shadow-lg red-glow hover:scale-105 transition-transform border-4 border-[#0A0A0A]"
             title="طلب جديد"
           >
             <Plus className="w-7 h-7 stroke-[3]" />
@@ -90,12 +90,12 @@ export const BottomNav: React.FC = () => {
           onClick={() => setActiveTab('games')}
           className={`flex flex-col items-center justify-center flex-1 h-full relative transition-colors ${
             isGamesActive
-              ? 'text-[#E8123D] font-bold'
+              ? 'text-[#0088CC] font-bold'
               : 'text-gray-400 hover:text-gray-200'
           }`}
         >
           {isGamesActive && (
-            <motion.span layoutId="nav-indicator" className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
+            <motion.span layoutId="nav-indicator" className="absolute top-0 w-8 h-0.5 bg-[#0088CC] rounded-full red-glow" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
           )}
           <motion.div whileTap={{ scale: 0.85 }}>
             <Gamepad2 className={`w-5 h-5 mb-0.5 ${isGamesActive ? 'stroke-[2.5]' : ''}`} />

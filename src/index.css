@@ -5,10 +5,10 @@
     --bg-dark: #0A0A0A;
     --card-dark: #121212;
     --border-dark: #222222;
-    --primary-red: #E8123D;
+    --primary-red: #0088CC;
     --accent-gold-glow: #FFB432;
-    --color-primary: #E8123D;
-    --color-primary-hover: #B10E31;
+    --color-primary: #0088CC;
+    --color-primary-hover: #006699;
   }
 
   html, body {
@@ -83,11 +83,11 @@
 }
 
 .red-glow {
-  box-shadow: 0 0 15px rgba(232, 18, 61, 0.25);
+  box-shadow: 0 0 15px rgba(0, 136, 204, 0.25);
 }
 
 .red-glow-lg {
-  box-shadow: 0 0 30px rgba(232, 18, 61, 0.4);
+  box-shadow: 0 0 30px rgba(0, 136, 204, 0.4);
 }
 
 .hover-red-glow {
@@ -95,8 +95,8 @@
 }
 
 .hover-red-glow:hover {
-  box-shadow: 0 4px 20px rgba(232, 18, 61, 0.3);
-  border-color: rgba(232, 18, 61, 0.5) !important;
+  box-shadow: 0 4px 20px rgba(0, 136, 204, 0.3);
+  border-color: rgba(0, 136, 204, 0.5) !important;
   transform: translateY(-2px);
 }
 
@@ -116,7 +116,7 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #E8123D;
+  background: #0088CC;
 }
 
 /* Hide scrollbar for clean horizontal scroll */

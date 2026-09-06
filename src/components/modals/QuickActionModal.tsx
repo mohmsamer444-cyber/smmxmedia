@@ -62,7 +62,7 @@ export const QuickActionModal: React.FC = () => {
                 closeQuickActionModal();
                 setActiveTab('services');
               }}
-              className="w-full p-3 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#E8123D]/60 hover:bg-[#1f1f1f] text-right flex items-center justify-between transition-all group"
+              className="w-full p-3 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#0088CC]/60 hover:bg-[#1f1f1f] text-right flex items-center justify-between transition-all group"
             >
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-lg bg-blue-500/10 text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors">
@@ -82,7 +82,7 @@ export const QuickActionModal: React.FC = () => {
                 closeQuickActionModal();
                 setActiveTab('games');
               }}
-              className="w-full p-3 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#E8123D]/60 hover:bg-[#1f1f1f] text-right flex items-center justify-between transition-all group"
+              className="w-full p-3 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#0088CC]/60 hover:bg-[#1f1f1f] text-right flex items-center justify-between transition-all group"
             >
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-lg bg-amber-500/10 text-amber-400 group-hover:bg-amber-500 group-hover:text-white transition-colors">
@@ -102,7 +102,7 @@ export const QuickActionModal: React.FC = () => {
                 closeQuickActionModal();
                 openDepositModal();
               }}
-              className="w-full p-3 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#E8123D]/60 hover:bg-[#1f1f1f] text-right flex items-center justify-between transition-all group"
+              className="w-full p-3 rounded-xl bg-[#0A0A0A] border border-[#262626] hover:border-[#0088CC]/60 hover:bg-[#1f1f1f] text-right flex items-center justify-between transition-all group"
             >
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">

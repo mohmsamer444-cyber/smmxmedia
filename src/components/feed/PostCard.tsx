@@ -50,7 +50,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
     return parts.map((part, i) => {
       if (part.startsWith('#')) {
         return (
-          <span key={i} className="text-[#E8123D] font-bold dir-ltr inline-block">
+          <span key={i} className="text-[#0088CC] font-bold dir-ltr inline-block">
             {part}{' '}
           </span>
         );
@@ -66,7 +66,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-[#0A0A0A] border border-[#262626]">
           <div className="flex items-center gap-2 flex-wrap">
             {post.gameTag && (
-              <span className="px-2.5 py-1 rounded-lg bg-[#E8123D]/20 border border-[#E8123D]/40 text-[#E8123D] font-black text-xs flex items-center gap-1">
+              <span className="px-2.5 py-1 rounded-lg bg-[#0088CC]/20 border border-[#0088CC]/40 text-[#0088CC] font-black text-xs flex items-center gap-1">
                 <Tag className="w-3.5 h-3.5" />
                 {post.gameTag}
               </span>
@@ -92,7 +92,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           <img
             src={post.author.avatar}
             alt={post.author.name}
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#E8123D] shrink-0"
+            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#0088CC] shrink-0"
           />
           <div>
             <div className="flex items-center gap-1.5 font-bold text-sm text-white">
@@ -125,7 +125,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
       {/* Location Badge */}
       {post.location && (
         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#1a1a1a] border border-[#262626] text-[11px] text-gray-400">
-          <MapPin className="w-3.5 h-3.5 text-[#E8123D]" />
+          <MapPin className="w-3.5 h-3.5 text-[#0088CC]" />
           <span>{post.location}</span>
         </div>
       )}
@@ -177,7 +177,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all">
                 <button
                   onClick={() => setIsPlayingVideo(true)}
-                  className="w-14 h-14 rounded-full bg-[#E8123D] text-white flex items-center justify-center shadow-2xl red-glow hover:scale-110 transition-transform"
+                  className="w-14 h-14 rounded-full bg-[#0088CC] text-white flex items-center justify-center shadow-2xl red-glow hover:scale-110 transition-transform"
                 >
                   <Play className="w-6 h-6 fill-current ml-1" />
                 </button>
@@ -214,12 +214,12 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                   disabled={hasVoted}
                   onClick={() => votePollOption(post.id, opt.id)}
                   className={`relative w-full text-right rounded-lg border overflow-hidden transition-colors ${
-                    isMyVote ? 'border-[#E8123D]' : 'border-[#262626]'
-                  } ${hasVoted ? 'cursor-default' : 'hover:border-[#E8123D]/60 cursor-pointer'}`}
+                    isMyVote ? 'border-[#0088CC]' : 'border-[#262626]'
+                  } ${hasVoted ? 'cursor-default' : 'hover:border-[#0088CC]/60 cursor-pointer'}`}
                 >
                   {hasVoted && (
                     <div
-                      className={`absolute inset-y-0 right-0 ${isMyVote ? 'bg-[#E8123D]/25' : 'bg-white/10'}`}
+                      className={`absolute inset-y-0 right-0 ${isMyVote ? 'bg-[#0088CC]/25' : 'bg-white/10'}`}
                       style={{ width: `${percent}%` }}
                     />
                   )}
@@ -244,10 +244,10 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         <button
           onClick={() => togglePostLike(post.id)}
           className={`flex items-center gap-1.5 text-xs font-bold transition-colors ${
-            post.isLiked ? 'text-[#E8123D]' : 'text-gray-400 hover:text-[#E8123D]'
+            post.isLiked ? 'text-[#0088CC]' : 'text-gray-400 hover:text-[#0088CC]'
           }`}
         >
-          <Heart className={`w-4.5 h-4.5 ${post.isLiked ? 'fill-[#E8123D]' : ''}`} />
+          <Heart className={`w-4.5 h-4.5 ${post.isLiked ? 'fill-[#0088CC]' : ''}`} />
           <span className="font-sans">{post.likesCount}</span>
         </button>
 
@@ -300,11 +300,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
               onChange={(e) => setCommentText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendComment()}
               placeholder="اكتب تعليق..."
-              className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-full py-2 px-4 text-xs outline-none focus:border-[#E8123D] transition-colors"
+              className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-full py-2 px-4 text-xs outline-none focus:border-[#0088CC] transition-colors"
             />
             <button
               onClick={handleSendComment}
-              className="p-2 rounded-full bg-[#E8123D] text-white hover:bg-[#B10E31] hover:scale-105 active:scale-95 transition-all shrink-0 red-glow"
+              className="p-2 rounded-full bg-[#0088CC] text-white hover:bg-[#006699] hover:scale-105 active:scale-95 transition-all shrink-0 red-glow"
             >
               <Send className="w-3.5 h-3.5" />
             </button>
@@ -351,7 +351,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment: c, postId, currentUs
       className="flex items-start gap-2 animate-slide-up"
       style={{ animationDelay: depth === 0 ? `${Math.min(index, 6) * 40}ms` : '0ms', animationFillMode: 'backwards' }}
     >
-      <img src={c.author.avatar} alt={c.author.name} className="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-[#E8123D]/30" />
+      <img src={c.author.avatar} alt={c.author.name} className="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-[#0088CC]/30" />
       <div className="flex-1 min-w-0">
         <div className="bg-gradient-to-br from-[#161616] to-[#0A0A0A] border border-[#262626] rounded-2xl rounded-tr-sm px-3.5 py-2.5 hover-red-glow">
           <div className="flex items-center gap-1">
@@ -364,10 +364,10 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment: c, postId, currentUs
           <button
             onClick={() => toggleCommentLike(postId, c.id)}
             className={`flex items-center gap-1 text-[10px] font-bold transition-colors ${
-              c.isLiked ? 'text-[#E8123D]' : 'text-gray-500 hover:text-[#E8123D]'
+              c.isLiked ? 'text-[#0088CC]' : 'text-gray-500 hover:text-[#0088CC]'
             }`}
           >
-            <Heart className={`w-3 h-3 ${c.isLiked ? 'fill-[#E8123D]' : ''}`} />
+            <Heart className={`w-3 h-3 ${c.isLiked ? 'fill-[#0088CC]' : ''}`} />
             <span>إعجاب{c.likesCount > 0 ? ` · ${c.likesCount}` : ''}</span>
           </button>
           {depth === 0 && (

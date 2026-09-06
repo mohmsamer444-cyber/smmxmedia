@@ -62,7 +62,7 @@ const HeaderLogo: React.FC<{
           <defs>
             <linearGradient id="mewGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#FF4D4D" />
-              <stop offset="55%" stopColor="#E8123D" />
+              <stop offset="55%" stopColor="#0088CC" />
               <stop offset="100%" stopColor="#FFB432" />
             </linearGradient>
             <filter id="mewGlow" x="-30%" y="-30%" width="160%" height="160%">
@@ -94,7 +94,7 @@ const HeaderLogo: React.FC<{
           className="text-base sm:text-xl font-black tracking-wide font-sans leading-none min-h-[28px] flex items-center"
         >
           <span className="text-white">عالم </span>
-          <span className="text-[#E8123D] mr-1">الشرق الأوسط</span>
+          <span className="text-[#0088CC] mr-1">الشرق الأوسط</span>
         </motion.div>
       </div>
 
@@ -102,7 +102,7 @@ const HeaderLogo: React.FC<{
         initial={shouldAnimate ? { opacity: 0, y: 4 } : { opacity: 1, y: 0 }}
         animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 4 }}
         transition={{ duration: 0.35, ease: 'easeOut', delay: shouldAnimate ? 0.15 : 0 }}
-        className="text-[9px] sm:text-[10px] font-bold text-[#E8123D] tracking-widest mt-0.5 font-sans"
+        className="text-[9px] sm:text-[10px] font-bold text-[#0088CC] tracking-widest mt-0.5 font-sans"
       >
         {getTagline()}
       </motion.span>
@@ -219,7 +219,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
                         setIsCurrencyOpen(false);
                       }}
                       className={`w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-right hover:bg-[#1a1a1a] transition-colors ${
-                        currency === code ? 'text-[#E8123D] font-bold bg-[#E8123D]/10' : 'text-gray-300'
+                        currency === code ? 'text-[#0088CC] font-bold bg-[#0088CC]/10' : 'text-gray-300'
                       }`}
                     >
                       <span className="flex items-center gap-1.5">
@@ -248,7 +248,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
             >
               <Bell className="w-4 h-4 stroke-[1.8]" />
               {unreadNotifCount > 0 && (
-                <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-[#E8123D] text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-[#0088CC] text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
                   {unreadNotifCount}
                 </span>
               )}
@@ -264,12 +264,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
                 >
                   <div className="p-3 border-b border-[#262626] flex items-center justify-between bg-[#1a1a1a]">
                     <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                      <Bell className="w-3.5 h-3.5 text-[#E8123D]" />
+                      <Bell className="w-3.5 h-3.5 text-[#0088CC]" />
                       الإشعارات
                     </span>
                     <button
                       onClick={markNotificationsRead}
-                      className="text-[11px] text-[#E8123D] hover:underline"
+                      className="text-[11px] text-[#0088CC] hover:underline"
                     >
                       تحديد الكل ككمقروء
                     </button>
@@ -283,12 +283,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
                         <div
                           key={n.id}
                           className={`p-3 text-right hover:bg-[#1f1f1f] transition-colors ${
-                            !n.read ? 'bg-[#E8123D]/5' : ''
+                            !n.read ? 'bg-[#0088CC]/5' : ''
                           }`}
                         >
                           <div className="flex items-center justify-between text-xs font-bold text-white mb-1">
-                            <span className="flex items-center gap-1 text-[#E8123D]">
-                              {!n.read && <span className="w-1.5 h-1.5 bg-[#E8123D] rounded-full inline-block" />}
+                            <span className="flex items-center gap-1 text-[#0088CC]">
+                              {!n.read && <span className="w-1.5 h-1.5 bg-[#0088CC] rounded-full inline-block" />}
                               {n.title}
                             </span>
                             <span className="text-[10px] font-normal text-gray-500">{n.timestamp}</span>
@@ -307,12 +307,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="flex items-center gap-2 p-1 rounded-full border border-transparent hover:border-[#E8123D]/50 transition-all shrink-0"
+              className="flex items-center gap-2 p-1 rounded-full border border-transparent hover:border-[#0088CC]/50 transition-all shrink-0"
             >
               <img
                 src={user.avatar}
                 alt={user.name}
-                className="w-8 h-8 rounded-full object-cover border border-[#E8123D]/60 shrink-0"
+                className="w-8 h-8 rounded-full object-cover border border-[#0088CC]/60 shrink-0"
               />
             </button>
 
@@ -329,10 +329,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
                       <img
                         src={user.avatar}
                         alt={user.name}
-                        className="w-10 h-10 rounded-full object-cover border border-[#E8123D]"
+                        className="w-10 h-10 rounded-full object-cover border border-[#0088CC]"
                       />
                       <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Camera className="w-4 h-4 text-[#E8123D]" />
+                        <Camera className="w-4 h-4 text-[#0088CC]" />
                       </div>
                     </div>
                     <div className="overflow-hidden flex-1">
@@ -350,7 +350,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
                   <div className="p-2.5 rounded-lg bg-[#1a1a1a] border border-[#262626] flex items-center justify-between">
                     <div>
                       <div className="text-[10px] text-gray-400">رصيدك الحالي</div>
-                      <div className="text-sm font-extrabold text-[#E8123D]">
+                      <div className="text-sm font-extrabold text-[#0088CC]">
                         {formatPrice(user.balanceUSD)}
                       </div>
                     </div>
@@ -359,7 +359,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
                         setIsProfileOpen(false);
                         openDepositModal();
                       }}
-                      className="p-1.5 rounded-lg bg-[#E8123D] text-white hover:bg-[#b10e31] transition-colors flex items-center gap-1 text-xs font-bold"
+                      className="p-1.5 rounded-lg bg-[#0088CC] text-white hover:bg-[#006699] transition-colors flex items-center gap-1 text-xs font-bold"
                     >
                       <PlusCircle className="w-3.5 h-3.5" />
                       إيداع
@@ -374,7 +374,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
                       }}
                       className="w-full flex items-center gap-2 py-2 text-gray-300 hover:text-white transition-colors"
                     >
-                      <Camera className="w-4 h-4 text-[#E8123D]" />
+                      <Camera className="w-4 h-4 text-[#0088CC]" />
                       تغيير الصورة الشخصية
                     </button>
 
@@ -385,7 +385,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
                       }}
                       className="w-full flex items-center gap-2 py-2 text-gray-300 hover:text-white transition-colors"
                     >
-                      <Wallet className="w-4 h-4 text-[#E8123D]" />
+                      <Wallet className="w-4 h-4 text-[#0088CC]" />
                       سجل الطلبات
                     </button>
 
@@ -396,7 +396,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
                       }}
                       className="w-full flex items-center gap-2 py-2 text-gray-300 hover:text-white transition-colors"
                     >
-                      <Code className="w-4 h-4 text-[#E8123D]" />
+                      <Code className="w-4 h-4 text-[#0088CC]" />
                       إعدادات API للبانل
                     </button>
 
@@ -425,7 +425,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenDrawer }) => {
             }}
             aria-label="القائمة الرئيسية - إعدادات الحساب والبانل"
             title="القائمة الرئيسية"
-            className="p-2.5 rounded-xl bg-[#141414] border border-[#262626] text-gray-200 hover:text-white hover:border-[#E8123D] active:scale-95 transition-all cursor-pointer relative z-10"
+            className="p-2.5 rounded-xl bg-[#141414] border border-[#262626] text-gray-200 hover:text-white hover:border-[#0088CC] active:scale-95 transition-all cursor-pointer relative z-10"
           >
             <Menu className="w-5 h-5" />
           </button>
