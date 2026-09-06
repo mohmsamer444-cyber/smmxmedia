@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { useAuth } from './context/AuthContext';
+import { AnimatePresence, motion } from 'motion/react';
 import { LoginPage } from './components/auth/LoginPage';
 import { Header } from './components/common/Header';
 import { BottomNav } from './components/common/BottomNav';
@@ -52,10 +53,20 @@ const AppContent: React.FC = () => {
 
       {/* Main View Area */}
       <main className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-28 overflow-x-hidden">
-        {activeTab === 'feed' && <SocialFeedPage />}
-        {activeTab === 'services' && <ServicesPage />}
-        {activeTab === 'games' && <GameTopUpPage />}
-        {activeTab === 'orders' && <OrderHistoryPage />}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {activeTab === 'feed' && <SocialFeedPage />}
+            {activeTab === 'services' && <ServicesPage />}
+            {activeTab === 'games' && <GameTopUpPage />}
+            {activeTab === 'orders' && <OrderHistoryPage />}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Floating Action Buttons */}

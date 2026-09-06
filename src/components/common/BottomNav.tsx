@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import { motion } from 'motion/react';
 import {
   Home,
   Layers,
@@ -35,9 +36,11 @@ export const BottomNav: React.FC = () => {
           }`}
         >
           {isHomeActive && (
-            <span className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" />
+            <motion.span layoutId="nav-indicator" className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
           )}
-          <Home className={`w-5 h-5 mb-0.5 ${isHomeActive ? 'stroke-[2.5]' : ''}`} />
+          <motion.div whileTap={{ scale: 0.85 }}>
+            <Home className={`w-5 h-5 mb-0.5 ${isHomeActive ? 'stroke-[2.5]' : ''}`} />
+          </motion.div>
           <span className="text-[10px] sm:text-[11px]">الرئيسية</span>
         </button>
 
@@ -51,21 +54,24 @@ export const BottomNav: React.FC = () => {
           }`}
         >
           {isServicesActive && (
-            <span className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" />
+            <motion.span layoutId="nav-indicator" className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
           )}
-          <Layers className={`w-5 h-5 mb-0.5 ${isServicesActive ? 'stroke-[2.5]' : ''}`} />
+          <motion.div whileTap={{ scale: 0.85 }}>
+            <Layers className={`w-5 h-5 mb-0.5 ${isServicesActive ? 'stroke-[2.5]' : ''}`} />
+          </motion.div>
           <span className="text-[10px] sm:text-[11px]">الخدمات</span>
         </button>
 
         {/* Slot 3: Center Floating Red "+" */}
         <div className="relative -top-5 flex items-center justify-center z-10 px-1">
-          <button
+          <motion.button
+            whileTap={{ scale: 0.9, rotate: 90 }}
             onClick={openQuickActionModal}
-            className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#B10E31] to-[#E8123D] text-white flex items-center justify-center shadow-lg red-glow active:scale-95 hover:scale-105 transition-all border-4 border-[#0A0A0A]"
+            className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#B10E31] to-[#E8123D] text-white flex items-center justify-center shadow-lg red-glow hover:scale-105 transition-transform border-4 border-[#0A0A0A]"
             title="طلب جديد"
           >
             <Plus className="w-7 h-7 stroke-[3]" />
-          </button>
+          </motion.button>
         </div>
 
         {/* Slot 4: تليجرام (direct order link) */}
@@ -73,7 +79,9 @@ export const BottomNav: React.FC = () => {
           onClick={openTelegram}
           className="flex flex-col items-center justify-center flex-1 h-full relative text-[#2AABEE] hover:text-[#54c0f7] transition-colors"
         >
-          <Send className="w-5 h-5 mb-0.5" />
+          <motion.div whileTap={{ scale: 0.85 }}>
+            <Send className="w-5 h-5 mb-0.5" />
+          </motion.div>
           <span className="text-[10px] sm:text-[11px]">تليجرام</span>
         </button>
 
@@ -87,9 +95,11 @@ export const BottomNav: React.FC = () => {
           }`}
         >
           {isGamesActive && (
-            <span className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" />
+            <motion.span layoutId="nav-indicator" className="absolute top-0 w-8 h-0.5 bg-[#E8123D] rounded-full red-glow" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
           )}
-          <Gamepad2 className={`w-5 h-5 mb-0.5 ${isGamesActive ? 'stroke-[2.5]' : ''}`} />
+          <motion.div whileTap={{ scale: 0.85 }}>
+            <Gamepad2 className={`w-5 h-5 mb-0.5 ${isGamesActive ? 'stroke-[2.5]' : ''}`} />
+          </motion.div>
           <span className="text-[10px] sm:text-[11px]">الألعاب</span>
         </button>
       </div>
