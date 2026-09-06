@@ -95,6 +95,8 @@ export interface SocialPost {
   location?: string;
   likesCount: number;
   isLiked: boolean;
+  thumbsCount: number;
+  isThumbed: boolean;
   commentsCount: number;
   comments: PostComment[];
   sharesCount: number;

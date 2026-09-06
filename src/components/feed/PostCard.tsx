@@ -9,6 +9,7 @@ import {
   DollarSign,
   Send,
   Heart,
+  ThumbsUp,
   MessageCircle,
   Share2,
 } from 'lucide-react';
@@ -247,6 +248,16 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         >
           <Heart className={`w-4.5 h-4.5 ${post.isLiked ? 'fill-[#E8123D]' : ''}`} />
           <span className="font-sans">{post.likesCount}</span>
+        </button>
+
+        <button
+          onClick={() => togglePostLike(post.id, 'thumb')}
+          className={`flex items-center gap-1.5 text-xs font-bold transition-colors ${
+            post.isThumbed ? 'text-[#2AABEE]' : 'text-gray-400 hover:text-[#2AABEE]'
+          }`}
+        >
+          <ThumbsUp className={`w-4.5 h-4.5 ${post.isThumbed ? 'fill-[#2AABEE]' : ''}`} />
+          <span className="font-sans">{post.thumbsCount}</span>
         </button>
 
         <button

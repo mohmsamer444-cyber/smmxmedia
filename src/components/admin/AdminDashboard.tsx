@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search, Settings, Tag, Plus, Trash2, FileText, ClipboardList, Copy, Upload, Loader2, Heart, MessageSquarePlus } from 'lucide-react';
+import { Users, Wallet, CheckCircle2, XCircle, RefreshCw, Search, Settings, Tag, Plus, Trash2, FileText, ClipboardList, Copy, Upload, Loader2, Heart, ThumbsUp, MessageSquarePlus } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { VerifiedBadge } from '../common/VerifiedBadge';
@@ -52,6 +52,7 @@ interface PostRow {
   hashtags: string[] | null;
   created_at: string;
   boosted_likes: number;
+  boosted_likes_thumb: number;
 }
 
 interface FakeCommentRow {
@@ -108,6 +109,7 @@ export const AdminDashboard: React.FC = () => {
   // Catalog posts (admin-only storefront posts) state
   const [catalogPosts, setCatalogPosts] = useState<PostRow[]>([]);
   const [likeEdits, setLikeEdits] = useState<Record<string, string>>({});
+  const [thumbEdits, setThumbEdits] = useState<Record<string, string>>({});
   const [fakeComments, setFakeComments] = useState<Record<string, FakeCommentRow[]>>({});
   const [newFakeComment, setNewFakeComment] = useState<Record<string, { name: string; text: string }>>({});
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
@@ -119,7 +121,21 @@ export const AdminDashboard: React.FC = () => {
     if (isNaN(numeric) || numeric < 0) return;
     const { error } = await supabase.from('posts').update({ boosted_likes: numeric }).eq('id', postId);
     if (!error) {
-      showMsg('تم تحديث عدد اللايكات بنجاح');
+      showMsg('تم تحديث عدد القلوب بنجاح');
+      loadData();
+    } else {
+      showMsg('حصل خطأ: ' + error.message);
+    }
+  };
+
+  const updateBoostedThumbs = async (postId: string) => {
+    const value = thumbEdits[postId];
+    if (value === undefined || value === '') return;
+    const numeric = parseInt(value, 10);
+    if (isNaN(numeric) || numeric < 0) return;
+    const { error } = await supabase.from('posts').update({ boosted_likes_thumb: numeric }).eq('id', postId);
+    if (!error) {
+      showMsg('تم تحديث عدد اللايكات 👍 بنجاح');
       loadData();
     } else {
       showMsg('حصل خطأ: ' + error.message);
@@ -238,7 +254,7 @@ export const AdminDashboard: React.FC = () => {
 
     const { data: postsData } = await supabase
       .from('posts')
-      .select('id, content, image_url, video_url, audio_url, game_tag, price_tag, hashtags, created_at, boosted_likes')
+      .select('id, content, image_url, video_url, audio_url, game_tag, price_tag, hashtags, created_at, boosted_likes, boosted_likes_thumb')
       .order('created_at', { ascending: false });
     setCatalogPosts((postsData as any) || []);
 
@@ -1102,10 +1118,10 @@ export const AdminDashboard: React.FC = () => {
                 <span>{new Date(p.created_at).toLocaleString('ar-EG')}</span>
               </div>
 
-              {/* Boost likes */}
+              {/* Boost hearts ❤️ */}
               <div className="flex items-center gap-2 pt-1">
                 <Heart className="w-3.5 h-3.5 text-[#E8123D] shrink-0" />
-                <span className="text-[10px] text-gray-400 shrink-0">لايكات وهمية حالية: {p.boosted_likes || 0}</span>
+                <span className="text-[10px] text-gray-400 shrink-0">قلوب ❤️ وهمية حالية: {p.boosted_likes || 0}</span>
                 <input
                   type="number"
                   min={0}
@@ -1117,6 +1133,26 @@ export const AdminDashboard: React.FC = () => {
                 <button
                   onClick={() => updateBoostedLikes(p.id)}
                   className="px-2.5 py-1.5 rounded-lg bg-[#E8123D] text-white text-[11px] font-bold shrink-0"
+                >
+                  تحديث
+                </button>
+              </div>
+
+              {/* Boost thumbs 👍 */}
+              <div className="flex items-center gap-2 pt-1">
+                <ThumbsUp className="w-3.5 h-3.5 text-[#2AABEE] shrink-0" />
+                <span className="text-[10px] text-gray-400 shrink-0">لايكات 👍 وهمية حالية: {p.boosted_likes_thumb || 0}</span>
+                <input
+                  type="number"
+                  min={0}
+                  placeholder="عدد جديد"
+                  value={thumbEdits[p.id] ?? ''}
+                  onChange={(e) => setThumbEdits({ ...thumbEdits, [p.id]: e.target.value })}
+                  className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-lg py-1.5 px-2 text-[11px] outline-none focus:border-[#2AABEE]"
+                />
+                <button
+                  onClick={() => updateBoostedThumbs(p.id)}
+                  className="px-2.5 py-1.5 rounded-lg bg-[#0088cc] text-white text-[11px] font-bold shrink-0"
                 >
                   تحديث
                 </button>

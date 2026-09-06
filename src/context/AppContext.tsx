@@ -83,7 +83,7 @@ interface AppContextType {
   // Social Feed
   posts: SocialPost[];
   createPost: (postData: Partial<SocialPost>) => void;
-  togglePostLike: (postId: string) => void;
+  togglePostLike: (postId: string, reactionType?: 'heart' | 'thumb') => void;
   addPostComment: (postId: string, text: string) => void;
   loadPostComments: (postId: string) => void;
   sharePost: (postId: string) => void;
@@ -267,7 +267,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const mapDbPostToSocialPost = (
     row: any,
     likedSet: Set<string>,
-    votedMap: Record<string, string>
+    votedMap: Record<string, string>,
+    thumbedSet: Set<string> = new Set(),
+    heartCounts: Record<string, number> = {},
+    thumbCounts: Record<string, number> = {}
   ): SocialPost => {
     const pollOptions = Array.isArray(row.poll_options) ? row.poll_options : null;
     const totalVotes = pollOptions
@@ -318,8 +321,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             }
           : undefined,
       location: row.location || undefined,
-      likesCount: (row.post_likes?.[0]?.count || 0) + (row.boosted_likes || 0),
+      likesCount: (heartCounts[row.id] || 0) + (row.boosted_likes || 0),
       isLiked: likedSet.has(row.id),
+      thumbsCount: (thumbCounts[row.id] || 0) + (row.boosted_likes_thumb || 0),
+      isThumbed: thumbedSet.has(row.id),
       commentsCount: row.post_comments?.[0]?.count || 0,
       comments: [],
       sharesCount: row.shares_count || 0,
@@ -332,20 +337,35 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const { data, error } = await supabase
       .from('posts')
       .select(
-        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, image_urls, video_url, video_duration_seconds, poll_question, poll_options, audio_url, shares_count, boosted_likes, created_at, profiles(full_name, avatar_url, is_verified), post_likes(count), post_comments(count)'
+        'id, user_id, content, hashtags, game_tag, price_tag, location, image_url, image_urls, video_url, video_duration_seconds, poll_question, poll_options, audio_url, shares_count, boosted_likes, boosted_likes_thumb, created_at, profiles(full_name, avatar_url, is_verified), post_comments(count)'
       )
       .order('created_at', { ascending: false })
       .limit(100);
 
     let likedSet = new Set<string>();
+    let thumbedSet = new Set<string>();
+    let heartCounts: Record<string, number> = {};
+    let thumbCounts: Record<string, number> = {};
     let votedMap: Record<string, string> = {};
-    if (session?.user?.id) {
-      const { data: likedRows } = await supabase
-        .from('post_likes')
-        .select('post_id')
-        .eq('user_id', session.user.id);
-      likedSet = new Set((likedRows || []).map((r: any) => r.post_id));
 
+    const postIds = (data || []).map((r: any) => r.id);
+    if (postIds.length > 0) {
+      const { data: allReactions } = await supabase
+        .from('post_likes')
+        .select('post_id, user_id, reaction_type')
+        .in('post_id', postIds);
+      (allReactions || []).forEach((r: any) => {
+        if (r.reaction_type === 'thumb') {
+          thumbCounts[r.post_id] = (thumbCounts[r.post_id] || 0) + 1;
+          if (session?.user?.id && r.user_id === session.user.id) thumbedSet.add(r.post_id);
+        } else {
+          heartCounts[r.post_id] = (heartCounts[r.post_id] || 0) + 1;
+          if (session?.user?.id && r.user_id === session.user.id) likedSet.add(r.post_id);
+        }
+      });
+    }
+
+    if (session?.user?.id) {
       const { data: votedRows } = await supabase
         .from('post_poll_votes')
         .select('post_id, option_id')
@@ -356,7 +376,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
 
     if (!error && data) {
-      setPosts(data.map((row: any) => mapDbPostToSocialPost(row, likedSet, votedMap)));
+      setPosts(
+        data.map((row: any) =>
+          mapDbPostToSocialPost(row, likedSet, votedMap, thumbedSet, heartCounts, thumbCounts)
+        )
+      );
     }
   };
 
@@ -708,6 +732,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       location: postData.location,
       likesCount: 0,
       isLiked: false,
+      thumbsCount: 0,
+      isThumbed: false,
       commentsCount: 0,
       comments: [],
       sharesCount: 0,
@@ -747,43 +773,50 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     showToast('تم نشر منشورك بنجاح!', 'success');
   };
 
-  const togglePostLike = async (postId: string) => {
+  const togglePostLike = async (postId: string, reactionType: 'heart' | 'thumb' = 'heart') => {
     const target = posts.find(p => p.id === postId);
     if (!target || !session?.user?.id) return;
-    const wasLiked = target.isLiked;
+    const wasReacted = reactionType === 'thumb' ? target.isThumbed : target.isLiked;
 
     // Optimistic UI update
     setPosts(prev =>
       prev.map(p => {
-        if (p.id === postId) {
-          const newLiked = !p.isLiked;
+        if (p.id !== postId) return p;
+        if (reactionType === 'thumb') {
+          const newThumbed = !p.isThumbed;
           return {
             ...p,
-            isLiked: newLiked,
-            likesCount: newLiked ? p.likesCount + 1 : p.likesCount - 1,
+            isThumbed: newThumbed,
+            thumbsCount: newThumbed ? p.thumbsCount + 1 : p.thumbsCount - 1,
           };
         }
-        return p;
+        const newLiked = !p.isLiked;
+        return {
+          ...p,
+          isLiked: newLiked,
+          likesCount: newLiked ? p.likesCount + 1 : p.likesCount - 1,
+        };
       })
     );
 
-    if (wasLiked) {
+    if (wasReacted) {
       const { error } = await supabase
         .from('post_likes')
         .delete()
         .eq('post_id', postId)
-        .eq('user_id', session.user.id);
+        .eq('user_id', session.user.id)
+        .eq('reaction_type', reactionType);
       if (error) loadPosts(); // revert on failure
     } else {
       const { error } = await supabase
         .from('post_likes')
-        .insert({ post_id: postId, user_id: session.user.id });
+        .insert({ post_id: postId, user_id: session.user.id, reaction_type: reactionType });
       if (error) {
         loadPosts(); // revert on failure
       } else if (target.author.id && target.author.id !== session.user.id) {
         await supabase.from('notifications').insert({
           user_id: target.author.id,
-          title: 'إعجاب جديد بمنشورك',
+          title: reactionType === 'thumb' ? 'إعجاب جديد بمنشورك' : 'إعجاب جديد بمنشورك',
           description: `${user.name} أعجب بمنشورك`,
           type: 'social',
         });
