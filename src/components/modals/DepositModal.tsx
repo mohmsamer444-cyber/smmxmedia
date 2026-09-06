@@ -136,7 +136,7 @@ export const DepositModal: React.FC = () => {
       ),
       details: {
         phone: siteSettings.vodafone_cash_number,
-        name: 'عالم الشرق الأوسط - كاش',
+        name: 'متجر بلس ميديا - كاش',
         instruction: 'حول المبلغ المطلوب بالكامل من غير أي خصم أو إضافة',
       },
     },

@@ -26,7 +26,7 @@ export const Footer: React.FC = () => {
               <span className="w-8 h-8 rounded-xl bg-[#0088CC] text-white font-black flex items-center justify-center text-sm shadow-md red-glow">
                 ع
               </span>
-              <span className="font-black text-lg text-white tracking-wider">عالم الشرق الأوسط</span>
+              <span className="font-black text-lg text-white tracking-wider">متجر بلس ميديا</span>
             </div>
             <p className="text-gray-400 text-xs leading-normal">
               منصتك العربية الشاملة لخدمات السوشيال ميديا، مشاركة المحتوى، وشحن الألعاب. نقدم أفضل الأسعار مع التسليم الفوري والدعم المستمر على مدار الساعة.
@@ -116,7 +116,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Copyright */}
         <div className="pt-6 border-t border-[#202020] flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-gray-500">
-          <p>© {new Date().getFullYear()} عالم الشرق الأوسط. جميع الحقوق محفوظة.</p>
+          <p>© {new Date().getFullYear()} متجر بلس ميديا. جميع الحقوق محفوظة.</p>
           <div className="flex items-center gap-4">
             <span className="hover:text-gray-300 cursor-pointer">الشروط والأحكام</span>
             <span className="hover:text-gray-300 cursor-pointer">سياسة الخصوصية</span>

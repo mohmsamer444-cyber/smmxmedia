@@ -52,7 +52,7 @@ export const LoginPage: React.FC = () => {
     >
       <div className="w-full max-w-sm bg-[#141414] border border-[#262626] rounded-2xl p-6 sm:p-8 shadow-2xl">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-extrabold text-[#0088CC]">عالم الشرق الأوسط</h1>
+          <h1 className="text-2xl font-extrabold text-[#0088CC]">متجر بلس ميديا</h1>
           <p className="text-sm text-gray-400 mt-1">
             {mode === 'login' ? 'سجّل دخولك للمتابعة' : 'أنشئ حسابك الجديد'}
           </p>

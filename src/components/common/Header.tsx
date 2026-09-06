@@ -27,7 +27,7 @@ interface HeaderProps {
   onOpenDrawer: () => void;
 }
 
-const BRAND_NAME = 'عالم الشرق الأوسط';
+const BRAND_NAME = 'متجر بلس ميديا';
 
 const HeaderLogo: React.FC<{
   activeTab: string;

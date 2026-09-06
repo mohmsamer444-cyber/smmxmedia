@@ -1075,7 +1075,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const shareUrl = `${window.location.origin}/#post-${postId}`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'عالم الشرق الأوسط', text: target.content, url: shareUrl });
+        await navigator.share({ title: 'متجر بلس ميديا', text: target.content, url: shareUrl });
       } catch {
         /* user cancelled — ignore */
       }
