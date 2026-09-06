@@ -59,6 +59,7 @@ export interface UserProfile {
 
 export interface PostComment {
   id: string;
+  authorId?: string;
   author: {
     name: string;
     avatar: string;
@@ -66,6 +67,8 @@ export interface PostComment {
   };
   content: string;
   timestamp: string;
+  likesCount: number;
+  isLiked: boolean;
   replies?: PostComment[];
 }
 

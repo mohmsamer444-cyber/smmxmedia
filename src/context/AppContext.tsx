@@ -86,6 +86,8 @@ interface AppContextType {
   togglePostLike: (postId: string, reactionType?: 'heart' | 'thumb') => void;
   addPostComment: (postId: string, text: string) => void;
   loadPostComments: (postId: string) => void;
+  toggleCommentLike: (postId: string, commentId: string) => void;
+  deleteComment: (postId: string, commentId: string) => void;
   sharePost: (postId: string) => void;
   togglePostBookmark: (postId: string) => void;
   votePollOption: (postId: string, optionId: string) => Promise<void>;
@@ -828,6 +830,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (!text.trim() || !session?.user?.id) return;
     const newComment = {
       id: 'c-' + Date.now(),
+      authorId: session.user.id,
       author: {
         name: user.name,
         avatar: user.avatar,
@@ -835,6 +838,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       },
       content: text,
       timestamp: 'الآن',
+      likesCount: 0,
+      isLiked: false,
     };
 
     // Optimistic UI update
@@ -851,16 +856,31 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       })
     );
 
-    const { error } = await supabase.from('post_comments').insert({
-      post_id: postId,
-      user_id: session.user.id,
-      content: text.trim(),
-    });
+    const { data: inserted, error } = await supabase
+      .from('post_comments')
+      .insert({
+        post_id: postId,
+        user_id: session.user.id,
+        content: text.trim(),
+      })
+      .select('id')
+      .single();
 
     if (error) {
       showToast('تعذر حفظ التعليق، حاول تاني', 'error');
       loadPosts();
       return;
+    }
+
+    // Replace the temporary optimistic id with the real DB id so like/delete work immediately
+    if (inserted?.id) {
+      setPosts(prev =>
+        prev.map(p =>
+          p.id === postId
+            ? { ...p, comments: p.comments.map(c => (c.id === newComment.id ? { ...c, id: inserted.id } : c)) }
+            : p
+        )
+      );
     }
 
     // Notify the post owner (only if someone else commented, not themselves)
@@ -880,22 +900,91 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const loadPostComments = async (postId: string) => {
     const { data, error } = await supabase
       .from('post_comments')
-      .select('id, content, created_at, display_name, profiles(full_name, avatar_url, is_verified)')
+      .select('id, user_id, content, created_at, display_name, profiles(full_name, avatar_url, is_verified)')
       .eq('post_id', postId)
       .order('created_at', { ascending: true });
 
-    if (!error && data) {
-      const comments = data.map((row: any) => ({
-        id: row.id,
-        author: {
-          name: row.display_name || row.profiles?.full_name || 'مستخدم',
-          avatar: row.profiles?.avatar_url || DEFAULT_AVATAR,
-          verified: row.display_name ? false : !!row.profiles?.is_verified,
-        },
-        content: row.content,
-        timestamp: new Date(row.created_at).toLocaleString('ar-EG'),
-      }));
-      setPosts(prev => prev.map(p => (p.id === postId ? { ...p, comments } : p)));
+    if (error || !data) return;
+
+    const commentIds = data.map((row: any) => row.id);
+    let likeCounts: Record<string, number> = {};
+    let likedSet = new Set<string>();
+    if (commentIds.length > 0) {
+      const { data: reactions } = await supabase
+        .from('post_comment_likes')
+        .select('comment_id, user_id')
+        .in('comment_id', commentIds);
+      (reactions || []).forEach((r: any) => {
+        likeCounts[r.comment_id] = (likeCounts[r.comment_id] || 0) + 1;
+        if (session?.user?.id && r.user_id === session.user.id) likedSet.add(r.comment_id);
+      });
+    }
+
+    const comments = data.map((row: any) => ({
+      id: row.id,
+      authorId: row.user_id,
+      author: {
+        name: row.display_name || row.profiles?.full_name || 'مستخدم',
+        avatar: row.profiles?.avatar_url || DEFAULT_AVATAR,
+        verified: row.display_name ? false : !!row.profiles?.is_verified,
+      },
+      content: row.content,
+      timestamp: new Date(row.created_at).toLocaleString('ar-EG'),
+      likesCount: likeCounts[row.id] || 0,
+      isLiked: likedSet.has(row.id),
+    }));
+    setPosts(prev => prev.map(p => (p.id === postId ? { ...p, comments } : p)));
+  };
+
+  const toggleCommentLike = async (postId: string, commentId: string) => {
+    if (!session?.user?.id) return;
+    const targetPost = posts.find(p => p.id === postId);
+    const targetComment = targetPost?.comments.find(c => c.id === commentId);
+    if (!targetComment) return;
+    const wasLiked = targetComment.isLiked;
+
+    setPosts(prev =>
+      prev.map(p =>
+        p.id === postId
+          ? {
+              ...p,
+              comments: p.comments.map(c =>
+                c.id === commentId
+                  ? { ...c, isLiked: !wasLiked, likesCount: wasLiked ? c.likesCount - 1 : c.likesCount + 1 }
+                  : c
+              ),
+            }
+          : p
+      )
+    );
+
+    if (wasLiked) {
+      await supabase.from('post_comment_likes').delete().eq('comment_id', commentId).eq('user_id', session.user.id);
+    } else {
+      await supabase.from('post_comment_likes').insert({ comment_id: commentId, user_id: session.user.id });
+    }
+  };
+
+  const deleteComment = async (postId: string, commentId: string) => {
+    if (!session?.user?.id) return;
+    const prevPosts = posts;
+
+    setPosts(prev =>
+      prev.map(p =>
+        p.id === postId
+          ? {
+              ...p,
+              comments: p.comments.filter(c => c.id !== commentId),
+              commentsCount: Math.max(0, p.commentsCount - 1),
+            }
+          : p
+      )
+    );
+
+    const { error } = await supabase.from('post_comments').delete().eq('id', commentId);
+    if (error) {
+      setPosts(prevPosts); // revert on failure
+      showToast('تعذر حذف التعليق', 'error');
     }
   };
 
@@ -1204,6 +1293,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         togglePostLike,
         addPostComment,
         loadPostComments,
+        toggleCommentLike,
+        deleteComment,
         sharePost,
         togglePostBookmark,
         votePollOption,

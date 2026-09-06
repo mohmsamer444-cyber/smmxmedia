@@ -12,6 +12,7 @@ import {
   ThumbsUp,
   MessageCircle,
   Share2,
+  Trash2,
 } from 'lucide-react';
 import { VerifiedBadge } from '../common/VerifiedBadge';
 
@@ -22,7 +23,7 @@ interface PostCardProps {
 const TELEGRAM_ORDER_LINK = 'https://t.me/fx_sa2';
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
-  const { togglePostLike, addPostComment, loadPostComments, sharePost, votePollOption } = useApp();
+  const { togglePostLike, addPostComment, loadPostComments, toggleCommentLike, deleteComment, sharePost, votePollOption, user } = useApp();
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
@@ -283,15 +284,41 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           {post.comments.length === 0 && (
             <p className="text-[11px] text-gray-500 text-center py-2">لسه مفيش تعليقات، كن أول من يعلق</p>
           )}
-          {post.comments.map((c) => (
-            <div key={c.id} className="flex items-start gap-2">
-              <img src={c.author.avatar} alt={c.author.name} className="w-7 h-7 rounded-full object-cover shrink-0" />
-              <div className="bg-[#0A0A0A] border border-[#262626] rounded-xl px-3 py-2 flex-1">
-                <div className="flex items-center gap-1">
-                  <span className="text-[11px] font-bold text-white">{c.author.name}</span>
-                  <span className="text-[10px] text-gray-500">{c.timestamp}</span>
+          {post.comments.map((c, idx) => (
+            <div
+              key={c.id}
+              className="flex items-start gap-2 animate-slide-up"
+              style={{ animationDelay: `${Math.min(idx, 6) * 40}ms`, animationFillMode: 'backwards' }}
+            >
+              <img src={c.author.avatar} alt={c.author.name} className="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-[#E8123D]/30" />
+              <div className="flex-1 min-w-0">
+                <div className="bg-gradient-to-br from-[#161616] to-[#0A0A0A] border border-[#262626] rounded-2xl rounded-tr-sm px-3.5 py-2.5 hover-red-glow">
+                  <div className="flex items-center gap-1">
+                    <span className="text-[11px] font-bold text-white">{c.author.name}</span>
+                    {c.author.verified && <VerifiedBadge size={11} />}
+                  </div>
+                  <p className="text-xs text-gray-200 mt-0.5 leading-relaxed">{c.content}</p>
                 </div>
-                <p className="text-xs text-gray-300 mt-0.5">{c.content}</p>
+                <div className="flex items-center gap-3 mt-1 px-2">
+                  <button
+                    onClick={() => toggleCommentLike(post.id, c.id)}
+                    className={`flex items-center gap-1 text-[10px] font-bold transition-colors ${
+                      c.isLiked ? 'text-[#E8123D]' : 'text-gray-500 hover:text-[#E8123D]'
+                    }`}
+                  >
+                    <Heart className={`w-3 h-3 ${c.isLiked ? 'fill-[#E8123D]' : ''}`} />
+                    <span>إعجاب{c.likesCount > 0 ? ` · ${c.likesCount}` : ''}</span>
+                  </button>
+                  {c.authorId === user.id && (
+                    <button
+                      onClick={() => deleteComment(post.id, c.id)}
+                      className="flex items-center gap-1 text-[10px] font-bold text-gray-500 hover:text-red-400 transition-colors"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      <span>حذف</span>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -302,11 +329,11 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
               onChange={(e) => setCommentText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSendComment()}
               placeholder="اكتب تعليق..."
-              className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-full py-2 px-4 text-xs outline-none focus:border-[#E8123D]"
+              className="flex-1 bg-[#0A0A0A] border border-[#262626] rounded-full py-2 px-4 text-xs outline-none focus:border-[#E8123D] transition-colors"
             />
             <button
               onClick={handleSendComment}
-              className="p-2 rounded-full bg-[#E8123D] text-white hover:bg-[#B10E31] transition-colors shrink-0"
+              className="p-2 rounded-full bg-[#E8123D] text-white hover:bg-[#B10E31] hover:scale-105 active:scale-95 transition-all shrink-0 red-glow"
             >
               <Send className="w-3.5 h-3.5" />
             </button>
